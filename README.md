@@ -15,8 +15,8 @@ The classes included in RealityUI aim to offer familiar User Interface guideline
 - [Usage](#usage)
 - [RUIElements](#creating-realityui-entities)
   - [RUISwitch](#ruiswitch-creation)
-  - [RUISlider](#ruislider-creation)
   - [RUIStepper](#ruistepper-creation)
+  - [RUISlider](#ruislider-creation)
 
 RUIStepper is used to increment or decrement a value.
 

@@ -3,11 +3,21 @@
 RealityUI is a collection of User Interface classes for RealityKit.
 The classes included in RealityUI aim to offer familiar User Interface guidelines, but in a 3D setting for Augmented and Virtual Reality through RealityKit.
 
+The User Interface controls in this repository so far are made to be familiar to what people are used to with 2D interfaces, however the plan is to expand the tools on offer to new and unique controls, which are more appropriate for an Augmented Reality and Virtual Reality context. 
+
+<p align="center">
+  <img src="https://img.shields.io/github/v/release/maxxfrazer/realityui"/>
+  <img src="https://img.shields.io/badge/platform-iOS%20%7C%20macOS-lightgrey"/>
+  <img src="https://img.shields.io/badge/Swift-5.2-orange"/>
+  <img src="https://img.shields.io/badge/SwiftPM-📦%20-orange"/>
+  <img src="https://img.shields.io/github/license/maxxfrazer/realityui"/>
+</p>
+
 ![RealityUI Elements in a RealityKit VR space](media/realityui_banner.gif)
 
 ## Requirements
 
-- iOS 13 + macOS 10.15
+- iOS 13 or macOS 10.15
 - Swift 5.2
 - Xcode 11
 
@@ -33,7 +43,7 @@ RUISlider gestures are not working with macOS currently.
 
 ### Swift Package Manager
 
-Add the URL of this repository to your Xcode 11+ Project under `Swift Packages`.
+Add the URL of this repository to your Xcode 11+ Project under `Project > Swift Packages`.
 
 `https://github.com/maxxfrazer/RealityUI.git`
 

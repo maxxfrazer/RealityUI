@@ -15,7 +15,7 @@ public class RUISlider: Entity, HasSlider, HasModel {
   /// Creates a RealityUI Slider entity with optional `SliderComponent`, `RUIComponent` and `updateCallback`.
   /// - Parameters:
   ///   - slider: Details about the slider to be set when initialized
-  ///   - RUI: Details about the Reality UI Entity
+  ///   - RUI: Details about the RealityUI Entity
   ///   - updateCallback: callback function to receive updates on slider value changes.
   required public init(
     slider: SliderComponent? = nil, RUI: RUIComponent? = nil,
@@ -57,6 +57,12 @@ public struct SliderComponent: Component {
   /// The thickness of the track in meters, default is 0.2.
   var thickness: Float
 
+  /// The nubmer of steps the slider should have.
+  /// 0 (default) for continuous, no clamping.
+  /// 1 would mean two possible values (0 and 1)
+  /// 2 would allow 0, 0.5 and 1 etc.
+  var steps: Int
+
   public enum SlidingState {
     case started
     case updated
@@ -79,6 +85,7 @@ public struct SliderComponent: Component {
   ///   - thumbColor: The color set to the material of the thumb. Default `.white`
   ///   - thickness: The thickness of the track in meters, default is 0.2m.
   ///   - isContinuous: A Boolean value indicating whether changes in the slider’s value generate continuous update events. Default true.
+  ///   - steps: An Integer value indicating how many steps the slider should have.
   public init(
     length: Float = 10,
     startingValue: Float = 0,
@@ -86,7 +93,8 @@ public struct SliderComponent: Component {
     maxTrackColor: Material.Color = .systemGray,
     thumbColor: Material.Color = .white,
     thickness: Float = 0.2,
-    isContinuous: Bool = true
+    isContinuous: Bool = true,
+    steps: Int = 0
   ) {
     self.length = length
     self.value = startingValue
@@ -95,10 +103,11 @@ public struct SliderComponent: Component {
     self.thumbColor = thumbColor
     self.thickness = thickness
     self.isContinuous = isContinuous
+    self.steps = steps
   }
 }
 
-public protocol HasSlider: HasARTouch {
+public protocol HasSlider: HasPanTouch {
   var sliderUpdated: ((HasSlider, SliderComponent.SlidingState) -> Void)? { get set }
 }
 
@@ -123,6 +132,10 @@ public extension HasSlider {
       [(self.value / 2) * self.sliderLength, 0, 0],
       [(-0.5 + self.value) * self.sliderLength, 0, 0]
     )
+  }
+  var steps: Int {
+    get { self.slider.steps }
+    set { self.slider.steps = newValue }
   }
   var isContinuous: Bool {
     get { self.slider.isContinuous }
@@ -156,10 +169,21 @@ public extension HasSlider {
     self.panGestureOffset = self.value - (localPos.x / self.sliderLength + 1 / 2)
     self.sliderUpdated?(self, .started)
   }
+  private func clampSlideValue(_ newPercent: inout Float) {
+    if self.steps <= 0 {
+      return
+    }
+    let floatSteps = Float(self.steps)
+    newPercent = roundf(newPercent * floatSteps) / floatSteps
+  }
   func arTouchUpdated(_ worldCoordinate: SIMD3<Float>) {
     let localPos = self.convert(position: worldCoordinate, from: nil)
-    let newPercent = (localPos.x / self.sliderLength + 1 / 2)
-    self.setPercent(to: self.panGestureOffset + newPercent, animated: false)
+    var newPercent = (localPos.x / self.sliderLength + 1 / 2) + self.panGestureOffset
+    self.clampSlideValue(&newPercent)
+    if self.value == newPercent {
+      return
+    }
+    self.setPercent(to: newPercent, animated: false)
     if self.isContinuous {
       self.sliderUpdated?(self, .updated)
     }

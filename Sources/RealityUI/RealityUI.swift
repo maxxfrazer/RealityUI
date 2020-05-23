@@ -56,7 +56,9 @@ import Combine
   public internal(set) var enabledGestures: RUIGesture = []
   public static var RUIComponents: [Component.Type] = [
     RUIComponent.self,
+    ButtonComponent.self,
     SwitchComponent.self,
+    StepperComponent.self,
     SliderComponent.self
   ]
   internal static var shared = RealityUI()

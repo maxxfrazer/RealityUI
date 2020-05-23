@@ -3,6 +3,8 @@
 RealityUI is a collection of User Interface classes for RealityKit.
 The classes included in RealityUI aim to offer familiar User Interface guidelines, but in a 3D setting for Augmented and Virtual Reality through RealityKit.
 
+![RealityUI Elements in a RealityKit VR space](media/realityui_banner.gif)
+
 ## Requirements
 
 - iOS 13 (or macos 10.15 without drag gestures)
@@ -13,13 +15,15 @@ The classes included in RealityUI aim to offer familiar User Interface guideline
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [RUIElements](#creating-realityui-entities)
+- [RUIEntities](#creating-realityui-entities)
   - [RUISwitch](#ruiswitch-creation)
   - [RUIStepper](#ruistepper-creation)
   - [RUISlider](#ruislider-creation)
-
-RUIStepper is used to increment or decrement a value.
-
+- [RealityUI Components](#realityui-components)
+  - [RUIComponent](#ruicomponent)
+  - [SwitchComponent](#switchcomponent)
+  - [StepperComponent](#steppercomponent)
+  - [SliderComponent](#slidercomponent)
 
 ## Installation
 
@@ -83,6 +87,7 @@ let newSwitch = RUISwitch(
 
 #### RUIStepper Creation
 
+RUIStepper is used to increment or decrement a value.
 ![RUIStepper with light responsiveness](media/stepper_light.gif)
 
 Default bounding box is 2x1x0.25m
@@ -106,10 +111,9 @@ let stepper = RUIStepper(upTrigger: { _ in
 ```
 
 #### RUISlider Creation
+
 An interactive track to represent an interpolated value.
-
 ![RUISlider with light responsiveness](media/slider_light.gif)
-
 
 Default bounding box is 10x1x1m (Including thumb)
 
@@ -130,6 +134,52 @@ let newSlider = RUISlider(
   adjustmentCuboid.scale.x = slider.value + 0.1
 }
 ```
+
+## RealityUI Components
+
+These components are largely for customising RealityUI entities in terms of colour and sizing. The components default values are great for most use-cases, but there may be times when more customisation is necessary.
+
+### RUIComponent
+
+| Property           | Type | Default | Description|
+|--------------------|------|---------|------------|
+| ruiEnabled         | Bool | true    | A Boolean value showing if the entity can be clicked or otherwise affected by gestures.<br><br>Default is `true`, and when set to `false` all the materials change to become translusent.|
+| respondsToLighting | Bool | false   | A Boolean value which affects the materials used on this Entity to be affected by light or not. Defautl is `true`.|
+
+
+### SwitchComponent
+
+SwitchComponent is used for the RUISwitch class, it has properties which affect colour for each model, as well as sizing between components such as the border.
+
+| Property    | Type           | Default      | Description |
+|-------------|----------------|--------------|----------------------------------------------------------------------------|
+| isOn        | Bool           | false        | A Boolean value that determines the off/on state of the switch. |
+| padding     | Float          | 0.05         | Padding (in meters) between the thumb and the inner capsule of the switch. |
+| border      | Float          | 0.05         | Border (in meters) between the two outer capsules of the switch. |
+| onColor     | Material.Color | .systemGreen | Color of the inner capsule when the switch is set to `on`. |
+| offColor    | Material.Color | .lightGray   | Color of the inner capsule when the switch is set to `off`. |
+| borderColor | Material.Color | .black       | Color of the outer border. |
+| thumbColor  | Material.Color | .white       | Color of the thumb. Default white. |
+
+### StepperComponent
+
+| property | type | Default | Description |
+|------------------|-----------------|---------------------------|------------------------------------------------------------------------------------|
+| backgroundTint | Material.Color | .tertiarySystemBackground | Background color of the stepper. |
+| buttonTint | Material.Color | .systemBlue | Color of the buttons inside a stepper, default `.systemBlue`. |
+| secondButtonTint | Material.Color? | nil | Color of the second button inside a stepper.<br>If nil, then buttonTint will be used. |
+
+### SliderComponent
+
+| Property | Type | Default | Description |
+|---------------|----------------|-------------|--------------------------------------------------------------------------------------------------------------------------|
+| length | Float | 10 | Length of the slider in meters. |
+| value | Float | 0 | The slider's current value (0-1). |
+| minTrackColor | Material.Color | .systemBlue | The color set to the material on the left side of the slider. |
+| maxTrackColor | Material.Color | .systemGray | The color set to the material on the right side of the slider. |
+| thumbColor | Material.Color | .white | The color set to the material of the thumb. |
+| isContinuous | Bool | true | If set to true, you can receive all changes to the value, otherwise only at the start and end of changes made via touch. |
+| thickness | Float | 0.2 | The thickness of the track in meters. |
 
 #### More
 

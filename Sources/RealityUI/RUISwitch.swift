@@ -28,7 +28,7 @@ public class RUISwitch: Entity, HasSwitch, HasClick {
   /// Creates a RealityUI Switch entity with optional `SwitchComponent`, `RUIComponent` and `changedCallback`.
   /// - Parameters:
   ///   - switchness: Details about the switch to be set when initialized.
-  ///   - RUI: Details about the Reality UI Entity
+  ///   - RUI: Details about the RealityUI Entity
   ///   - changedCallback: callback function to receive updates when the switch isOn property changes.
   public init(
     switchness: SwitchComponent? = nil,

@@ -34,12 +34,6 @@ import Combine
       comp.registerComponent()
     }
   }
-  
-  public enum Gesture {
-    case tap
-    case pan
-    case all
-  }
 
   public struct RUIGesture: OptionSet {
     public let rawValue: Int
@@ -51,6 +45,8 @@ import Combine
     public static let tap = RUIGesture(rawValue: 1 << 0)
     public static let pan = RUIGesture(rawValue: 1 << 1)
 
+    /// Hold and pan use the same gesture
+    public static let hold: RUIGesture = .pan
     public static let all: RUIGesture = [.tap, .pan]
   }
   public internal(set) var enabledGestures: RUIGesture = []
@@ -69,13 +65,14 @@ import Combine
 
   internal func enable(gestures: RealityUI.RUIGesture, on arView: ARView) {
     /// - TODO: This method is gross, I tried to use `OptionSet` and think I'm doing it wrong
-    /// These multiple if statements make me feel shame.
+    /// These multiple if statements make me feel shame, not scalable.
     let newGestures = gestures.subtracting(self.enabledGestures)
     if newGestures.isEmpty { return }
     if newGestures.contains(.tap) {
       self.addTap(to: arView)
     }
     if newGestures.contains(.pan) {
+      RealityUI.RUIPrint("ADDING LONG TOUCH")
       self.addLongTouch(to: arView)
     }
     self.enabledGestures.formUnion(newGestures)
@@ -92,7 +89,7 @@ import Combine
   }
   private func addLongTouch(to arView: ARView) {
     #if os(macOS)
-    RealityUI.RUIPrint("RealityUI: long touch gesture not yet working on macOS")
+    RealityUI.RUIPrint("RealityUI: long touch gesture, not fully working on macOS")
     #endif
     let longTouchGesture = RUILongTouchGestureRecognizer(target: nil, action: nil, view: arView)
     arView.addGestureRecognizer(longTouchGesture)

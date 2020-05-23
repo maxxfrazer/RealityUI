@@ -24,6 +24,12 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
   public var upTrigger: ((HasStepper) -> Void)?
   public var downTrigger: ((HasStepper) -> Void)?
 
+  /// Creates a RealityUI Stepper entity with optional `StepperComponent`, `RUIComponent`, as well as `upTrigger` and `downTrigger` callbacks.
+  /// - Parameters:
+  ///   - stepper: Details about the stepper colours to be set when initialized.
+  ///   - RUI: Details about the RealityUI Entity.
+  ///   - upTrigger: Callback function to receive updates then the up button has been clicked.
+  ///   - downTrigger: Callback function to receive updates then the down button has been clicked.
   required public init(
     stepper: StepperComponent? = nil,
     RUI: RUIComponent? = nil,
@@ -36,6 +42,12 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     self.makeModels()
     self.upTrigger = upTrigger
     self.downTrigger = downTrigger
+  }
+
+  convenience init(
+    upTrigger: ((HasStepper) -> Void)? = nil, downTrigger: ((HasStepper) -> Void)? = nil
+  ) {
+    self.init(stepper: nil, upTrigger: upTrigger, downTrigger: downTrigger)
   }
 
   required convenience init() {

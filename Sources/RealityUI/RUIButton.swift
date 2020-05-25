@@ -8,7 +8,7 @@
 import RealityKit
 
 /// A  RealityUI Button to be added to a RealityKit scene.
-public class RUIButton: Entity, HasButton, HasModel {
+public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 
   public var touchUpCompleted: ((HasButton) -> Void)?
 

@@ -20,6 +20,7 @@ import Combine
   public static func registerComponents() {
     RealityUI.shared.logActivated()
   }
+  public static var gestureMask: CollisionGroup = .all
   private func logActivated() {
     RealityUI.RUIPrint("RealityUI: Activated, registered components")
   }
@@ -72,7 +73,6 @@ import Combine
       self.addTap(to: arView)
     }
     if newGestures.contains(.pan) {
-      RealityUI.RUIPrint("ADDING LONG TOUCH")
       self.addLongTouch(to: arView)
     }
     self.enabledGestures.formUnion(newGestures)
@@ -108,10 +108,10 @@ import Combine
   }
   #elseif os(iOS)
     @objc internal func tapReco(sender: UITapGestureRecognizer? = nil) {
-    guard let arView = sender?.view as? ARView, let tapInView = sender?.location(in: arView) else {
-      return
-    }
-    if let ht = arView.hitTest(tapInView).first, let tappedEntity = ht.entity as? HasClick, tappedEntity.ruiEnabled {
+      guard let arView = sender?.view as? ARView, let tapInView = sender?.location(in: arView) else {
+        return
+      }
+      if let ht = arView.hitTest(tapInView, mask: RealityUI.gestureMask).first, let tappedEntity = ht.entity as? HasClick, tappedEntity.ruiEnabled {
       let htPos = ht.position
       tappedEntity.onTap(worldCollision: htPos)
     }

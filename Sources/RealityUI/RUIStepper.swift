@@ -44,6 +44,10 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     self.downTrigger = downTrigger
   }
 
+  convenience init(style: StepperComponent.Style, upTrigger: ((HasStepper) -> Void)? = nil, downTrigger: ((HasStepper) -> Void)? = nil) {
+    self.init(stepper: StepperComponent(style: style), upTrigger: upTrigger, downTrigger: downTrigger)
+  }
+
   convenience init(
     upTrigger: ((HasStepper) -> Void)? = nil, downTrigger: ((HasStepper) -> Void)? = nil
   ) {
@@ -63,10 +67,16 @@ public struct StepperComponent: Component {
   internal var buttonTint: Material.Color
   /// Color of the second button inside a stepper. If nil, then buttonTint will be used.
   internal var secondButtonTint: Material.Color?
+  internal var style: Style
   internal enum UIPart: String {
-    case up
-    case down
+    case right
+    case left
     case background
+  }
+  public enum Style {
+    case minusPlus
+    case arrowLeftRight
+//    case arrowDownUp
   }
   /// Create a StepperComponent for an RUIStepper object to add to your scene
   /// - Parameters:
@@ -75,36 +85,59 @@ public struct StepperComponent: Component {
   ///   - secondaryTint: Color of the second button inside a stepper. If nil, then buttonTint will be used.
   #if os(iOS)
   init(
+    style: StepperComponent.Style = .minusPlus,
     backgroundTint: Material.Color = .tertiarySystemBackground,
     buttonTint: Material.Color = .systemBlue,
     secondaryTint: Material.Color? = nil
   ) {
+    self.style = style
     self.backgroundTint = backgroundTint
     self.buttonTint = buttonTint
     self.secondButtonTint = secondaryTint
   }
   #elseif os(macOS)
   init(
+    style: StepperComponent.Style = .minusPlus,
     backgroundTint: Material.Color = .windowBackgroundColor,
     buttonTint: Material.Color = .systemBlue,
     secondaryTint: Material.Color? = nil
   ) {
+    self.style = style
     self.backgroundTint = backgroundTint
     self.buttonTint = buttonTint
     self.secondButtonTint = secondaryTint
   }
   #endif
-
+  init(style: StepperComponent.Style) {
+    self.init(style: style, secondaryTint: nil)
+  }
 }
 public protocol HasStepper: HasClick {}
 
 public extension HasStepper {
   func updateMaterials() {
-    let plusModel = self.getModel(part: .up)
-    plusModel?.model?.materials = self.getMaterials(for: .up)
-    (plusModel?.children.first as? ModelEntity)?.model?.materials = self.getMaterials(for: .up)
-    self.getModel(part: .down)?.model?.materials = self.getMaterials(for: .down)
+    switch self.style {
+    case .arrowLeftRight, .minusPlus: // , .arrowDownUp
+      guard let rightModel = self.getModel(part: .right),
+        let leftModel = self.getModel(part: .left) else {
+        return
+      }
+      rightModel.model?.materials = self.getMaterials(for: .right)
+      for child in rightModel.children {
+        (child as? ModelEntity)?.model?.materials = self.getMaterials(for: .right)
+      }
+      leftModel.model?.materials = self.getMaterials(for: .left)
+      for child in leftModel.children {
+        (child as? ModelEntity)?.model?.materials = self.getMaterials(for: .left)
+      }
+    default:
+      break
+    }
     self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)
+  }
+  internal(set) var style: StepperComponent.Style {
+    get { self.stepper.style }
+    set { self.stepper.style = newValue }
   }
 }
 
@@ -125,9 +158,9 @@ internal extension HasStepper {
     switch part {
     case .background:
       return [self.getMaterial(with: stepper.backgroundTint)]
-    case .down:
+    case .left:
       return [self.getMaterial(with: stepper.buttonTint)]
-    case .up:
+    case .right:
       return [self.getMaterial(with: stepper.secondButtonTint ?? stepper.buttonTint)]
     }
   }
@@ -149,23 +182,57 @@ internal extension HasStepper {
   }
 
   fileprivate func makeModels() {
-    let plusModel = self.addModel(part: .up)
-    plusModel.model =  ModelComponent(
-      mesh: MeshResource.generateBox(size: [0.15, 0.7, 0.15], cornerRadius: 0.05),
-      materials: []
-    )
-    let subPlusModel = ModelEntity(
-      mesh: .generateBox(
-        size: [0.7, 0.15, 0.15],
-        cornerRadius: 0.05),
-      materials: []
-    )
-    plusModel.addChild(subPlusModel)
-    plusModel.position.x = 0.5
+    let rightModel = self.addModel(part: .right)
+    let leftModel = self.addModel(part: .left)
+    switch self.style {
+    case .minusPlus:
+      rightModel.model =  ModelComponent(
+        mesh: MeshResource.generateBox(size: [0.15, 0.7, 0.15], cornerRadius: 0.05),
+        materials: []
+      )
+      let subPlusModel = ModelEntity(
+        mesh: .generateBox(
+          size: [0.7, 0.15, 0.15],
+          cornerRadius: 0.05),
+        materials: []
+      )
+      rightModel.addChild(subPlusModel)
+      rightModel.position.x = 0.5
+      leftModel.model =  ModelComponent(mesh: MeshResource.generateBox(size: [0.7, 0.15, 0.15], cornerRadius: 0.05), materials: [])
+      leftModel.position.x = -0.5
+    case .arrowLeftRight:
+      let sinAng: Float = sin(.pi / 6)
+      let partLen: Float = (0.7 / 2) / cos(.pi / 6)
+      let partThickness = partLen * 0.2
+      let yDist = 0.2 - (sinAng * partThickness)
 
-    let minusModel = self.addModel(part: .down)
-    minusModel.model =  ModelComponent(mesh: MeshResource.generateBox(size: [0.7, 0.15, 0.15], cornerRadius: 0.05), materials: [])
-    minusModel.position.x = -0.5
+      rightModel.position = [0.5, 0, 0]
+
+      let rightSubModel1 = ModelEntity(mesh: .generateBox(
+          size: [partThickness, partLen, partThickness],
+          cornerRadius: partThickness * 0.25
+        ), materials: []
+      )
+      let rightSubModel2 = ModelEntity()
+      rightSubModel2.model = rightSubModel1.model
+
+      rightSubModel1.position.y = yDist
+      rightSubModel1.orientation = .init(angle: .pi / 6, axis: [0, 0, 1])
+      rightSubModel2.position.y = -yDist
+      rightSubModel2.orientation = .init(angle: -.pi / 6, axis: [0, 0, 1])
+      rightModel.addChild(rightSubModel1)
+      rightModel.addChild(rightSubModel2)
+//      leftModel.model = ModelComponent(mesh: MeshResource.generateBox(size: [0.7, 0.15, 0.15], cornerRadius: 0.05), materials: [])
+      leftModel.position = [-0.5, 0, 0]
+      let leftSubModel1 = rightSubModel2.clone(recursive: true)
+      leftSubModel1.position.y = yDist
+      let leftSubModel2 = rightSubModel1.clone(recursive: true)
+      leftSubModel2.position.y = -yDist
+      leftModel.addChild(leftSubModel1)
+      leftModel.addChild(leftSubModel2)
+    default:
+      break
+    }
 
     let background = self.addModel(part: .background)
     background.model = ModelComponent(mesh: .generateBox(size: [2, 1, 0.25], cornerRadius: 0.125), materials: [])
@@ -185,12 +252,12 @@ internal extension HasStepper {
       let localPos = stepperObj.convert(position: tapPos, from: nil)
 
       if localPos.x < 0 {
-        if let downModel = stepperObj.getModel(part: .down) {
+        if let downModel = stepperObj.getModel(part: .left) {
           stepperObj.springAnimate(entity: downModel)
         }
         stepperObj.downTrigger?(stepperObj)
       } else {
-        if let upModel = stepperObj.getModel(part: .up) {
+        if let upModel = stepperObj.getModel(part: .right) {
           stepperObj.springAnimate(entity: upModel)
         }
         stepperObj.upTrigger?(stepperObj)

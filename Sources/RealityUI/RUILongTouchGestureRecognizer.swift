@@ -63,7 +63,7 @@ public protocol HasTouchUpInside: HasARTouch {
   }
 
   func globalTouchBegan(touchInView: CGPoint) -> Bool {
-    guard let hitPanEntity = self.arView.entity(at: touchInView) else {
+    guard let hitPanEntity = self.arView.hitTest(touchInView, query: .nearest, mask: RealityUI.gestureMask).first?.entity else {
         return false
     }
     if let arTouch = hitPanEntity as? HasPanTouch {
@@ -76,7 +76,7 @@ public protocol HasTouchUpInside: HasARTouch {
     return true
   }
   func touchesBeganUpInside(hitEntity: HasTouchUpInside, touchInView: CGPoint) {
-    let ht = self.arView.hitTest(touchInView, query: .nearest, mask: .all)
+    let ht = self.arView.hitTest(touchInView, query: .nearest, mask: CollisionGroup(rawValue: 0b1))
     if let fht = ht.first, fht.entity == hitEntity {
       self.touchLocation = touchInView
       self.entity = hitEntity
@@ -128,7 +128,7 @@ public protocol HasTouchUpInside: HasARTouch {
       return
     }
     #endif
-    let htResult = self.arView.hitTest(touchLocation, query: .nearest, mask: .all).first
+    let htResult = self.arView.hitTest(touchLocation, query: .nearest, mask: RealityUI.gestureMask).first
     let hitPos = htResult?.entity == hitEntity ? htResult?.position : nil
     hitEntity.arTouchUpdated(
       hasCollided: htResult?.entity == hitEntity, hitPos
@@ -155,11 +155,9 @@ extension RUILongTouchGestureRecognizer {
     }
   }
   open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
-    print("in touches moved")
     guard let activeTouch = self.activeTouch else {
       return
     }
-    print("active touch not nil")
     if entity == nil || !touches.contains(activeTouch) {
       return
     }
@@ -176,7 +174,6 @@ extension RUILongTouchGestureRecognizer {
   }
 
   open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
-    print("cancelled!")
     self.touchesEnded(touches, with: event)
   }
 

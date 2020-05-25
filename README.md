@@ -6,11 +6,10 @@ The classes included in RealityUI aim to offer familiar User Interface guideline
 The User Interface controls in this repository so far are made to be familiar to what people are used to with 2D interfaces, however the plan is to expand the tools on offer to new and unique controls, which are more appropriate for an Augmented Reality and Virtual Reality context. 
 
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/maxxfrazer/realityui"/>
+  <img src="https://img.shields.io/github/v/release/maxxfrazer/RealityUI?color=orange&label=SwiftPM&logo=swift"/>
   <img src="https://img.shields.io/badge/platform-iOS%20%7C%20macOS-lightgrey"/>
-  <img src="https://img.shields.io/badge/Swift-5.2-orange"/>
-  <img src="https://img.shields.io/badge/SwiftPM-📦%20-orange"/>
-  <img src="https://img.shields.io/github/license/maxxfrazer/realityui"/>
+  <img src="https://img.shields.io/badge/Swift-5.2-orange?logo=swift"/>
+  <img src="https://img.shields.io/github/license/maxxfrazer/RealityUI"/>
 </p>
 
 ![RealityUI Elements in a RealityKit VR space](media/realityui_banner.gif)
@@ -173,7 +172,7 @@ let newButton = RUIButton()
 This RUIButton will animate an Entity to a new transform, and change its own button color to `.systemGreen`.
 
 ```swift
-let button = RUIButton{ myButton in
+let button = RUIButton(updateCallback: { myButton in
   adjustmentCuboid.move(
     to: Transform(
       scale: .one,
@@ -183,9 +182,9 @@ let button = RUIButton{ myButton in
     duration: 0.3
   )
   myButton.buttonColor = .systemGreen
-}
+})
 ```
-To customise steppers further, see [StepperComponent](#steppercomponent).
+To customise buttons further, see [ButtonComponent](#buttoncomponent).
 
 ---
 
@@ -197,8 +196,8 @@ These components are largely for customising RealityUI entities in terms of colo
 
 | Property           | Type | Default | Description|
 |--------------------|------|---------|------------|
-| ruiEnabled         | Bool | true    | A Boolean value showing if the entity can be clicked or otherwise affected by gestures.<br><br>Default is `true`, and when set to `false` all the materials change to become translusent.|
-| respondsToLighting | Bool | false   | A Boolean value which affects the materials used on this Entity to be affected by light or not. Defautl is `true`.|
+| ruiEnabled         | Bool | `true`    | A Boolean value showing if the entity can be clicked or otherwise affected by gestures.<br><br>When set to `false` all the materials become translucent.|
+| respondsToLighting | Bool | `false`   | A Boolean value which affects the materials used on this Entity to be affected by light.|
 
 
 ### SwitchComponent

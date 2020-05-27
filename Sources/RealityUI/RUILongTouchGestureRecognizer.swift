@@ -63,12 +63,14 @@ public protocol HasTouchUpInside: HasARTouch {
   }
 
   func globalTouchBegan(touchInView: CGPoint) -> Bool {
-    guard let hitPanEntity = self.arView.hitTest(touchInView, query: .nearest, mask: RealityUI.gestureMask).first?.entity else {
+    guard let hitEntity = self.arView.hitTest(
+      touchInView, query: .nearest, mask: RealityUI.gestureMask
+    ).first?.entity as? HasARTouch else {
         return false
     }
-    if let arTouch = hitPanEntity as? HasPanTouch {
+    if let arTouch = hitEntity as? HasPanTouch {
       self.touchesBeganARTouch(hitEntity: arTouch, touchInView: touchInView)
-    } else if let upInsideEntity = hitPanEntity as? HasTouchUpInside {
+    } else if let upInsideEntity = hitEntity as? HasTouchUpInside {
       self.touchesBeganUpInside(hitEntity: upInsideEntity, touchInView: touchInView)
     } else {
       return false
@@ -76,7 +78,7 @@ public protocol HasTouchUpInside: HasARTouch {
     return true
   }
   func touchesBeganUpInside(hitEntity: HasTouchUpInside, touchInView: CGPoint) {
-    let ht = self.arView.hitTest(touchInView, query: .nearest, mask: CollisionGroup(rawValue: 0b1))
+    let ht = self.arView.hitTest(touchInView, query: .nearest, mask: RealityUI.gestureMask)
     if let fht = ht.first, fht.entity == hitEntity {
       self.touchLocation = touchInView
       self.entity = hitEntity
@@ -92,6 +94,7 @@ public protocol HasTouchUpInside: HasARTouch {
     self.entity = hitEntity
     let colPlane = hitEntity.collisonPlane
     self.collisionPlane = colPlane
+
     guard let planeCollisionPoint = self.arView.unproject(touchInView, ontoPlane: colPlane) else {
       return
     }

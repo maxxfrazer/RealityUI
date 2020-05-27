@@ -76,7 +76,7 @@ public struct StepperComponent: Component {
   public enum Style {
     case minusPlus
     case arrowLeftRight
-//    case arrowDownUp
+    case arrowDownUp
   }
   /// Create a StepperComponent for an RUIStepper object to add to your scene
   /// - Parameters:
@@ -117,7 +117,7 @@ public protocol HasStepper: HasClick {}
 public extension HasStepper {
   func updateMaterials() {
     switch self.style {
-    case .arrowLeftRight, .minusPlus: // , .arrowDownUp
+    case .arrowLeftRight, .minusPlus, .arrowDownUp:
       guard let rightModel = self.getModel(part: .right),
         let leftModel = self.getModel(part: .left) else {
         return
@@ -130,8 +130,8 @@ public extension HasStepper {
       for child in leftModel.children {
         (child as? ModelEntity)?.model?.materials = self.getMaterials(for: .left)
       }
-    default:
-      break
+//    default:
+//      break
     }
     self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)
   }
@@ -171,12 +171,12 @@ internal extension HasStepper {
     cancellable = entity.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, { _ in
       cancellable?.cancel()
       entity.move(
-        to: Transform(scale: .one, rotation: .init(), translation: pos),
+        to: Transform(scale: .one, rotation: entity.orientation, translation: pos),
         relativeTo: self, duration: 0.1, timingFunction: .linear
       )
     })
     entity.move(
-      to: Transform(scale: .init(repeating: 0.9), rotation: .init(), translation: pos),
+      to: Transform(scale: .init(repeating: 0.9), rotation: entity.orientation, translation: pos),
       relativeTo: self, duration: 0.1, timingFunction: .linear
     )
   }
@@ -200,7 +200,11 @@ internal extension HasStepper {
       rightModel.position.x = 0.5
       leftModel.model =  ModelComponent(mesh: MeshResource.generateBox(size: [0.7, 0.15, 0.15], cornerRadius: 0.05), materials: [])
       leftModel.position.x = -0.5
-    case .arrowLeftRight:
+    case .arrowLeftRight, .arrowDownUp:
+      if self.style == .arrowDownUp {
+        leftModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
+        rightModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
+      }
       let sinAng: Float = sin(.pi / 6)
       let partLen: Float = (0.7 / 2) / cos(.pi / 6)
       let partThickness = partLen * 0.2

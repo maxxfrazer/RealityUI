@@ -108,7 +108,6 @@ public protocol HasTouchUpInside: HasARTouch {
       else {
         return
     }
-    print(hitEntity.convert(position: newPos, from: nil))
     #if os(iOS)
     if let activeTouch = self.activeTouch, activeTouch.phase == .ended {
       self.touchesEnded([activeTouch], with: UIEvent())
@@ -116,11 +115,8 @@ public protocol HasTouchUpInside: HasARTouch {
     }
     #endif
     if let pivotEntity = (hitEntity as? HasPivotTouch) {
-      print("into touch updated")
       pivotEntity.arTouchUpdated(newPos)
-      print("done with touch updated")
     } else {
-      print("BAD TOUCH UPDATE")
       (hitEntity as? HasPanTouch)?.arTouchUpdated(newPos)
     }
   }

@@ -45,13 +45,15 @@ import Combine
     }
 
     public static let tap = RUIGesture(rawValue: 1 << 0)
-    public static let pan = RUIGesture(rawValue: 1 << 1)
 
-    /// Hold and pan use the same gesture
-    public static let hold: RUIGesture = .pan
-    public static let all: RUIGesture = [.tap, .pan]
+    /// For now, longTouch is used for RealityUI gestures that are more complex than a simple tap
+    public static let longTouch = RUIGesture(rawValue: 1 << 1)
+
+    public static let all: RUIGesture = [.tap, .longTouch]
   }
   public internal(set) var enabledGestures: RUIGesture = []
+
+  /// All the components used by RealityUI
   public static var RUIComponents: [Component.Type] = [
     RUIComponent.self,
     ButtonComponent.self,
@@ -60,7 +62,9 @@ import Combine
     SliderComponent.self,
     PivotComponent.self
   ]
+
   internal static var shared = RealityUI()
+
   private override init() {
     super.init()
     self.registerComponents()
@@ -68,13 +72,13 @@ import Combine
 
   internal func enable(gestures: RealityUI.RUIGesture, on arView: ARView) {
     /// - TODO: This method is gross, I tried to use `OptionSet` and think I'm doing it wrong
-    /// These multiple if statements make me feel shame, not scalable.
+    /// These multiple if statements make me feel uncomfortable.
     let newGestures = gestures.subtracting(self.enabledGestures)
     if newGestures.isEmpty { return }
     if newGestures.contains(.tap) {
       self.addTap(to: arView)
     }
-    if newGestures.contains(.pan) {
+    if newGestures.contains(.longTouch) {
       self.addLongTouch(to: arView)
     }
     self.enabledGestures.formUnion(newGestures)

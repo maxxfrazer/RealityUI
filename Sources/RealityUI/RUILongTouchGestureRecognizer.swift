@@ -37,9 +37,8 @@ public protocol HasTouchUpInside: HasARTouch {
 }
 
 /// This Gesture is currently used for any gesture other than simple taps.
-@objc internal class RUILongTouchGestureRecognizer : LongGestureBase {
+@objc internal class RUILongTouchGestureRecognizer: LongGestureBase {
   let arView: ARView
-
 
   #if os(iOS)
   fileprivate var activeTouch: UITouch?
@@ -77,11 +76,11 @@ public protocol HasTouchUpInside: HasARTouch {
     return true
   }
   func touchesBeganUpInside(hitEntity: HasTouchUpInside, touchInView: CGPoint) {
-    let ht = self.arView.hitTest(touchInView, query: .nearest, mask: RealityUI.longGestureMask)
-    if let fht = ht.first, fht.entity == hitEntity {
+    let ccHit = self.arView.hitTest(touchInView, query: .nearest, mask: RealityUI.longGestureMask)
+    if let ccFirst = ccHit.first, ccFirst.entity == hitEntity {
       self.touchLocation = touchInView
       self.entity = hitEntity
-      hitEntity.arTouchStarted(hasCollided: true, fht.position)
+      hitEntity.arTouchStarted(hasCollided: true, ccFirst.position)
       self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, updateTouchInside(_:))
     }
   }

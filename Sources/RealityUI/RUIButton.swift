@@ -28,7 +28,6 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
     self.makeModels()
   }
 
-
   required public convenience init() {
     self.init(button: nil)
   }

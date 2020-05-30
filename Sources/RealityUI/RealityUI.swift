@@ -81,7 +81,7 @@ import Combine
   }
   private func addTap(to arView: ARView) {
     #if os(iOS)
-    let addUITapGesture = UITapGestureRecognizer(target: self, action:  #selector(self.tapReco))
+    let addUITapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapReco))
     arView.addGestureRecognizer(addUITapGesture)
     #elseif os(macOS)
     let addUITapGesture = NSClickGestureRecognizer(target: self, action: #selector(self.clickReco))
@@ -103,9 +103,9 @@ import Combine
       return
     }
     let tapInView = sender.location(in: arView)
-    if let ht = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first, let tappedEntity = ht.entity as? HasClick, tappedEntity.ruiEnabled {
-      let htPos = ht.position
-      tappedEntity.onTap(worldCollision: htPos)
+    if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
+      let tappedEntity = ccHit.entity as? HasClick, tappedEntity.ruiEnabled {
+      tappedEntity.onTap(worldCollision: ccHit.position)
     }
   }
   #elseif os(iOS)
@@ -113,9 +113,9 @@ import Combine
       guard let arView = sender?.view as? ARView, let tapInView = sender?.location(in: arView) else {
         return
       }
-      if let ht = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first, let tappedEntity = ht.entity as? HasClick, tappedEntity.ruiEnabled {
-      let htPos = ht.position
-      tappedEntity.onTap(worldCollision: htPos)
+      if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
+        let tappedEntity = ccHit.entity as? HasClick, tappedEntity.ruiEnabled {
+      tappedEntity.onTap(worldCollision: ccHit.position)
     }
   }
   #endif

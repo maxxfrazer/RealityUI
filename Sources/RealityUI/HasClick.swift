@@ -20,4 +20,3 @@ internal extension HasClick {
     self.tapAction?(self, worldCollision)
   }
 }
-

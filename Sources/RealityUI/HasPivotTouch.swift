@@ -1,4 +1,3 @@
-
 import RealityKit
 
 /// This is an experimental feature, full functionality has not yet been decided.

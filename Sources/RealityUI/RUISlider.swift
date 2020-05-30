@@ -67,7 +67,8 @@ public struct SliderComponent: Component {
   /// The color set to the material of the thumb. Default `.white`
   var thumbColor: Material.Color
   /// A Boolean value indicating whether changes in the slider’s value generate continuous update events.
-  /// If set to true, you can receive all changes to the value, otherwise only at the start and end of changes made via touch.
+  /// If set to true, you can receive all changes to the value,
+  /// otherwise only at the start and end of changes made via touch.
   var isContinuous: Bool
   /// The thickness of the track in meters, default is 0.2.
   var thickness: Float
@@ -99,7 +100,8 @@ public struct SliderComponent: Component {
   ///   - maxTrackColor: The color set to the material on the right side of the slider. Default `.systemGray`
   ///   - thumbColor: The color set to the material of the thumb. Default `.white`
   ///   - thickness: The thickness of the track in meters, default is 0.2m.
-  ///   - isContinuous: A Boolean value indicating whether changes in the slider’s value generate continuous update events. Default true.
+  ///   - isContinuous: A Boolean value indicating whether changes in the slider’s value generate
+  ///                   continuous update events. Default true.
   ///   - steps: An Integer value indicating how many steps the slider should have.
   public init(
     length: Float = 10,
@@ -141,13 +143,7 @@ public extension HasSlider {
     get { self.slider.value }
     set { self.slider.value = newValue }
   }
-  private var sliderPositions: (full: SIMD3<Float>, empty: SIMD3<Float>, thumb: SIMD3<Float>) {
-    return (
-      [(self.value / 2 - 0.5) * self.sliderLength, 0, 0],
-      [(self.value / 2) * self.sliderLength, 0, 0],
-      [(-0.5 + self.value) * self.sliderLength, 0, 0]
-    )
-  }
+
   var steps: Int {
     get { self.slider.steps }
     set { self.slider.steps = newValue }
@@ -159,6 +155,30 @@ public extension HasSlider {
   var trackThickness: Float {
     self.slider.thickness
   }
+
+  /// Set the sliders position
+  /// - Parameters:
+  ///   - percent: A Float value representing the slider progression from start to end.
+  ///   - animated: A Boolean value of whether the change in percentage should animate.
+  func setPercent(to percent: Float, animated: Bool = false) {
+    let percentClamped = min(max(percent, 0), 1)
+    self.value = percentClamped
+    self.updateThumb(to: self.getSliderPosition(for: .thumb), animated: animated)
+    self.updateFill(to: self.getSliderPosition(for: .fill), animated: animated)
+    self.updateEmpty(to: self.getSliderPosition(for: .empty), animated: animated)
+  }
+
+  private func getSliderPosition(for part: SliderComponent.UIPart) -> SIMD3<Float> {
+    switch part {
+    case .fill:
+      return [(self.value / 2 - 0.5) * self.sliderLength, 0, 0]
+    case .thumb:
+      return [(-0.5 + self.value) * self.sliderLength, 0, 0]
+    case .empty:
+      return [(self.value / 2) * self.sliderLength, 0, 0]
+    }
+  }
+
   internal func getMaterials(
     for part: SliderComponent.UIPart
   ) -> [Material] {
@@ -276,14 +296,5 @@ public extension HasSlider {
     } else {
       fthread.transform = threadTransform
     }
-  }
-
-  func setPercent(to percent: Float, animated: Bool = false) {
-    let percentClamped = min(max(percent, 0), 1)
-    self.value = percentClamped
-    let sliderPoss = self.sliderPositions
-    self.updateThumb(to: sliderPoss.thumb, animated: animated)
-    self.updateFill(to: sliderPoss.full, animated: animated)
-    self.updateEmpty(to: sliderPoss.empty, animated: animated)
   }
 }

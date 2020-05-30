@@ -24,7 +24,8 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
   public var upTrigger: ((HasStepper) -> Void)?
   public var downTrigger: ((HasStepper) -> Void)?
 
-  /// Creates a RealityUI Stepper entity with optional `StepperComponent`, `RUIComponent`, as well as `upTrigger` and `downTrigger` callbacks.
+  /// Creates a RealityUI Stepper entity with optional `StepperComponent`, `RUIComponent`,
+  /// as well as `upTrigger` and `downTrigger` callbacks.
   /// - Parameters:
   ///   - stepper: Details about the stepper colours to be set when initialized.
   ///   - RUI: Details about the RealityUI Entity.
@@ -44,7 +45,11 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     self.downTrigger = downTrigger
   }
 
-  convenience init(style: StepperComponent.Style, upTrigger: ((HasStepper) -> Void)? = nil, downTrigger: ((HasStepper) -> Void)? = nil) {
+  convenience init(
+    style: StepperComponent.Style,
+    upTrigger: ((HasStepper) -> Void)? = nil,
+    downTrigger: ((HasStepper) -> Void)? = nil
+  ) {
     self.init(stepper: StepperComponent(style: style), upTrigger: upTrigger, downTrigger: downTrigger)
   }
 
@@ -199,50 +204,12 @@ internal extension HasStepper {
         materials: []
       )
       rightModel.addChild(subPlusModel)
-      leftModel.model =  ModelComponent(mesh: MeshResource.generateBox(size: [0.7, 0.15, 0.15], cornerRadius: 0.05), materials: [])
+      leftModel.model =  ModelComponent(
+        mesh: MeshResource.generateBox(size: [0.7, 0.15, 0.15], cornerRadius: 0.05),
+        materials: []
+      )
     case .arrowLeftRight, .arrowDownUp:
-
-      // Setup parameters
-      let turnAngle: Float = .pi / 6
-      let sinAng: Float = sin(turnAngle)
-      let partLen: Float = (0.7 / 2) / cos(turnAngle)
-      let partThickness = partLen * 0.2
-      let yDist = 0.2 - (sinAng * partThickness)
-
-      if self.style == .arrowDownUp {
-        leftModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
-        rightModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
-      }
-
-      let rightSubModel1 = ModelEntity(mesh: .generateBox(
-          size: [partThickness, partLen, partThickness],
-          cornerRadius: partThickness * 0.25
-        ), materials: []
-      )
-      rightSubModel1.transform = Transform(
-        scale: .one, rotation: .init(angle: turnAngle, axis: [0, 0, 1]),
-        translation: [0, yDist, 0]
-      )
-
-      let rightSubModel2 = ModelEntity()
-      rightSubModel2.model = rightSubModel1.model
-
-      rightSubModel2.transform = Transform(
-        scale: .one, rotation: .init(angle: -turnAngle, axis: [0, 0, 1]),
-        translation: [0, -yDist, 0]
-      )
-
-      let leftSubModel1 = rightSubModel2.clone(recursive: true)
-      leftSubModel1.position.y = yDist
-      let leftSubModel2 = rightSubModel1.clone(recursive: true)
-      leftSubModel2.position.y = -yDist
-
-      rightModel.addChild(rightSubModel1)
-      rightModel.addChild(rightSubModel2)
-      leftModel.addChild(leftSubModel1)
-      leftModel.addChild(leftSubModel2)
-//    default:
-//      break
+      self.addArrowModels(leftModel, rightModel)
     }
 
     let background = self.addModel(part: .background)
@@ -251,6 +218,49 @@ internal extension HasStepper {
 
     self.updateMaterials()
     self.collision = CollisionComponent(shapes: [.generateBox(size: [2, 1, 0.25])])
+  }
+
+  private func addArrowModels(_ leftModel: ModelEntity, _ rightModel: ModelEntity) {
+    // Setup parameters
+    let turnAngle: Float = .pi / 6
+    let sinAng: Float = sin(turnAngle)
+    let partLen: Float = (0.7 / 2) / cos(turnAngle)
+    let partThickness = partLen * 0.2
+    let yDist = 0.2 - (sinAng * partThickness)
+
+    if self.style == .arrowDownUp {
+      leftModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
+      rightModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
+    }
+
+    let rightSubModel1 = ModelEntity(mesh: .generateBox(
+        size: [partThickness, partLen, partThickness],
+        cornerRadius: partThickness * 0.25
+      ), materials: []
+    )
+    rightSubModel1.transform = Transform(
+      scale: .one, rotation: .init(angle: turnAngle, axis: [0, 0, 1]),
+      translation: [0, yDist, 0]
+    )
+
+    let rightSubModel2 = ModelEntity()
+    rightSubModel2.model = rightSubModel1.model
+
+    rightSubModel2.transform = Transform(
+      scale: .one, rotation: .init(angle: -turnAngle, axis: [0, 0, 1]),
+      translation: [0, -yDist, 0]
+    )
+
+    let leftSubModel1 = rightSubModel2.clone(recursive: true)
+    leftSubModel1.position.y = yDist
+    let leftSubModel2 = rightSubModel1.clone(recursive: true)
+    leftSubModel2.position.y = -yDist
+
+    rightModel.addChild(rightSubModel1)
+    rightModel.addChild(rightSubModel2)
+    leftModel.addChild(leftSubModel1)
+    leftModel.addChild(leftSubModel2)
+
   }
 
   func stepperTap(clicker: HasClick, worldTapPos: SIMD3<Float>?) {

@@ -28,7 +28,7 @@ public protocol HasRUI: Entity {
   /// All RealityUI Entities should have a method for updating all the materials
   /// This is in case of disabling entities or changing their responsiveness to light.
   /// This method does not need to be called by outside of a RealityUI class.
-  func updateMaterials() -> Void
+  func updateMaterials()
 }
 public extension HasRUI {
   /// A Boolean value that determines whether touch events are ignored on this RealityUI Entity
@@ -89,13 +89,12 @@ internal extension HasRUI {
     self.findEntity(named: part) as? ModelEntity
   }
   func addModel(part: String) -> ModelEntity {
-    if let mp = self.getModel(part: part) {
-      return mp
+    if let modelPart = self.getModel(part: part) {
+      return modelPart
     }
-    let mp = ModelEntity()
-    mp.name = part
-    self.addChild(mp)
-    return mp
+    let newModelPart = ModelEntity()
+    newModelPart.name = part
+    self.addChild(newModelPart)
+    return newModelPart
   }
 }
-

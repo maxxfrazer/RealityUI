@@ -169,19 +169,27 @@ public extension HasSwitch {
     let togLen = self.switchness.length
     if self.border > 0 {
       let borderBg = self.addModel(part: .border)
-      borderBg.model = ModelComponent(mesh: .generateBox(size: [togLen + border, 1 + border, 1 + border], cornerRadius: (1 + border) / 2), materials: [])
+      borderBg.model = ModelComponent(mesh: .generateBox(
+        size: [togLen + border, 1 + border, 1 + border], cornerRadius: (1 + border) / 2), materials: []
+      )
       borderBg.scale = .init(repeating: -1)
-    } else if let bg = self.getModel(part: .border) {
-      bg.removeFromParent()
+    } else if let border = self.getModel(part: .border) {
+      border.removeFromParent()
     }
     let bigBg = self.addModel(part: .background)
-    bigBg.model = ModelComponent(mesh: .generateBox(size: [togLen, 1, 1], cornerRadius: 0.5), materials: [])
+    bigBg.model = ModelComponent(
+      mesh: .generateBox(size: [togLen, 1, 1], cornerRadius: 0.5), materials: []
+    )
     bigBg.scale = .init(repeating: -1)
 
     let thumb = self.addModel(part: .thumb)
     thumb.model = ModelComponent(mesh: .generateSphere(radius: (1 - padding) / 2), materials: [])
     thumb.position = togglePos
-    self.collision = CollisionComponent(shapes: [ShapeResource.generateCapsule(height: 2, radius: 0.5).offsetBy(rotation: simd_quatf(angle: .pi/2, axis: [0, 0, 1]))])
+    self.collision = CollisionComponent(
+      shapes: [ShapeResource.generateCapsule(height: 2, radius: 0.5)
+        .offsetBy(rotation: simd_quatf(angle: .pi/2, axis: [0, 0, 1]))
+      ]
+    )
     self.updateMaterials()
   }
 

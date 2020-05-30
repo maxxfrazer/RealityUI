@@ -9,11 +9,11 @@ let package = Package(
   products: [
     .library(
       name: "RealityUI",
-      targets: ["RealityUI"]),
+      targets: ["RealityUI"])
   ],
   dependencies: [],
   targets: [
-    .target(name: "RealityUI", dependencies: []),
+    .target(name: "RealityUI", dependencies: [])
 //    .testTarget(name: "RealityUITests", dependencies: ["RealityUI"])
   ]
 )

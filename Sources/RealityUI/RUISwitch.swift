@@ -103,6 +103,10 @@ public struct SwitchComponent: Component {
     self.borderColor = borderColor
     self.thumbColor = thumbColor
   }
+
+  public init(onColor: Material.Color, offColor: Material.Color) {
+    self.init(isOn: false, onColor: onColor, offColor: offColor)
+  }
 }
 
 public extension HasSwitch {

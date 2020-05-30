@@ -45,7 +45,7 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     self.downTrigger = downTrigger
   }
 
-  convenience init(
+  public convenience init(
     style: StepperComponent.Style,
     upTrigger: ((HasStepper) -> Void)? = nil,
     downTrigger: ((HasStepper) -> Void)? = nil
@@ -53,13 +53,13 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     self.init(stepper: StepperComponent(style: style), upTrigger: upTrigger, downTrigger: downTrigger)
   }
 
-  convenience init(
+  public convenience init(
     upTrigger: ((HasStepper) -> Void)? = nil, downTrigger: ((HasStepper) -> Void)? = nil
   ) {
     self.init(stepper: nil, upTrigger: upTrigger, downTrigger: downTrigger)
   }
 
-  required convenience init() {
+  required public convenience init() {
     self.init(upTrigger: nil, downTrigger: nil)
   }
 }
@@ -89,7 +89,7 @@ public struct StepperComponent: Component {
   ///   - buttonTint: Color of the buttons inside a stepper, default `.systemBlue`.
   ///   - secondaryTint: Color of the second button inside a stepper. If nil, then buttonTint will be used.
   #if os(iOS)
-  init(
+  public init(
     style: StepperComponent.Style = .minusPlus,
     backgroundTint: Material.Color = .tertiarySystemBackground,
     buttonTint: Material.Color = .systemBlue,
@@ -101,7 +101,7 @@ public struct StepperComponent: Component {
     self.secondButtonTint = secondaryTint
   }
   #elseif os(macOS)
-  init(
+  public init(
     style: StepperComponent.Style = .minusPlus,
     backgroundTint: Material.Color = .windowBackgroundColor,
     buttonTint: Material.Color = .systemBlue,
@@ -113,7 +113,7 @@ public struct StepperComponent: Component {
     self.secondButtonTint = secondaryTint
   }
   #endif
-  init(style: StepperComponent.Style) {
+  public init(style: StepperComponent.Style) {
     self.init(style: style, secondaryTint: nil)
   }
 }

@@ -52,7 +52,7 @@ public struct ButtonComponent: Component {
     case rectangular
   }
 
-  static let defaultSize: SIMD3<Float> = [1, 1, 0.2]
+  public static let defaultSize: SIMD3<Float> = [1, 1, 0.2]
 
   /// Creates a ButtonComponent specifying the layout and appearance of a RUIButton
   /// - Parameters:
@@ -66,7 +66,7 @@ public struct ButtonComponent: Component {
   ///               The compress amount will be a multiplier of the button z size
   ///   - cornerRadius: A corner radius applied to both the button and the button base.
   ///   - style: Style of RUIButton
-  init(
+  public init(
     size: SIMD3<Float> = ButtonComponent.defaultSize,
     buttonColor: Material.Color = .systemBlue,
     baseColor: Material.Color = .systemGray,
@@ -86,10 +86,10 @@ public struct ButtonComponent: Component {
     self.cornerRadius = cornerRadius
     self.style = style
   }
-  init(style: Style) {
+  public init(style: Style) {
     self.init(size: ButtonComponent.defaultSize, style: style)
   }
-  init(width: Float = 1, height: Float = 1, depth: Float = 0.2, padding: Float = 0.1, cornerRadius: Float? = nil) {
+  public init(width: Float = 1, height: Float = 1, depth: Float = 0.2, padding: Float = 0.1, cornerRadius: Float? = nil) {
     self.init(size: [width, height, depth], padding: padding, cornerRadius: cornerRadius)
   }
 }

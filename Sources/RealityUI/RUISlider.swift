@@ -30,7 +30,7 @@ public class RUISlider: Entity, HasSlider, HasModel {
     self.updateCollision()
   }
 
-  convenience init(
+  public convenience init(
     length: Float, start: Float, steps: Int,
     updateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? = nil
   ) {

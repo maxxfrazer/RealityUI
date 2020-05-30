@@ -13,6 +13,26 @@ public struct PivotComponent: Component {
   }
 }
 
+public extension HasPivotTouch {
+  func arTouchStarted(_ worldCoordinate: SIMD3<Float>) {
+    self.lastGlobalPosition = worldCoordinate
+  }
+  func arTouchUpdated(_ worldCoordinate: SIMD3<Float>) {
+    var localPos = self.convert(position: worldCoordinate, from: nil)
+    localPos = self.pivotRotation.act(localPos)
+    var lastLocalPos = self.convert(position: self.lastGlobalPosition, from: nil)
+    lastLocalPos = self.pivotRotation.act(lastLocalPos)
+    let lastAngle = atan2f(lastLocalPos.x, lastLocalPos.z)
+    let angle = atan2f(localPos.x, localPos.z)
+
+    self.orientation *= simd_quatf(angle: angle - lastAngle, axis: self.pivotAxis)
+    self.lastGlobalPosition = worldCoordinate
+  }
+  func arTouchEnded(_ worldCoordinate: SIMD3<Float>?) {
+    self.lastGlobalPosition = .zero
+  }
+}
+
 extension HasPivotTouch {
   var collisionPlane: float4x4 {
     return self.transformMatrix(relativeTo: nil)
@@ -32,22 +52,5 @@ extension HasPivotTouch {
   var lastGlobalPosition: SIMD3<Float> {
     get { self.pivotTouch.lastGlobalPosition }
     set { self.pivotTouch.lastGlobalPosition = newValue }
-  }
-  func arTouchStarted(_ worldCoordinate: SIMD3<Float>) {
-    self.lastGlobalPosition = worldCoordinate
-  }
-  func arTouchUpdated(_ worldCoordinate: SIMD3<Float>) {
-    var localPos = self.convert(position: worldCoordinate, from: nil)
-    localPos = self.pivotRotation.act(localPos)
-    var lastLocalPos = self.convert(position: self.lastGlobalPosition, from: nil)
-    lastLocalPos = self.pivotRotation.act(lastLocalPos)
-    let lastAngle = atan2f(lastLocalPos.x, lastLocalPos.z)
-    let angle = atan2f(localPos.x, localPos.z)
-
-    self.orientation *= simd_quatf(angle: angle - lastAngle, axis: self.pivotAxis)
-    self.lastGlobalPosition = worldCoordinate
-  }
-  func arTouchEnded(_ worldCoordinate: SIMD3<Float>?) {
-    self.lastGlobalPosition = .zero
   }
 }

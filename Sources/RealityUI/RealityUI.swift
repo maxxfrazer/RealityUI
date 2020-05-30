@@ -20,7 +20,8 @@ import Combine
   public static func registerComponents() {
     RealityUI.shared.logActivated()
   }
-  public static var gestureMask: CollisionGroup = .all
+  public static var longGestureMask: CollisionGroup = .all
+  public static var tapGestureMask: CollisionGroup = .all
   private func logActivated() {
     RealityUI.RUIPrint("RealityUI: Activated, registered components")
   }
@@ -56,7 +57,8 @@ import Combine
     ButtonComponent.self,
     SwitchComponent.self,
     StepperComponent.self,
-    SliderComponent.self
+    SliderComponent.self,
+    PivotComponent.self
   ]
   internal static var shared = RealityUI()
   private override init() {
@@ -101,7 +103,7 @@ import Combine
       return
     }
     let tapInView = sender.location(in: arView)
-    if let ht = arView.hitTest(tapInView).first, let tappedEntity = ht.entity as? HasClick, tappedEntity.ruiEnabled {
+    if let ht = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first, let tappedEntity = ht.entity as? HasClick, tappedEntity.ruiEnabled {
       let htPos = ht.position
       tappedEntity.onTap(worldCollision: htPos)
     }
@@ -111,93 +113,12 @@ import Combine
       guard let arView = sender?.view as? ARView, let tapInView = sender?.location(in: arView) else {
         return
       }
-      if let ht = arView.hitTest(tapInView, mask: RealityUI.gestureMask).first, let tappedEntity = ht.entity as? HasClick, tappedEntity.ruiEnabled {
+      if let ht = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first, let tappedEntity = ht.entity as? HasClick, tappedEntity.ruiEnabled {
       let htPos = ht.position
       tappedEntity.onTap(worldCollision: htPos)
     }
   }
   #endif
-}
-
-public struct RUIComponent: Component {
-  public internal(set) var ruiEnabled: Bool
-  public internal(set) var respondsToLighting: Bool
-  public init(enabled: Bool = true, respondsToLighting: Bool = false) {
-    self.ruiEnabled = enabled
-    self.respondsToLighting = respondsToLighting
-  }
-}
-
-public protocol HasRUI: Entity {
-  /// All RealityUI Entities should have a method for updating all the materials
-  /// This is in case of disabling entities or changing their responsiveness to light
-  func updateMaterials() -> Void
-}
-public extension HasRUI {
-  /// A Boolean value that determines whether touch events are ignored on this RealityUI Entity
-  var ruiEnabled: Bool {
-    get { self.RUI.ruiEnabled }
-    set {
-      if self.RUI.ruiEnabled == newValue { return }
-      self.RUI.ruiEnabled = newValue
-      self.materialsShouldChange()
-    }
-  }
-
-  /// A Boolean value that determines whether this Entity's materials respond to lighting
-  var respondsToLighting: Bool {
-    get { self.RUI.respondsToLighting }
-    set {
-      if self.RUI.respondsToLighting == newValue { return }
-      self.RUI.respondsToLighting = newValue
-      self.materialsShouldChange()
-    }
-  }
-
-  func replaceRUI(with RUI: RUIComponent) {
-    self.RUI = RUI
-    self.materialsShouldChange()
-  }
-
-  internal(set) var RUI: RUIComponent {
-    get {
-      if let ruiComp = self.components[RUIComponent.self] as? RUIComponent {
-        return ruiComp
-      } else {
-        self.components[RUIComponent.self] = RUIComponent()
-        return self.components[RUIComponent.self]!
-      }
-    }
-    set {
-      self.components[RUIComponent.self] = newValue
-    }
-  }
-
-  private func materialsShouldChange() {
-    self.updateMaterials()
-  }
-}
-internal extension HasRUI {
-  func getMaterial(with color: Material.Color) -> Material {
-    let adjustedColor = color.withAlphaComponent(self.ruiEnabled ? 1 : 0.5)
-    if self.RUI.respondsToLighting {
-      return SimpleMaterial(color: adjustedColor, isMetallic: false)
-    }
-    return UnlitMaterial(color: adjustedColor)
-  }
-
-  func getModel(part: String) -> ModelEntity? {
-    self.findEntity(named: part) as? ModelEntity
-  }
-  func addModel(part: String) -> ModelEntity {
-    if let mp = self.getModel(part: part) {
-      return mp
-    }
-    let mp = ModelEntity()
-    mp.name = part
-    self.addChild(mp)
-    return mp
-  }
 }
 
 public extension ARView {

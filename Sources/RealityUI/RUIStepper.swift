@@ -6,12 +6,12 @@
 //
 
 import RealityKit
+import Combine
 #if os(iOS)
 import UIKit
 #elseif os(macOS)
 import AppKit
 #endif
-import Combine
 
 /// A new RealityUI Stepper to be added to your RealityKit scene.
 public class RUIStepper: Entity, HasRUI, HasStepper {
@@ -135,6 +135,10 @@ public extension HasStepper {
     }
     self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)
   }
+  internal(set) var stepper: StepperComponent {
+    get { self.components[StepperComponent.self] ?? StepperComponent() }
+    set { self.components[StepperComponent.self] = newValue }
+  }
   internal(set) var style: StepperComponent.Style {
     get { self.stepper.style }
     set { self.stepper.style = newValue }
@@ -142,10 +146,6 @@ public extension HasStepper {
 }
 
 internal extension HasStepper {
-  var stepper: StepperComponent {
-    get { self.components[StepperComponent.self] ?? StepperComponent() }
-    set { self.components[StepperComponent.self] = newValue }
-  }
   fileprivate func getModel(part: StepperComponent.UIPart) -> ModelEntity? {
     return (self as HasRUI).getModel(part: part.rawValue)
   }
@@ -183,7 +183,9 @@ internal extension HasStepper {
 
   fileprivate func makeModels() {
     let rightModel = self.addModel(part: .right)
+    rightModel.position.x = 0.5
     let leftModel = self.addModel(part: .left)
+    leftModel.position.x = -0.5
     switch self.style {
     case .minusPlus:
       rightModel.model =  ModelComponent(
@@ -197,45 +199,50 @@ internal extension HasStepper {
         materials: []
       )
       rightModel.addChild(subPlusModel)
-      rightModel.position.x = 0.5
       leftModel.model =  ModelComponent(mesh: MeshResource.generateBox(size: [0.7, 0.15, 0.15], cornerRadius: 0.05), materials: [])
-      leftModel.position.x = -0.5
     case .arrowLeftRight, .arrowDownUp:
+
+      // Setup parameters
+      let turnAngle: Float = .pi / 6
+      let sinAng: Float = sin(turnAngle)
+      let partLen: Float = (0.7 / 2) / cos(turnAngle)
+      let partThickness = partLen * 0.2
+      let yDist = 0.2 - (sinAng * partThickness)
+
       if self.style == .arrowDownUp {
         leftModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
         rightModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
       }
-      let sinAng: Float = sin(.pi / 6)
-      let partLen: Float = (0.7 / 2) / cos(.pi / 6)
-      let partThickness = partLen * 0.2
-      let yDist = 0.2 - (sinAng * partThickness)
-
-      rightModel.position = [0.5, 0, 0]
 
       let rightSubModel1 = ModelEntity(mesh: .generateBox(
           size: [partThickness, partLen, partThickness],
           cornerRadius: partThickness * 0.25
         ), materials: []
       )
+      rightSubModel1.transform = Transform(
+        scale: .one, rotation: .init(angle: turnAngle, axis: [0, 0, 1]),
+        translation: [0, yDist, 0]
+      )
+
       let rightSubModel2 = ModelEntity()
       rightSubModel2.model = rightSubModel1.model
 
-      rightSubModel1.position.y = yDist
-      rightSubModel1.orientation = .init(angle: .pi / 6, axis: [0, 0, 1])
-      rightSubModel2.position.y = -yDist
-      rightSubModel2.orientation = .init(angle: -.pi / 6, axis: [0, 0, 1])
-      rightModel.addChild(rightSubModel1)
-      rightModel.addChild(rightSubModel2)
-//      leftModel.model = ModelComponent(mesh: MeshResource.generateBox(size: [0.7, 0.15, 0.15], cornerRadius: 0.05), materials: [])
-      leftModel.position = [-0.5, 0, 0]
+      rightSubModel2.transform = Transform(
+        scale: .one, rotation: .init(angle: -turnAngle, axis: [0, 0, 1]),
+        translation: [0, -yDist, 0]
+      )
+
       let leftSubModel1 = rightSubModel2.clone(recursive: true)
       leftSubModel1.position.y = yDist
       let leftSubModel2 = rightSubModel1.clone(recursive: true)
       leftSubModel2.position.y = -yDist
+
+      rightModel.addChild(rightSubModel1)
+      rightModel.addChild(rightSubModel2)
       leftModel.addChild(leftSubModel1)
       leftModel.addChild(leftSubModel2)
-    default:
-      break
+//    default:
+//      break
     }
 
     let background = self.addModel(part: .background)

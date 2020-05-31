@@ -1,3 +1,11 @@
+//
+//  HasPivotTouch.swift
+//
+//
+//  Created by Max Cobb on 5/31/20.
+//  Copyright © 2020 Max Cobb. All rights reserved.
+//
+
 import RealityKit
 
 /// This is an experimental feature, full functionality has not yet been decided.

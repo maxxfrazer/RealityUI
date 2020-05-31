@@ -3,6 +3,7 @@
 //
 //
 //  Created by Max Cobb on 5/16/20.
+//  Copyright © 2020 Max Cobb. All rights reserved.
 //
 
 import RealityKit
@@ -95,7 +96,7 @@ import Combine
   }
   private func addLongTouch(to arView: ARView) {
     #if os(macOS)
-    RealityUI.RUIPrint("RealityUI: long touch gesture, not fully working on macOS")
+    RealityUI.RUIPrint("RealityUI: long touch gesture not fully working on macOS")
     #endif
     let longTouchGesture = RUILongTouchGestureRecognizer(target: nil, action: nil, view: arView)
     arView.addGestureRecognizer(longTouchGesture)

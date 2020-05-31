@@ -3,6 +3,7 @@
 //
 //
 //  Created by Max Cobb on 5/16/20.
+//  Copyright © 2020 Max Cobb. All rights reserved.
 //
 
 import RealityKit

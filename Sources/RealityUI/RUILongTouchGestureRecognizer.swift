@@ -233,7 +233,9 @@ extension RUILongTouchGestureRecognizer {
       }
       let touchInView = self.arView.convert(event.locationInWindow, from: event.window?.contentView)
   //    self.activeTouch = touches.first
-      globalTouchBegan(touchInView: touchInView)
+      if !globalTouchBegan(touchInView: touchInView) {
+        self.mouseUp(with: event)
+      }
     }
     override func mouseDragged(with event: NSEvent) {
       if entity == nil || self.touchLocation == nil {

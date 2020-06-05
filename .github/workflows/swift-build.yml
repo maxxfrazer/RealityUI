@@ -1,0 +1,32 @@
+name: build
+
+# on:
+#   push:
+#     branches:
+#       - "master"
+#   pull_request:
+#     branches:
+#     - "*"
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build Package
+      run: |
+        swift package generate-xcodeproj
+    - name: Test iOS
+      run: |
+        xcodebuild clean build -project $PROJECT -scheme $SCHEME -sdk $SDK CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO | xcpretty
+      env:
+        PROJECT: RealityUI.xcodeproj
+        SCHEME: RealityUI-Package
+        SDK: iphoneos
+    - name: Test macOS
+      run: |
+        xcodebuild clean build -project $PROJECT -scheme $SCHEME -sdk $SDK CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO | xcpretty
+      env:
+        PROJECT: RealityUI.xcodeproj
+        SCHEME: RealityUI-Package
+        SDK: macosx

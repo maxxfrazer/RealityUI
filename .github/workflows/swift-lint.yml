@@ -1,0 +1,20 @@
+name: swiftlint
+
+on:
+  push:
+    branches:
+      - "master"
+    tags:
+      - "!*"
+  pull_request:
+    branches:
+    - "*"
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: swiftlint
+      run: |
+        swiftlint

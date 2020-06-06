@@ -3,9 +3,7 @@ name: swiftlint
 on:
   push:
     branches:
-      - "master"
-    tags:
-      - "!*"
+      - "*"
   pull_request:
     branches:
     - "*"

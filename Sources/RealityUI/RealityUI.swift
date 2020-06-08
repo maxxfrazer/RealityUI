@@ -72,7 +72,7 @@ import Combine
   }
 
   internal func enable(gestures: RealityUI.RUIGesture, on arView: ARView) {
-    /// - TODO: This method is gross, I tried to use `OptionSet` and think I'm doing it wrong
+    /// This method is gross, I tried to use `OptionSet` and think I'm doing it wrong
     /// These multiple if statements make me feel uncomfortable.
     let newGestures = gestures.subtracting(self.enabledGestures)
     if newGestures.isEmpty { return }

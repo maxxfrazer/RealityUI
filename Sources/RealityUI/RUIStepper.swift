@@ -21,7 +21,7 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
       (clicker as? HasStepper)?.stepperTap(clicker: clicker, worldTapPos: worldPos)
   }
 
-  // TODO: Consider changing to 1 function
+  // Consider changing to 1 function
   public var upTrigger: ((HasStepper) -> Void)?
   public var downTrigger: ((HasStepper) -> Void)?
 

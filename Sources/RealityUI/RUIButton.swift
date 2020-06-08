@@ -90,7 +90,10 @@ public struct ButtonComponent: Component {
   public init(style: Style) {
     self.init(size: ButtonComponent.defaultSize, style: style)
   }
-  public init(width: Float = 1, height: Float = 1, depth: Float = 0.2, padding: Float = 0.1, cornerRadius: Float? = nil) {
+  public init(
+    width: Float = 1, height: Float = 1, depth: Float = 0.2,
+    padding: Float = 0.1, cornerRadius: Float? = nil
+  ) {
     self.init(size: [width, height, depth], padding: padding, cornerRadius: cornerRadius)
   }
 }

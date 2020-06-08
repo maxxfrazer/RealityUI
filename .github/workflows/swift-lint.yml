@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     steps:
     - name: GitHub Action for SwiftLint
       uses: norio-nomura/action-swiftlint@3.1.0

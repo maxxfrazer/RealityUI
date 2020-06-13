@@ -78,7 +78,11 @@ public extension HasRUI {
 internal extension HasRUI {
   func getMaterial(with color: Material.Color) -> Material {
     var alpha: CGFloat = 0
+    #if os(macOS)
+    alpha = color.alphaComponent
+    #else
     color.getWhite(nil, alpha: &alpha)
+    #endif
     let adjustedColor = color.withAlphaComponent(alpha * (self.ruiEnabled ? 1 : 0.5))
     if self.RUI.respondsToLighting {
       return SimpleMaterial(color: adjustedColor, isMetallic: false)

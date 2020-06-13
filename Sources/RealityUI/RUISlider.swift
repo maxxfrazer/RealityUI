@@ -11,6 +11,11 @@ import RealityKit
 
 /// A  RealityUI Slider to be added to a RealityKit scene.
 public class RUISlider: Entity, HasSlider, HasModel {
+
+  public var collisionPlane: float4x4? {
+    return self.transformMatrix(relativeTo: nil)
+      * float4x4(simd_quatf(angle: .pi / 2, axis: [1, 0, 0]))
+  }
   public var sliderUpdated: ((HasSlider, SliderComponent.SlidingState) -> Void)?
 
   /// Creates a RealityUI Slider entity with optional `SliderComponent`, `RUIComponent` and `updateCallback`.
@@ -52,6 +57,34 @@ public class RUISlider: Entity, HasSlider, HasModel {
 
   required public convenience init() {
     self.init(length: 10)
+  }
+
+  public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
+    let localPos = self.convert(position: worldCoordinate, from: nil)
+    self.panGestureOffset = self.value - (localPos.x / self.sliderLength + 1 / 2)
+    self.sliderUpdated?(self, .started)
+  }
+  public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
+    let localPos = self.convert(position: worldCoordinate, from: nil)
+    var newPercent = (localPos.x / self.sliderLength + 1 / 2) + self.panGestureOffset
+    self.clampSlideValue(&newPercent)
+    if self.value == newPercent {
+      return
+    }
+    self.setPercent(to: newPercent, animated: false)
+    if self.isContinuous {
+      self.sliderUpdated?(self, .updated)
+    }
+  }
+
+  public func arTouchCancelled() {
+    self.arTouchEnded(nil)
+  }
+
+  public func arTouchEnded(_ worldCoordinate: SIMD3<Float>? = nil) {
+    self.panGestureOffset = 0
+    updateCollision()
+    self.sliderUpdated?(self, .ended)
   }
 }
 
@@ -200,35 +233,12 @@ public extension HasSlider {
       .offsetBy(translation: thumb.position)
     self.collision = CollisionComponent(shapes: [collisionShape])
   }
-  func arTouchStarted(_ worldCoordinate: SIMD3<Float>) {
-    let localPos = self.convert(position: worldCoordinate, from: nil)
-    self.panGestureOffset = self.value - (localPos.x / self.sliderLength + 1 / 2)
-    self.sliderUpdated?(self, .started)
-  }
-  private func clampSlideValue(_ newPercent: inout Float) {
+  internal func clampSlideValue(_ newPercent: inout Float) {
     if self.steps <= 0 {
       return
     }
     let floatSteps = Float(self.steps)
     newPercent = roundf(newPercent * floatSteps) / floatSteps
-  }
-  func arTouchUpdated(_ worldCoordinate: SIMD3<Float>) {
-    let localPos = self.convert(position: worldCoordinate, from: nil)
-    var newPercent = (localPos.x / self.sliderLength + 1 / 2) + self.panGestureOffset
-    self.clampSlideValue(&newPercent)
-    if self.value == newPercent {
-      return
-    }
-    self.setPercent(to: newPercent, animated: false)
-    if self.isContinuous {
-      self.sliderUpdated?(self, .updated)
-    }
-  }
-
-  func arTouchEnded(_ worldCoordinate: SIMD3<Float>? = nil) {
-    self.panGestureOffset = 0
-    updateCollision()
-    self.sliderUpdated?(self, .ended)
   }
 
   private func getModel(part: SliderComponent.UIPart) -> ModelEntity? {

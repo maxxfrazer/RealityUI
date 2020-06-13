@@ -23,7 +23,6 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouc
       .horizontal, classification: .any, minimumBounds: [0.5, 0.5]
     ))
     self.addControls()
-    /*
     /// Uncomment this to try out HasPivotTouch, but it's still in an experimental stage.
     if let rotateImg = try? TextureResource.load(named: "rotato") {
       self.collision = CollisionComponent(shapes: [.generateBox(size: [10, 0.1, 10])])
@@ -32,7 +31,6 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouc
       unlitTextured.tintColor = unlitTextured.tintColor.withAlphaComponent(0.75)
       self.model = ModelComponent(mesh: .generatePlane(width: 1.5, depth: 1.5), materials: [unlitTextured])
     }
-     */
   }
 
   func entityAnchored() {

@@ -12,20 +12,16 @@ import RealityKit
 /// Hence no documentation yet.
 public protocol HasPivotTouch: HasPanTouch {}
 
-public struct PivotComponent: Component {
-  internal var lastTouchAngle: Float?
-  internal var lastGlobalPosition: SIMD3<Float> = .zero
-  public var pivotAxis: SIMD3<Float>
-  public init(pivot: SIMD3<Float> = [0, 1, 0]) {
-    self.pivotAxis = pivot
-  }
-}
-
 public extension HasPivotTouch {
-  func arTouchStarted(_ worldCoordinate: SIMD3<Float>) {
+  var collisionPlane: float4x4? {
+    return self.transformMatrix(relativeTo: nil)
+      * float4x4(pivotRotation)
+  }
+
+  func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
     self.lastGlobalPosition = worldCoordinate
   }
-  func arTouchUpdated(_ worldCoordinate: SIMD3<Float>) {
+  func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
     var localPos = self.convert(position: worldCoordinate, from: nil)
     localPos = self.pivotRotation.act(localPos)
     var lastLocalPos = self.convert(position: self.lastGlobalPosition, from: nil)
@@ -36,16 +32,24 @@ public extension HasPivotTouch {
     self.orientation *= simd_quatf(angle: angle - lastAngle, axis: self.pivotAxis)
     self.lastGlobalPosition = worldCoordinate
   }
+  func arTouchCancelled() {
+    self.arTouchEnded(nil)
+  }
   func arTouchEnded(_ worldCoordinate: SIMD3<Float>?) {
     self.lastGlobalPosition = .zero
   }
 }
 
-extension HasPivotTouch {
-  var collisionPlane: float4x4 {
-    return self.transformMatrix(relativeTo: nil)
-      * float4x4(pivotRotation)
+public struct PivotComponent: Component {
+  internal var lastTouchAngle: Float?
+  internal var lastGlobalPosition: SIMD3<Float> = .zero
+  public var pivotAxis: SIMD3<Float>
+  public init(pivot: SIMD3<Float> = [0, 1, 0]) {
+    self.pivotAxis = pivot
   }
+}
+
+internal extension HasPivotTouch {
   var pivotRotation: simd_quatf {
     simd_quaternion(self.pivotAxis, [0, 1, 0])
   }

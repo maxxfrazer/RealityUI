@@ -52,7 +52,12 @@ import Combine
 
     public static let all: RUIGesture = [.tap, .longTouch]
   }
-  public internal(set) var enabledGestures: RUIGesture = []
+
+  /// Gestures that have been enalbed, `.tap`, `.longTouch` etc
+  public internal(set) var enabledGestures: [ARView: RUIGesture] = [:]
+
+  /// Gestures that have been installed. Plan to expose this property later.
+  private var installedGestures: [ARView: [GestureBase]] = [:]
 
   /// All the components used by RealityUI
   public static var RUIComponents: [Component.Type] = [
@@ -74,7 +79,10 @@ import Combine
   internal func enable(gestures: RealityUI.RUIGesture, on arView: ARView) {
     /// This method is gross, I tried to use `OptionSet` and think I'm doing it wrong
     /// These multiple if statements make me feel uncomfortable.
-    let newGestures = gestures.subtracting(self.enabledGestures)
+    if !self.enabledGestures.contains(where: { $0.key == arView}) {
+      self.enabledGestures[arView] = []
+    }
+    let newGestures = gestures.subtracting(self.enabledGestures[arView] ?? [])
     if newGestures.isEmpty { return }
     if newGestures.contains(.tap) {
       self.addTap(to: arView)
@@ -82,24 +90,27 @@ import Combine
     if newGestures.contains(.longTouch) {
       self.addLongTouch(to: arView)
     }
-    self.enabledGestures.formUnion(newGestures)
+    self.enabledGestures[arView]?.formUnion(newGestures)
   }
   private func addTap(to arView: ARView) {
     #if os(iOS)
     let addUITapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapReco))
-    arView.addGestureRecognizer(addUITapGesture)
     #elseif os(macOS)
     let addUITapGesture = NSClickGestureRecognizer(target: self, action: #selector(self.clickReco))
-    arView.addGestureRecognizer(addUITapGesture)
-
     #endif
+    arView.addGestureRecognizer(addUITapGesture)
+    self.installedGestures[arView]?.append(addUITapGesture)
   }
   private func addLongTouch(to arView: ARView) {
     #if os(macOS)
     RealityUI.RUIPrint("RealityUI: long touch gesture not fully working on macOS")
     #endif
-    let longTouchGesture = RUILongTouchGestureRecognizer(target: nil, action: nil, view: arView)
+    let longTouchGesture = RUILongTouchGestureRecognizer(
+      target: self, action: #selector(self.arTouchReco),
+      view: arView
+    )
     arView.addGestureRecognizer(longTouchGesture)
+    self.installedGestures[arView]?.append(longTouchGesture)
   }
 
   #if os(macOS)
@@ -124,6 +135,8 @@ import Combine
     }
   }
   #endif
+
+  @objc internal func arTouchReco(sender: RUILongTouchGestureRecognizer) {}
 }
 
 public extension ARView {

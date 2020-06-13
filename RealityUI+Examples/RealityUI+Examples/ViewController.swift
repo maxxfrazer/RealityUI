@@ -25,7 +25,6 @@ class ViewController: UIViewController {
     let config = ARWorldTrackingConfiguration()
     config.planeDetection = [.horizontal]
     arView.session.run(config, options: [])
-
     // Replaces camera feed, if 6dof VR look is wanted
 //    arView.environment.background = .color(.systemGray)
 

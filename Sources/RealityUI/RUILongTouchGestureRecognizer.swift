@@ -9,40 +9,53 @@
 import RealityKit
 #if os(iOS)
 import UIKit
-typealias LongGestureBase = UIGestureRecognizer
+public typealias GestureBase = UIGestureRecognizer
 #elseif os(macOS)
 import AppKit
-typealias LongGestureBase = NSGestureRecognizer
+public typealias GestureBase = NSGestureRecognizer
 #endif
 import Combine
 
-public protocol HasARTouch: HasRUI, HasCollision {}
+public protocol HasARTouch: HasRUI, HasCollision {
+  /// Called when a new touch has begun on an Entity
+  /// - Parameters:
+  ///   - worldCoordinate: Collision of the object or collision plane
+  ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
+  func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool)
 
-public protocol HasPanTouch: HasARTouch {
-  func arTouchStarted(_ worldCoordinate: SIMD3<Float>)
-  func arTouchUpdated(_ worldCoordinate: SIMD3<Float>)
+  /// Called when a touch is still on screen or a mouse is still down.
+  /// - Parameters:
+  ///   - worldCoordinate: Where is the touch currently hits in world space
+  ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
+  func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool)
+
+  /// Touch has ended without issues.
+  /// - Parameter worldCoordinate: Coordinate in world space where the released collision came from
   func arTouchEnded(_ worldCoordinate: SIMD3<Float>?)
+
+  /// Called when touch has been interrupted.
+  func arTouchCancelled()
+
+  /// Plane to continue touches with, used for RUISlider + Others
+  /// Return nil to just use the Entity `CollisionComponent`
+  var collisionPlane: float4x4? { get }
 }
 
-internal extension HasPanTouch {
-  var collisionPlane: float4x4 {
-    return self.transformMatrix(relativeTo: nil)
-      * float4x4(simd_quatf(angle: .pi / 2, axis: [1, 0, 0]))
-  }
+extension HasARTouch {
 }
 
-public protocol HasTouchUpInside: HasARTouch {
-  func arTouchStarted(hasCollided: Bool, _ worldCoordinate: SIMD3<Float>)
-  func arTouchUpdated(hasCollided: Bool, _ worldCoordinate: SIMD3<Float>?)
-  func arTouchEnded(_ worldCoordinate: SIMD3<Float>?)
-}
+public protocol HasPanTouch: HasARTouch {}
+
+public extension HasPanTouch {}
+
+public protocol HasTouchUpInside: HasARTouch {}
 
 /// This Gesture is currently used for any gesture other than simple taps.
-@objc internal class RUILongTouchGestureRecognizer: LongGestureBase {
+@objc internal class RUILongTouchGestureRecognizer: GestureBase {
   let arView: ARView
 
   #if os(iOS)
-  fileprivate var activeTouch: UITouch?
+  internal var activeTouch: UITouch?
   #endif
 
   var collisionStart: SIMD3<Float>?
@@ -62,52 +75,56 @@ public protocol HasTouchUpInside: HasARTouch {
   }
 
   func globalTouchBegan(touchInView: CGPoint) -> Bool {
-    guard let hitEntity = self.arView.hitTest(
+    guard let firstHit = self.arView.hitTest(
       touchInView, query: .nearest, mask: RealityUI.longGestureMask
-    ).first?.entity as? HasARTouch else {
+    ).first, let hitEntity = firstHit.entity as? HasARTouch else {
         return false
     }
-    if let arTouch = hitEntity as? HasPanTouch {
-      self.touchesBeganARTouch(hitEntity: arTouch, touchInView: touchInView)
-    } else if let upInsideEntity = hitEntity as? HasTouchUpInside {
-      self.touchesBeganUpInside(hitEntity: upInsideEntity, touchInView: touchInView)
-    } else {
-      return false
-    }
+    self.touchesBeganARTouch(hitEntity: hitEntity, touchInView: touchInView, touchInWorld: firstHit.position)
     return true
   }
-  func touchesBeganUpInside(hitEntity: HasTouchUpInside, touchInView: CGPoint) {
-    let ccHit = self.arView.hitTest(touchInView, query: .nearest, mask: RealityUI.longGestureMask)
-    if let ccFirst = ccHit.first, ccFirst.entity == hitEntity {
-      self.touchLocation = touchInView
-      self.entity = hitEntity
-      hitEntity.arTouchStarted(hasCollided: true, ccFirst.position)
-      self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, updateTouchInside(_:))
-    }
-  }
-  func touchesBeganARTouch(hitEntity: HasPanTouch, touchInView: CGPoint) {
+
+  func touchesBeganARTouch(
+    hitEntity: HasARTouch, touchInView: CGPoint, touchInWorld: SIMD3<Float>
+  ) {
     if !hitEntity.ruiEnabled {
       return
     }
     self.touchLocation = touchInView
     self.entity = hitEntity
-    let colPlane = (hitEntity as? HasPivotTouch)?.collisionPlane ?? hitEntity.collisionPlane
-    self.collisionPlane = colPlane
-
-    guard let planeCollisionPoint = self.arView.unproject(touchInView, ontoPlane: colPlane) else {
-      return
+    var worldTouch = touchInWorld
+    if let collisionPlane = hitEntity.collisionPlane {
+      self.collisionPlane = collisionPlane
+      if let planeCollisionPoint = self.arView.unproject(
+        touchInView, ontoPlane: collisionPlane
+      ) {
+        worldTouch = planeCollisionPoint
+      } else {
+        return
+      }
     }
-    (hitEntity as? HasPivotTouch ?? hitEntity)?.arTouchStarted(planeCollisionPoint)
-    self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, updatePan(_:))
+    hitEntity.arTouchStarted(worldTouch, hasCollided: true)
+    self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, updateRUILongTouch(_:))
   }
 
-  func updatePan(_ event: SceneEvents.Update) {
+  func updateRUILongTouch(_ event: SceneEvents.Update) {
     guard let touchLocation = self.touchLocation,
-      let collisionPlane = self.collisionPlane,
-      let hitEntity = self.entity,
-      let newPos = self.arView.unproject(touchLocation, ontoPlane: collisionPlane)
+      let hitEntity = self.entity
       else {
         return
+    }
+    var newPos: SIMD3<Float>?
+    var hasCollided = false
+    if let htResult = self.arView.hitTest(
+    touchLocation, query: .nearest, mask: RealityUI.longGestureMask
+      ).first {
+      hasCollided = htResult.entity == self.entity
+      if self.collisionPlane == nil {
+        newPos = htResult.position
+      }
+    }
+    if let collisionPlane = self.collisionPlane {
+      newPos = self.arView.unproject(touchLocation, ontoPlane: collisionPlane)
     }
     #if os(iOS)
     if let activeTouch = self.activeTouch, activeTouch.phase == .ended {
@@ -115,47 +132,7 @@ public protocol HasTouchUpInside: HasARTouch {
       return
     }
     #endif
-    if let pivotEntity = (hitEntity as? HasPivotTouch) {
-      pivotEntity.arTouchUpdated(newPos)
-    } else {
-      (hitEntity as? HasPanTouch)?.arTouchUpdated(newPos)
-    }
-  }
-
-  func updateTouchInside(_ event: SceneEvents.Update) {
-    guard let touchLocation = self.touchLocation,
-      let hitEntity = self.entity as? HasTouchUpInside
-      else {
-        return
-    }
-    #if os(iOS)
-    if let activeTouch = self.activeTouch, activeTouch.phase == .ended {
-      self.touchesEnded([activeTouch], with: UIEvent())
-      return
-    }
-    #endif
-    let htResult = self.arView.hitTest(touchLocation, query: .nearest, mask: RealityUI.longGestureMask).first
-    let hitPos = htResult?.entity == hitEntity ? htResult?.position : nil
-    hitEntity.arTouchUpdated(
-      hasCollided: htResult?.entity == hitEntity, hitPos
-    )
-  }
-  func updateRotateTouch(_ event: SceneEvents.Update) {
-    guard let touchLocation = self.touchLocation,
-      let hitEntity = self.entity as? HasPivotTouch
-      else {
-        return
-    }
-    #if os(iOS)
-    if let activeTouch = self.activeTouch, activeTouch.phase == .ended {
-      self.touchesEnded([activeTouch], with: UIEvent())
-      return
-    }
-    #endif
-    let htResult = self.arView.hitTest(touchLocation, query: .nearest, mask: RealityUI.longGestureMask).first
-    if htResult?.entity == hitEntity, let hitPos = htResult?.position {
-      hitEntity.arTouchUpdated(hitPos)
-    }
+    hitEntity.arTouchUpdated(newPos ?? .zero, hasCollided: hasCollided)
   }
 }
 
@@ -172,10 +149,17 @@ extension RUILongTouchGestureRecognizer {
         }
         return
     }
+    if touches.count > 1 {
+      self.touchesCancelled(touches, with: event)
+      return
+    }
     self.activeTouch = firstTouch
     if !globalTouchBegan(touchInView: touchInView) {
       self.touchesCancelled(touches, with: event)
+      return
     }
+    super.touchesBegan(touches, with: event)
+    self.state = .began
   }
   open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
     guard let activeTouch = self.activeTouch else {
@@ -194,13 +178,19 @@ extension RUILongTouchGestureRecognizer {
       return
     }
     self.touchLocation = touchInView
+    super.touchesMoved(touches, with: event)
+    self.state = .changed
   }
 
   open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
-    self.touchesEnded(touches, with: event)
+    self.clearTouch(touches, with: event, state: .cancelled)
   }
 
   open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
+    self.clearTouch(touches, with: event, state: .ended)
+  }
+
+  private func clearTouch(_ touches: Set<UITouch>, with event: UIEvent, state: UIGestureRecognizer.State) {
     guard let activeTouch = self.activeTouch, touches.contains(activeTouch) else {
       return
     }
@@ -209,17 +199,19 @@ extension RUILongTouchGestureRecognizer {
       return
     }
     self.touchLocation = nil
-    if let arTouchEntity = entity as? HasPanTouch {
-      arTouchEntity.arTouchEnded(nil)
-    } else if let upInsideEntity = entity as? HasTouchUpInside {
-      upInsideEntity.arTouchEnded(nil)
-    } else if let pivotEntity = entity as? HasPivotTouch {
-      pivotEntity.arTouchEnded(nil)
-    } else {
-      RealityUI.RUIPrint("Could not find class for entity in touchesEnded")
+    switch state {
+    case .cancelled:
+      entity?.arTouchCancelled()
+      super.touchesCancelled(touches, with: event)
+    case .ended:
+      entity?.arTouchEnded(nil)
+      super.touchesEnded(touches, with: event)
+    default:
+      break
     }
     self.entity = nil
     self.viewSubscriber?.cancel()
+    self.state = state
   }
 }
 #endif
@@ -235,7 +227,9 @@ extension RUILongTouchGestureRecognizer {
   //    self.activeTouch = touches.first
       if !globalTouchBegan(touchInView: touchInView) {
         self.mouseUp(with: event)
+        return
       }
+      super.mouseDown(with: event)
     }
     override func mouseDragged(with event: NSEvent) {
       if entity == nil || self.touchLocation == nil {
@@ -254,13 +248,7 @@ extension RUILongTouchGestureRecognizer {
         return
       }
       self.touchLocation = nil
-      if let arTouchEntity = entity as? HasPanTouch {
-        arTouchEntity.arTouchEnded(nil)
-      } else if let upInsideEntity = entity as? HasTouchUpInside {
-        upInsideEntity.arTouchEnded(nil)
-      } else {
-        RealityUI.RUIPrint("Could not find class for entity in mosueUp")
-      }
+      entity?.arTouchEnded(nil)
       self.entity = nil
       self.viewSubscriber?.cancel()
     }

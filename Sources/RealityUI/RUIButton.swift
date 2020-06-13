@@ -11,6 +11,8 @@ import RealityKit
 /// A  RealityUI Button to be added to a RealityKit scene.
 public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 
+  public var collisionPlane: float4x4? = nil
+
   public var touchUpCompleted: ((HasButton) -> Void)?
 
   /// Creates a RealityUI Button entity with optional `ButtonComponent`, `RUIComponent` and `updateCallback`.
@@ -32,6 +34,30 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
   required public convenience init() {
     self.init(button: nil)
   }
+
+  public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+    self.compressButton()
+  }
+
+  public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+    if hasCollided != self.isCompressed {
+      hasCollided ? self.compressButton() : self.releaseButton()
+    }
+  }
+
+  public func arTouchCancelled() {
+    if self.isCompressed {
+      self.releaseButton()
+    }
+  }
+
+  public func arTouchEnded(_ worldCoordinate: SIMD3<Float>?) {
+    if self.isCompressed {
+      self.releaseButton()
+      self.touchUpCompleted?(self)
+    }
+  }
+
 }
 
 public struct ButtonComponent: Component {
@@ -154,25 +180,6 @@ public extension HasButton {
   }
   private func addModel(part: ButtonComponent.UIPart) -> ModelEntity {
     return (self as HasRUI).addModel(part: part.rawValue)
-  }
-}
-
-public extension HasButton {
-  func arTouchStarted(hasCollided: Bool, _ worldCoordinate: SIMD3<Float>) {
-    self.compressButton()
-  }
-
-  func arTouchUpdated(hasCollided: Bool, _ worldCoordinate: SIMD3<Float>?) {
-    if hasCollided != self.isCompressed {
-      hasCollided ? self.compressButton() : self.releaseButton()
-    }
-  }
-
-  func arTouchEnded(_ worldCoordinate: SIMD3<Float>?) {
-    if self.isCompressed {
-      self.releaseButton()
-      self.touchUpCompleted?(self)
-    }
   }
 }
 

@@ -12,7 +12,7 @@ import RealityKit
 /// Hence no documentation yet.
 public protocol HasPivotTouch: HasPanTouch {}
 
-internal extension HasPivotTouch {
+public extension HasPivotTouch {
   var collisionPlane: float4x4? {
     return self.transformMatrix(relativeTo: nil)
       * float4x4(pivotRotation)

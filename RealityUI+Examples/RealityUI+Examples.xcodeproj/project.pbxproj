@@ -380,7 +380,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "file://../";
 			requirement = {
-				branch = master;
+				branch = main;
 				kind = branch;
 			};
 		};

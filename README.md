@@ -3,13 +3,15 @@
 RealityUI is a collection of User Interface classes for RealityKit.
 The classes included in RealityUI aim to offer familiar User Interface guidelines, but in a 3D setting for Augmented and Virtual Reality through RealityKit.
 
-The User Interface controls in this repository so far are made to be familiar to what people are used to with 2D interfaces, however the plan is to expand the tools on offer to new and unique controls, which are more appropriate for an Augmented Reality and Virtual Reality context. 
+The User Interface controls in this repository so far are made to be familiar to what people are used to with 2D interfaces, however the plan is to expand the tools on offer to new and unique controls, which are more appropriate for an Augmented Reality and Virtual Reality context.
 
 <p align="center">
   <img src="https://img.shields.io/github/v/release/maxxfrazer/RealityUI?color=orange&label=SwiftPM&logo=swift"/>
   <img src="https://img.shields.io/badge/platform-iOS%20%7C%20macOS-lightgrey"/>
   <img src="https://img.shields.io/badge/Swift-5.2-orange?logo=swift"/>
   <img src="https://img.shields.io/github/license/maxxfrazer/RealityUI"/>
+  <img src="https://github.com/maxxfrazer/RealityUI/workflows/build/badge.svg?branch=main"/>
+  <img src="https://github.com/maxxfrazer/RealityUI/workflows/swiftlint/badge.svg?branch=main"/>
 </p>
 
 ![RealityUI Elements in a RealityKit VR space](media/realityui_banner.gif)

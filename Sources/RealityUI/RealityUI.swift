@@ -7,11 +7,13 @@
 //
 
 import RealityKit
+import Foundation
 #if os(iOS)
-import UIKit
+import UIKit.UIGestureRecognizer
 #elseif os(macOS)
 import AppKit
 #endif
+
 import Combine
 
 @objc public class RealityUI: NSObject {
@@ -66,7 +68,8 @@ import Combine
     SwitchComponent.self,
     StepperComponent.self,
     SliderComponent.self,
-    PivotComponent.self
+    PivotComponent.self,
+    TextComponent.self
   ]
 
   internal static var shared = RealityUI()

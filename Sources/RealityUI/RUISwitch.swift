@@ -7,11 +7,6 @@
 //
 
 import RealityKit
-#if os(iOS)
-import UIKit
-#elseif os(macOS)
-import AppKit
-#endif
 
 /// A  RealityUI Switch to be added to a RealityKit scene.
 public class RUISwitch: Entity, HasSwitch, HasClick {
@@ -48,7 +43,7 @@ public class RUISwitch: Entity, HasSwitch, HasClick {
   }
 }
 
-public protocol HasSwitch: HasClick {
+public protocol HasSwitch: HasRUI {
   var switchChanged: ((HasSwitch) -> Void)? { get set }
 }
 
@@ -190,7 +185,7 @@ public extension HasSwitch {
     let thumb = self.addModel(part: .thumb)
     thumb.model = ModelComponent(mesh: .generateSphere(radius: (1 - padding) / 2), materials: [])
     thumb.position = togglePos
-    self.collision = CollisionComponent(
+    (self as? HasCollision)?.collision = CollisionComponent(
       shapes: [ShapeResource.generateCapsule(height: 2, radius: 0.5)
         .offsetBy(rotation: simd_quatf(angle: .pi/2, axis: [0, 0, 1]))
       ]

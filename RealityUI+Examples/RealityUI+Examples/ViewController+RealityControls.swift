@@ -129,5 +129,8 @@ extension ViewController {
       }
     })
     self.arView.scene.addAnchor(controlsAnchor)
+    let textAbove = RUIText(with: "RealityUI")
+    textAbove.look(at: [0, 1.5, 0], from: [0, 1.5, -1], relativeTo: nil)
+    controlsAnchor.addChild(textAbove)
   }
 }

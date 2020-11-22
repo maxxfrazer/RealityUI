@@ -8,11 +8,6 @@
 
 import RealityKit
 import Combine
-#if os(iOS)
-import UIKit
-#elseif os(macOS)
-import AppKit
-#endif
 
 /// A new RealityUI Stepper to be added to your RealityKit scene.
 public class RUIStepper: Entity, HasRUI, HasStepper {

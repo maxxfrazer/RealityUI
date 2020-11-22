@@ -16,7 +16,7 @@ open class RUIText: Entity, HasText, HasClick {
     }
   }
 
-  convenience init(
+  public convenience init(
     with text: String, width: CGFloat = 0, height: CGFloat = 0,
     font: MeshResource.Font = RUIText.mediumFont, extrusion: Float = 0.1,
     color: Material.Color = .green
@@ -158,7 +158,7 @@ public extension HasText {
 
 extension RUIText {
   /// Used as default larger text to be displayed in the scene
-  static var largeFont = MeshResource.Font(
+  static public var largeFont = MeshResource.Font(
     descriptor: .init(
       name: "Helvetica",
       size: 1),
@@ -166,7 +166,7 @@ extension RUIText {
   ) ?? MeshResource.Font.systemFont(ofSize: MeshResource.Font.systemFontSize / 20)
 
   /// Used as default medium text to be displayed in the scene
-  static var mediumFont = MeshResource.Font(
+  static public var mediumFont = MeshResource.Font(
     descriptor: .init(
       name: "Helvetica",
       size: 1),

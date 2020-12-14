@@ -192,13 +192,13 @@ internal extension HasButton {
   var buttonOutPos: SIMD3<Float> {
     return [
       0, 0,
-      (self.button.size.z + self.innerBoxSize.z * (2 * extrude - 1)) / 2
+      -(self.button.size.z + self.innerBoxSize.z * (2 * extrude - 1)) / 2
     ]
   }
   var buttonInPos: SIMD3<Float> {
     return [
       0, 0,
-      (self.button.size.z + self.innerBoxSize.z * (2 * compress - 1)) / 2
+      -(self.button.size.z + self.innerBoxSize.z * (2 * compress - 1)) / 2
     ]
   }
 

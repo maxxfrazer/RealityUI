@@ -13,9 +13,18 @@
 		F3414195246FF540006B1ECA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3414194246FF540006B1ECA /* Assets.xcassets */; };
 		F3414198246FF540006B1ECA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F3414196246FF540006B1ECA /* LaunchScreen.storyboard */; };
 		F34141B12471A595006B1ECA /* ShowTime in Frameworks */ = {isa = PBXBuildFile; productRef = F34141B02471A595006B1ECA /* ShowTime */; };
-		F37D9C9E2482E88200AF5A5F /* RealityUI in Frameworks */ = {isa = PBXBuildFile; productRef = F37D9C9D2482E88200AF5A5F /* RealityUI */; };
 		F38598C2247AE28F007BBC88 /* Entity+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38598C1247AE28F007BBC88 /* Entity+Extensions.swift */; };
 		F3DB9D81247D8BF8006D6CE5 /* ViewController+NonRealityUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3DB9D80247D8BF8006D6CE5 /* ViewController+NonRealityUI.swift */; };
+		F3F68530256BB91D0090A6C0 /* RUIText.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F68526256BB91D0090A6C0 /* RUIText.swift */; };
+		F3F68531256BB91D0090A6C0 /* RealityUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F68527256BB91D0090A6C0 /* RealityUI.swift */; };
+		F3F68532256BB91D0090A6C0 /* RUILongTouchGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F68528256BB91D0090A6C0 /* RUILongTouchGestureRecognizer.swift */; };
+		F3F68533256BB91D0090A6C0 /* RUIStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F68529256BB91D0090A6C0 /* RUIStepper.swift */; };
+		F3F68534256BB91D0090A6C0 /* RUISwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852A256BB91D0090A6C0 /* RUISwitch.swift */; };
+		F3F68535256BB91D0090A6C0 /* HasPivotTouch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852B256BB91D0090A6C0 /* HasPivotTouch.swift */; };
+		F3F68536256BB91D0090A6C0 /* RUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852C256BB91D0090A6C0 /* RUIButton.swift */; };
+		F3F68537256BB91D0090A6C0 /* HasRUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852D256BB91D0090A6C0 /* HasRUI.swift */; };
+		F3F68538256BB91D0090A6C0 /* HasClick.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852E256BB91D0090A6C0 /* HasClick.swift */; };
+		F3F68539256BB91D0090A6C0 /* RUISlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852F256BB91D0090A6C0 /* RUISlider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +37,16 @@
 		F3414199246FF540006B1ECA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F38598C1247AE28F007BBC88 /* Entity+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Entity+Extensions.swift"; sourceTree = "<group>"; };
 		F3DB9D80247D8BF8006D6CE5 /* ViewController+NonRealityUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+NonRealityUI.swift"; sourceTree = "<group>"; };
+		F3F68526256BB91D0090A6C0 /* RUIText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIText.swift; path = ../../../Sources/RealityUI/RUIText.swift; sourceTree = "<group>"; };
+		F3F68527256BB91D0090A6C0 /* RealityUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RealityUI.swift; path = ../../../Sources/RealityUI/RealityUI.swift; sourceTree = "<group>"; };
+		F3F68528256BB91D0090A6C0 /* RUILongTouchGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUILongTouchGestureRecognizer.swift; path = ../../../Sources/RealityUI/RUILongTouchGestureRecognizer.swift; sourceTree = "<group>"; };
+		F3F68529256BB91D0090A6C0 /* RUIStepper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIStepper.swift; path = ../../../Sources/RealityUI/RUIStepper.swift; sourceTree = "<group>"; };
+		F3F6852A256BB91D0090A6C0 /* RUISwitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUISwitch.swift; path = ../../../Sources/RealityUI/RUISwitch.swift; sourceTree = "<group>"; };
+		F3F6852B256BB91D0090A6C0 /* HasPivotTouch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasPivotTouch.swift; path = ../../../Sources/RealityUI/HasPivotTouch.swift; sourceTree = "<group>"; };
+		F3F6852C256BB91D0090A6C0 /* RUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIButton.swift; path = ../../../Sources/RealityUI/RUIButton.swift; sourceTree = "<group>"; };
+		F3F6852D256BB91D0090A6C0 /* HasRUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasRUI.swift; path = ../../../Sources/RealityUI/HasRUI.swift; sourceTree = "<group>"; };
+		F3F6852E256BB91D0090A6C0 /* HasClick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasClick.swift; path = ../../../Sources/RealityUI/HasClick.swift; sourceTree = "<group>"; };
+		F3F6852F256BB91D0090A6C0 /* RUISlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUISlider.swift; path = ../../../Sources/RealityUI/RUISlider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,7 +55,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F34141B12471A595006B1ECA /* ShowTime in Frameworks */,
-				F37D9C9E2482E88200AF5A5F /* RealityUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,11 +85,29 @@
 				F301D8A7247A62ED004AE1FA /* ViewController+RealityControls.swift */,
 				F3DB9D80247D8BF8006D6CE5 /* ViewController+NonRealityUI.swift */,
 				F38598C1247AE28F007BBC88 /* Entity+Extensions.swift */,
+				F3F68525256BB8FB0090A6C0 /* RealityUI */,
 				F3414194246FF540006B1ECA /* Assets.xcassets */,
 				F3414196246FF540006B1ECA /* LaunchScreen.storyboard */,
 				F3414199246FF540006B1ECA /* Info.plist */,
 			);
 			path = "RealityUI+Examples";
+			sourceTree = "<group>";
+		};
+		F3F68525256BB8FB0090A6C0 /* RealityUI */ = {
+			isa = PBXGroup;
+			children = (
+				F3F6852E256BB91D0090A6C0 /* HasClick.swift */,
+				F3F6852B256BB91D0090A6C0 /* HasPivotTouch.swift */,
+				F3F6852D256BB91D0090A6C0 /* HasRUI.swift */,
+				F3F68527256BB91D0090A6C0 /* RealityUI.swift */,
+				F3F6852C256BB91D0090A6C0 /* RUIButton.swift */,
+				F3F68528256BB91D0090A6C0 /* RUILongTouchGestureRecognizer.swift */,
+				F3F6852F256BB91D0090A6C0 /* RUISlider.swift */,
+				F3F68529256BB91D0090A6C0 /* RUIStepper.swift */,
+				F3F6852A256BB91D0090A6C0 /* RUISwitch.swift */,
+				F3F68526256BB91D0090A6C0 /* RUIText.swift */,
+			);
+			path = RealityUI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -93,7 +129,6 @@
 			name = "RealityUI+Examples";
 			packageProductDependencies = (
 				F34141B02471A595006B1ECA /* ShowTime */,
-				F37D9C9D2482E88200AF5A5F /* RealityUI */,
 			);
 			productName = "RealityUI+Examples";
 			productReference = F341418D246FF53E006B1ECA /* RealityUI+Examples.app */;
@@ -125,7 +160,6 @@
 			mainGroup = F3414184246FF53E006B1ECA;
 			packageReferences = (
 				F34141AF2471A595006B1ECA /* XCRemoteSwiftPackageReference "ShowTime" */,
-				F37D9C9C2482E88200AF5A5F /* XCRemoteSwiftPackageReference "/" */,
 			);
 			productRefGroup = F341418E246FF53E006B1ECA /* Products */;
 			projectDirPath = "";
@@ -174,11 +208,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3F68534256BB91D0090A6C0 /* RUISwitch.swift in Sources */,
+				F3F68532256BB91D0090A6C0 /* RUILongTouchGestureRecognizer.swift in Sources */,
+				F3F68533256BB91D0090A6C0 /* RUIStepper.swift in Sources */,
+				F3F68538256BB91D0090A6C0 /* HasClick.swift in Sources */,
+				F3F68539256BB91D0090A6C0 /* RUISlider.swift in Sources */,
 				F38598C2247AE28F007BBC88 /* Entity+Extensions.swift in Sources */,
 				F3414193246FF53E006B1ECA /* ViewController.swift in Sources */,
+				F3F68531256BB91D0090A6C0 /* RealityUI.swift in Sources */,
+				F3F68536256BB91D0090A6C0 /* RUIButton.swift in Sources */,
+				F3F68537256BB91D0090A6C0 /* HasRUI.swift in Sources */,
+				F3F68535256BB91D0090A6C0 /* HasPivotTouch.swift in Sources */,
 				F3DB9D81247D8BF8006D6CE5 /* ViewController+NonRealityUI.swift in Sources */,
 				F301D8A8247A62ED004AE1FA /* ViewController+RealityControls.swift in Sources */,
 				F3414191246FF53E006B1ECA /* AppDelegate.swift in Sources */,
+				F3F68530256BB91D0090A6C0 /* RUIText.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,6 +365,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -338,6 +383,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -376,14 +422,6 @@
 				minimumVersion = 2.5.2;
 			};
 		};
-		F37D9C9C2482E88200AF5A5F /* XCRemoteSwiftPackageReference "/" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "file://../";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -391,11 +429,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F34141AF2471A595006B1ECA /* XCRemoteSwiftPackageReference "ShowTime" */;
 			productName = ShowTime;
-		};
-		F37D9C9D2482E88200AF5A5F /* RealityUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F37D9C9C2482E88200AF5A5F /* XCRemoteSwiftPackageReference "/" */;
-			productName = RealityUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

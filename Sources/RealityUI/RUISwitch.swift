@@ -152,7 +152,7 @@ public extension HasSwitch {
   var onColor: Material.Color { self.switchness.onColor }
   var offColor: Material.Color { self.switchness.offColor }
   private var togglePos: SIMD3<Float> {
-    [(isOn ? 1 : -1) * (self.switchness.length - 1)/2, 0, 0]
+    [(isOn ? -1 : 1) * (self.switchness.length - 1)/2, 0, 0]
   }
   private var thumbColor: Material.Color {
     self.switchness.thumbColor

@@ -57,16 +57,16 @@ open class RUIText: Entity, HasText, HasClick {
 }
 
 public struct TextComponent: Component {
-  var text: String? = nil
-  var font: MeshResource.Font = .systemFont(ofSize: 0.1)
-  var width: CGFloat = 0
-  var height: CGFloat = 0
+  public var text: String? = nil
+  public var font: MeshResource.Font = .systemFont(ofSize: 0.1)
+  public var width: CGFloat = 0
+  public var height: CGFloat = 0
   #if os(iOS)
-  var color: Material.Color = .label
+  public var color: Material.Color = .label
   #elseif os(macOS)
-  var color: Material.Color = .labelColor
+  public var color: Material.Color = .labelColor
   #endif
-  var extrusion: Float = 1
+  public var extrusion: Float = 1
 
   enum UIPart: String {
     case textEntity
@@ -131,12 +131,12 @@ public extension HasText {
     guard let textModel = self.textModel else {
       return
     }
-    let textSize = textModel.mesh.bounds.extents
+//    let textSize = textModel.mesh.bounds.extents
     let textOffset = -textModel.mesh.bounds.center
     self.getModel(part: .textEntity)?.position = [
       -textOffset.x,
       textOffset.y,
-      -textSize.z / 2
+      0 // textSize.z / 2
     ]
     self.updateCollision()
   }

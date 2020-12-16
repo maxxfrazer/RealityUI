@@ -107,9 +107,19 @@ public extension HasText {
     self.addModel(part: part.rawValue)
   }
 
-  func updateMaterials() {
-    self.getModel(part: .textEntity)?.model?.materials = [self.getMaterial(with: self.textComponent.color)]
+  internal func getMaterials(
+    for part: TextComponent.UIPart
+  ) -> [Material] {
+    switch part {
+    case .textEntity:
+        return [self.getMaterial(with: self.textComponent.color)]
+    }
   }
+
+  func updateMaterials() {
+    self.getModel(part: .textEntity)?.model?.materials = self.getMaterials(for: .textEntity)
+  }
+
   func setText(_ text: String?) {
     guard let text = text else {
       self.getModel(part: .textEntity)?.model = nil
@@ -126,7 +136,10 @@ public extension HasText {
       lineBreakMode: .byWordWrapping
     )
 
-    self.textModel = ModelComponent(mesh: textMesh, materials: [SimpleMaterial(color: self.textComponent.color, isMetallic: false)])
+    self.textModel = ModelComponent(
+        mesh: textMesh,
+        materials: [SimpleMaterial(color: self.textComponent.color, isMetallic: false)]
+    )
     self.getModel(part: .textEntity)?.model = self.textModel
     guard let textModel = self.textModel else {
       return

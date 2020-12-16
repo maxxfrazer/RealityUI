@@ -11,7 +11,7 @@ import RealityKit
 /// A  RealityUI Button to be added to a RealityKit scene.
 public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 
-  public var collisionPlane: float4x4? = nil
+  public var collisionPlane: float4x4?
 
   public var touchUpCompleted: ((HasButton) -> Void)?
 
@@ -28,6 +28,7 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
     super.init()
     self.RUI = RUI ?? RUIComponent()
     self.button = button ?? ButtonComponent()
+    self.ruiOrientation()
     self.makeModels()
   }
 

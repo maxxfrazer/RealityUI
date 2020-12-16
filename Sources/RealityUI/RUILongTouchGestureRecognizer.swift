@@ -262,7 +262,7 @@ extension RUILongTouchGestureRecognizer {
 }
 #endif
 
-fileprivate extension SIMD where Self.Scalar : FloatingPoint {
+fileprivate extension SIMD where Self.Scalar: FloatingPoint {
     var magnitude: Self.Scalar {
         var sqSum: Self.Scalar = 0
         for indice in self.indices {

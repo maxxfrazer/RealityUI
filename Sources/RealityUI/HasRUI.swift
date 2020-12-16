@@ -93,6 +93,11 @@ internal extension HasRUI {
   func getModel(part: String) -> ModelEntity? {
     self.findEntity(named: part) as? ModelEntity
   }
+  func ruiOrientation() {
+    if let startOrient = RealityUI.startingOrientation {
+      self.orientation = startOrient
+    }
+  }
   func addModel(part: String) -> ModelEntity {
     if let modelPart = self.getModel(part: part) {
       return modelPart

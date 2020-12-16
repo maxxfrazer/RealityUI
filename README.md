@@ -22,8 +22,6 @@ The User Interface controls in this repository so far are made to be familiar to
 - Swift 5.2
 - Xcode 11
 
-RUISlider gestures are not working with macOS currently.
-
 ## Content
 
 - [Installation](#installation)

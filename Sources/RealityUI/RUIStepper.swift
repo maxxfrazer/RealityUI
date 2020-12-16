@@ -36,6 +36,7 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     super.init()
     self.RUI = RUI ?? RUIComponent()
     self.stepper = stepper ?? StepperComponent()
+    self.ruiOrientation()
     self.makeModels()
     self.upTrigger = upTrigger
     self.downTrigger = downTrigger

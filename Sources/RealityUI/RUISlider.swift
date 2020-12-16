@@ -31,6 +31,7 @@ public class RUISlider: Entity, HasSlider, HasModel {
     super.init()
     self.RUI = RUI ?? RUIComponent()
     self.slider = slider ?? SliderComponent()
+    self.ruiOrientation()
     self.makeModels()
     self.setPercent(to: self.slider.value)
     self.updateCollision()

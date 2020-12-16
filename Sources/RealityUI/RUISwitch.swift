@@ -34,7 +34,8 @@ public class RUISwitch: Entity, HasSwitch, HasClick {
     super.init()
     self.RUI = RUI ?? RUIComponent()
     self.switchness = switchness ?? SwitchComponent()
-    makeModels()
+    self.ruiOrientation()
+    self.makeModels()
     self.switchChanged = changedCallback
   }
 

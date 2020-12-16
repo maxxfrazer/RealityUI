@@ -23,6 +23,7 @@ import Combine
   public static func registerComponents() {
     RealityUI.shared.logActivated()
   }
+  public static var startingOrientation: simd_quatf?
   public static var longGestureMask: CollisionGroup = .all
   public static var tapGestureMask: CollisionGroup = .all
   private func logActivated() {
@@ -105,9 +106,6 @@ import Combine
     self.installedGestures[arView]?.append(addUITapGesture)
   }
   private func addLongTouch(to arView: ARView) {
-    #if os(macOS)
-    RealityUI.RUIPrint("RealityUI: long touch gesture not fully working on macOS")
-    #endif
     let longTouchGesture = RUILongTouchGestureRecognizer(
       target: self, action: #selector(self.arTouchReco),
       view: arView

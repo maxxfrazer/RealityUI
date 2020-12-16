@@ -42,6 +42,7 @@ open class RUIText: Entity, HasText, HasClick {
     super.init()
     self.RUI = RUI
     self.textComponent = textComponent ?? TextComponent()
+    self.ruiOrientation()
     self.makeModels()
   }
 
@@ -57,7 +58,7 @@ open class RUIText: Entity, HasText, HasClick {
 }
 
 public struct TextComponent: Component {
-  public var text: String? = nil
+  public var text: String?
   public var font: MeshResource.Font = .systemFont(ofSize: 0.1)
   public var width: CGFloat = 0
   public var height: CGFloat = 0
@@ -105,7 +106,6 @@ public extension HasText {
   internal func addModel(part: TextComponent.UIPart) -> ModelEntity {
     self.addModel(part: part.rawValue)
   }
-
 
   func updateMaterials() {
     self.getModel(part: .textEntity)?.model?.materials = [self.getMaterial(with: self.textComponent.color)]
@@ -157,6 +157,23 @@ public extension HasText {
 }
 
 extension RUIText {
+  #if os(iOS)
+  /// Used as default larger text to be displayed in the scene
+  static public var largeFont = MeshResource.Font(
+    descriptor: .init(
+      name: "Helvetica",
+      size: 1),
+    size: MeshResource.Font.systemFontSize / 20
+  )
+
+  /// Used as default medium text to be displayed in the scene
+  static public var mediumFont = MeshResource.Font(
+    descriptor: .init(
+      name: "Helvetica",
+      size: 1),
+    size: MeshResource.Font.systemFontSize / 28
+  )
+  #elseif os(macOS)
   /// Used as default larger text to be displayed in the scene
   static public var largeFont = MeshResource.Font(
     descriptor: .init(
@@ -172,4 +189,5 @@ extension RUIText {
       size: 1),
     size: MeshResource.Font.systemFontSize / 28
   ) ?? MeshResource.Font.systemFont(ofSize: MeshResource.Font.systemFontSize / 28)
+  #endif
 }

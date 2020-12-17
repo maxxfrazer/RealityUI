@@ -8,17 +8,11 @@
 
 import RealityKit
 import Combine
-#if os(iOS)
-import UIKit
-#elseif os(macOS)
-import AppKit
-#endif
 
 /// A new RealityUI Stepper to be added to your RealityKit scene.
 public class RUIStepper: Entity, HasRUI, HasStepper {
-  public var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = {
-    clicker, worldPos in
-      (clicker as? HasStepper)?.stepperTap(clicker: clicker, worldTapPos: worldPos)
+  public var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = { clicker, worldPos in
+    (clicker as? HasStepper)?.stepperTap(clicker: clicker, worldTapPos: worldPos)
   }
 
   // Consider changing to 1 function
@@ -41,6 +35,7 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     super.init()
     self.RUI = RUI ?? RUIComponent()
     self.stepper = stepper ?? StepperComponent()
+    self.ruiOrientation()
     self.makeModels()
     self.upTrigger = upTrigger
     self.downTrigger = downTrigger
@@ -189,9 +184,9 @@ internal extension HasStepper {
 
   fileprivate func makeModels() {
     let rightModel = self.addModel(part: .right)
-    rightModel.position.x = 0.5
+    rightModel.position.x = -0.5
     let leftModel = self.addModel(part: .left)
-    leftModel.position.x = -0.5
+    leftModel.position.x = 0.5
     switch self.style {
     case .minusPlus:
       rightModel.model =  ModelComponent(
@@ -224,44 +219,45 @@ internal extension HasStepper {
   private func addArrowModels(_ leftModel: ModelEntity, _ rightModel: ModelEntity) {
     // Setup parameters
     let turnAngle: Float = .pi / 6
-    let sinAng: Float = sin(turnAngle)
-    let partLen: Float = (0.7 / 2) / cos(turnAngle)
+    let partLen: Float = (0.7 / 2)
     let partThickness = partLen * 0.2
-    let yDist = 0.2 - (sinAng * partThickness)
+    let hCorner = hypot(partLen / 2, partThickness / 2)
+    let ang2 = atan2(partThickness / 2, partLen / 2)
+    let yDist = hCorner * cos(turnAngle + ang2)
 
     if self.style == .arrowDownUp {
       leftModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
       rightModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
     }
 
-    let rightSubModel1 = ModelEntity(mesh: .generateBox(
+    let leftSubModel1 = ModelEntity(
+      mesh: .generateBox(
         size: [partThickness, partLen, partThickness],
         cornerRadius: partThickness * 0.25
       ), materials: []
     )
-    rightSubModel1.transform = Transform(
+    leftSubModel1.transform = Transform(
       scale: .one, rotation: .init(angle: turnAngle, axis: [0, 0, 1]),
       translation: [0, yDist, 0]
     )
 
-    let rightSubModel2 = ModelEntity()
-    rightSubModel2.model = rightSubModel1.model
+    let leftSubModel2 = ModelEntity()
+    leftSubModel2.model = leftSubModel1.model
 
-    rightSubModel2.transform = Transform(
+    leftSubModel2.transform = Transform(
       scale: .one, rotation: .init(angle: -turnAngle, axis: [0, 0, 1]),
       translation: [0, -yDist, 0]
     )
 
-    let leftSubModel1 = rightSubModel2.clone(recursive: true)
-    leftSubModel1.position.y = yDist
-    let leftSubModel2 = rightSubModel1.clone(recursive: true)
-    leftSubModel2.position.y = -yDist
+    let rightSubModel1 = leftSubModel2.clone(recursive: true)
+    rightSubModel1.position.y = yDist
+    let rightSubModel2 = leftSubModel1.clone(recursive: true)
+    rightSubModel2.position.y = -yDist
 
-    rightModel.addChild(rightSubModel1)
-    rightModel.addChild(rightSubModel2)
     leftModel.addChild(leftSubModel1)
     leftModel.addChild(leftSubModel2)
-
+    rightModel.addChild(rightSubModel1)
+    rightModel.addChild(rightSubModel2)
   }
 
   func stepperTap(clicker: HasClick, worldTapPos: SIMD3<Float>?) {
@@ -273,7 +269,7 @@ internal extension HasStepper {
       }
       let localPos = stepperObj.convert(position: tapPos, from: nil)
 
-      if localPos.x < 0 {
+      if localPos.x > 0 {
         if let downModel = stepperObj.getModel(part: .left) {
           stepperObj.springAnimate(entity: downModel)
         }

@@ -44,12 +44,14 @@ public struct PivotComponent: Component {
   internal var lastTouchAngle: Float?
   internal var lastGlobalPosition: SIMD3<Float> = .zero
   public var pivotAxis: SIMD3<Float>
-  public init(pivot: SIMD3<Float> = [0, 1, 0]) {
-    self.pivotAxis = pivot
+  public var maxPivotDistance: Float?
+  public init(pivotAxis: SIMD3<Float> = [0, 1, 0], maxPivotDistance: Float? = nil) {
+    self.pivotAxis = pivotAxis
+    self.maxPivotDistance = maxPivotDistance
   }
 }
 
-internal extension HasPivotTouch {
+public extension HasPivotTouch {
   var pivotRotation: simd_quatf {
     simd_quaternion(self.pivotAxis, [0, 1, 0])
   }
@@ -61,7 +63,13 @@ internal extension HasPivotTouch {
     get { self.pivotTouch.pivotAxis }
     set { self.pivotTouch.pivotAxis = newValue }
   }
-  var lastGlobalPosition: SIMD3<Float> {
+
+  /// Maximum distance away from the center of the object where the pivot touch is active
+  var maxPivotDistance: Float? {
+    get { self.pivotTouch.maxPivotDistance }
+    set { self.pivotTouch.maxPivotDistance = newValue }
+  }
+  internal var lastGlobalPosition: SIMD3<Float> {
     get { self.pivotTouch.lastGlobalPosition }
     set { self.pivotTouch.lastGlobalPosition = newValue }
   }

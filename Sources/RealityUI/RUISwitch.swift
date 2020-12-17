@@ -7,11 +7,6 @@
 //
 
 import RealityKit
-#if os(iOS)
-import UIKit
-#elseif os(macOS)
-import AppKit
-#endif
 
 /// A  RealityUI Switch to be added to a RealityKit scene.
 public class RUISwitch: Entity, HasSwitch, HasClick {
@@ -39,7 +34,8 @@ public class RUISwitch: Entity, HasSwitch, HasClick {
     super.init()
     self.RUI = RUI ?? RUIComponent()
     self.switchness = switchness ?? SwitchComponent()
-    makeModels()
+    self.ruiOrientation()
+    self.makeModels()
     self.switchChanged = changedCallback
   }
 
@@ -48,7 +44,7 @@ public class RUISwitch: Entity, HasSwitch, HasClick {
   }
 }
 
-public protocol HasSwitch: HasClick {
+public protocol HasSwitch: HasRUI {
   var switchChanged: ((HasSwitch) -> Void)? { get set }
 }
 
@@ -157,7 +153,7 @@ public extension HasSwitch {
   var onColor: Material.Color { self.switchness.onColor }
   var offColor: Material.Color { self.switchness.offColor }
   private var togglePos: SIMD3<Float> {
-    [(isOn ? 1 : -1) * (self.switchness.length - 1)/2, 0, 0]
+    [(isOn ? -1 : 1) * (self.switchness.length - 1)/2, 0, 0]
   }
   private var thumbColor: Material.Color {
     self.switchness.thumbColor
@@ -190,7 +186,7 @@ public extension HasSwitch {
     let thumb = self.addModel(part: .thumb)
     thumb.model = ModelComponent(mesh: .generateSphere(radius: (1 - padding) / 2), materials: [])
     thumb.position = togglePos
-    self.collision = CollisionComponent(
+    (self as? HasCollision)?.collision = CollisionComponent(
       shapes: [ShapeResource.generateCapsule(height: 2, radius: 0.5)
         .offsetBy(rotation: simd_quatf(angle: .pi/2, axis: [0, 0, 1]))
       ]

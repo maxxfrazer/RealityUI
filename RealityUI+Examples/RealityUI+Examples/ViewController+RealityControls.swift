@@ -10,7 +10,7 @@ import RealityKit
 import Foundation
 import Combine
 
-import RealityUI
+//import RealityUI
 
 class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouch {
   func updateMaterials() {}
@@ -22,6 +22,7 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouc
     self.anchoring = AnchoringComponent(.plane(
       .horizontal, classification: .any, minimumBounds: [0.5, 0.5]
     ))
+    self.maxPivotDistance = 0.75
     self.addControls()
     /// Uncomment this to try out HasPivotTouch, but it's still in an experimental stage.
     if let rotateImg = try? TextureResource.load(named: "rotato") {
@@ -46,7 +47,7 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouc
     )
     button.transform = Transform(
       scale: .init(repeating: 0.2),
-      rotation: simd_quatf(angle: -.pi / 2, axis: [1, 0, 0]),
+      rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0]),
       translation: .zero
     )
     self.addChild(button)
@@ -59,37 +60,37 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouc
       }
     })
     toggle.transform = Transform(
-      scale: .init(repeating: 0.15), rotation: .init(), translation: [0, 0.25, -0.25]
+      scale: .init(repeating: 0.15), rotation: .init(angle: .pi, axis: [0, 1, 0]), translation: [0, 0.25, -0.25]
     )
     self.addChild(toggle)
 
     let slider = RUISlider(slider: SliderComponent(startingValue: 0.5, steps: 0)) { (slider, _) in
-      for child in self.tumblingCubes {
-        child.scale = .init(repeating: slider.value + 0.5)
-      }
+      self.tumblingCubes.forEach { $0.scale = .init(repeating: slider.value + 0.5)}
     }
-    slider.transform = Transform(scale: .init(repeating: 0.1), rotation: .init(), translation: [0, 1.15, -0.25])
+    slider.transform = Transform(
+      scale: .init(repeating: 0.1),
+      rotation: .init(angle: .pi, axis: [0, 1, 0]),
+      translation: [0, 1.15, -0.25]
+    )
     self.addChild(slider)
 
     let minusPlusStepper = RUIStepper(upTrigger: { _ in
       if self.tumblingCubes.count <= 8 {
         self.spawnShape(with: SIMD3<Float>(repeating: slider.value + 0.5))
       }
-    }, downTrigger: { _ in
-      self.removeCube()
-    })
+    }, downTrigger: { _ in self.removeCube() })
     minusPlusStepper.transform = Transform(
-      scale: .init(repeating: 0.15), rotation: .init(), translation: [-0.5, 0.25, -0.25]
+      scale: .init(repeating: 0.15), rotation: .init(angle: .pi, axis: [0, 1, 0]), translation: [-0.5, 0.25, -0.25]
     )
     self.addChild(minusPlusStepper)
 
-    let shapeStepper = RUIStepper(style: .arrowLeftRight, upTrigger: { stepper in
-      self.shiftShape(1, on: stepper)
-    }, downTrigger: { stepper in
-      self.shiftShape(-1, on: stepper)
-    })
+    let shapeStepper = RUIStepper(
+      style: .arrowLeftRight,
+      upTrigger: { stepper in self.shiftShape(1, on: stepper) },
+      downTrigger: { stepper in self.shiftShape(-1, on: stepper) }
+    )
     shapeStepper.transform = Transform(
-      scale: .init(repeating: 0.15), rotation: .init(), translation: [0.5, 0.25, -0.25]
+      scale: .init(repeating: 0.15), rotation: .init(angle: .pi, axis: [0, 1, 0]), translation: [0.5, 0.25, -0.25]
     )
     self.addChild(shapeStepper)
     self.shiftShape(0, on: shapeStepper)
@@ -113,21 +114,22 @@ extension ViewController {
     var anchorFoundCallback: Cancellable?
     anchorFoundCallback = self.arView.scene.subscribe(
       to: SceneEvents.AnchoredStateChanged.self, on: controlsAnchor, { anchorEvent in
-      if anchorEvent.isAnchored {
-        controlsAnchor.entityAnchored()
-        if ViewController.letRotate {
-          let visBounds = controlsAnchor.visualBounds(relativeTo: controlsAnchor)
-          print(visBounds.center)
-          controlsAnchor.collision = CollisionComponent(shapes: [
-            ShapeResource.generateBox(size: visBounds.extents * 1.1).offsetBy(translation: visBounds.center)
-          ])
-          self.arView.installGestures(.rotation, for: controlsAnchor)
-        }
-        DispatchQueue.main.async {
-          anchorFoundCallback?.cancel()
+        if anchorEvent.isAnchored {
+          controlsAnchor.entityAnchored()
+          if ViewController.letRotate {
+            let visBounds = controlsAnchor.visualBounds(relativeTo: controlsAnchor)
+            controlsAnchor.collision = CollisionComponent(shapes: [
+              ShapeResource.generateBox(size: visBounds.extents * 1.1).offsetBy(translation: visBounds.center)
+            ])
+            self.arView.installGestures(.rotation, for: controlsAnchor)
+          }
+          DispatchQueue.main.async { anchorFoundCallback?.cancel() }
         }
       }
-    })
+    )
     self.arView.scene.addAnchor(controlsAnchor)
+    let textAbove = RUIText(with: "RealityUI")
+    textAbove.look(at: [0, 1.5, 0], from: [0, 1.5, -1], relativeTo: nil)
+    controlsAnchor.addChild(textAbove)
   }
 }

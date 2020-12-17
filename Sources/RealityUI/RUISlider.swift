@@ -31,6 +31,7 @@ public class RUISlider: Entity, HasSlider, HasModel {
     super.init()
     self.RUI = RUI ?? RUIComponent()
     self.slider = slider ?? SliderComponent()
+    self.ruiOrientation()
     self.makeModels()
     self.setPercent(to: self.slider.value)
     self.updateCollision()
@@ -61,12 +62,12 @@ public class RUISlider: Entity, HasSlider, HasModel {
 
   public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
     let localPos = self.convert(position: worldCoordinate, from: nil)
-    self.panGestureOffset = self.value - (localPos.x / self.sliderLength + 1 / 2)
+    self.panGestureOffset = self.value - (0.5 - localPos.x / self.sliderLength)
     self.sliderUpdated?(self, .started)
   }
   public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
     let localPos = self.convert(position: worldCoordinate, from: nil)
-    var newPercent = (localPos.x / self.sliderLength + 1 / 2) + self.panGestureOffset
+    var newPercent = (0.5 - localPos.x / self.sliderLength) + self.panGestureOffset
     self.clampSlideValue(&newPercent)
     if self.value == newPercent {
       return
@@ -205,11 +206,11 @@ public extension HasSlider {
   private func getSliderPosition(for part: SliderComponent.UIPart) -> SIMD3<Float> {
     switch part {
     case .fill:
-      return [(self.value / 2 - 0.5) * self.sliderLength, 0, 0]
+      return [(0.5 - self.value / 2) * self.sliderLength, 0, 0]
     case .thumb:
-      return [(-0.5 + self.value) * self.sliderLength, 0, 0]
+      return [(0.5 - self.value) * self.sliderLength, 0, 0]
     case .empty:
-      return [(self.value / 2) * self.sliderLength, 0, 0]
+      return [-self.value / 2 * self.sliderLength, 0, 0]
     }
   }
 

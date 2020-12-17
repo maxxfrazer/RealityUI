@@ -7,11 +7,6 @@
 //
 
 import RealityKit
-#if os(iOS)
-import UIKit
-#elseif os(macOS)
-import AppKit
-#endif
 
 public protocol HasClick: HasRUI, HasCollision {
   var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? {get set}

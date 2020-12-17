@@ -7,11 +7,13 @@
 //
 
 import RealityKit
+import Foundation
 #if os(iOS)
-import UIKit
+import UIKit.UIGestureRecognizer
 #elseif os(macOS)
 import AppKit
 #endif
+
 import Combine
 
 @objc public class RealityUI: NSObject {
@@ -21,6 +23,7 @@ import Combine
   public static func registerComponents() {
     RealityUI.shared.logActivated()
   }
+  public static var startingOrientation: simd_quatf?
   public static var longGestureMask: CollisionGroup = .all
   public static var tapGestureMask: CollisionGroup = .all
   private func logActivated() {
@@ -66,7 +69,8 @@ import Combine
     SwitchComponent.self,
     StepperComponent.self,
     SliderComponent.self,
-    PivotComponent.self
+    PivotComponent.self,
+    TextComponent.self
   ]
 
   internal static var shared = RealityUI()
@@ -102,9 +106,6 @@ import Combine
     self.installedGestures[arView]?.append(addUITapGesture)
   }
   private func addLongTouch(to arView: ARView) {
-    #if os(macOS)
-    RealityUI.RUIPrint("RealityUI: long touch gesture not fully working on macOS")
-    #endif
     let longTouchGesture = RUILongTouchGestureRecognizer(
       target: self, action: #selector(self.arTouchReco),
       view: arView

@@ -22,8 +22,6 @@ The User Interface controls in this repository so far are made to be familiar to
 - Swift 5.2
 - Xcode 11
 
-RUISlider gestures are not working with macOS currently.
-
 ## Content
 
 - [Installation](#installation)
@@ -68,7 +66,7 @@ RUISlider uses `.pan`, but I would just recommend using `.all` to avoid issues, 
 
 For the sake of all these examples, the _Simple_ heading will create an Entity with no custom properties or callbacks, and for _Functional_, imagine there is a `ModelEntity` in the scene which we can reference from the variable `adjustmentCuboid`.
 
-By default all RealityUI Entities are quite large. This is used to standardize the sizes so that you always know what to expect. For example, all UI thumbs are spheres with a diameter of 1 meter, which is 1 unit in RealityKit, ± any padding adjustments. All RealityUI Entities face `[0, 0, 1]` by default, in the same way as a ModelEntity with a [plane mesh](https://developer.apple.com/documentation/realitykit/meshresource/3244419-generateplane).
+By default all RealityUI Entities are quite large. This is used to standardize the sizes so that you always know what to expect. For example, all UI thumbs are spheres with a diameter of 1 meter, which is 1 unit in RealityKit, ± any padding adjustments. All RealityUI Entities face `[0, 0, -1]` by default. To have them point at the user camera, or `.zero`, you can use the [`.look(at:,from:,relativeTo:)`](https://developer.apple.com/documentation/realitykit/entity/3244094-look) method like so: `.look(at: .zero, from: [0, 0, 1])`. Or if you want it to turn around straight away if you've positioned it at `[0, 0, -1]`, set the orientation to `simd_quatf(angle: .pi, axis: [0, 1, 0])`. Using the [.look()](https://developer.apple.com/documentation/realitykit/entity/3244094-look) method works here by setting the `at:` value to the direction the button should be used from.
 
 ## RUISwitch Creation
 

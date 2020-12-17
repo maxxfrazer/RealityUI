@@ -100,10 +100,10 @@ public protocol HasTouchUpInside: HasARTouch {}
         touchInView, ontoPlane: collisionPlane
       ) {
         if let thisPivot = hitEntity as? HasPivotTouch, let maxDist = thisPivot.maxPivotDistance {
-            let convPoint = hitEntity.convert(position: planeCollisionPoint, from: nil)
-            if convPoint.magnitude > maxDist {
-                return
-            }
+          let convPoint = hitEntity.convert(position: planeCollisionPoint, from: nil)
+          if convPoint.magnitude > maxDist {
+            return
+          }
         }
         worldTouch = planeCollisionPoint
       } else {
@@ -263,11 +263,11 @@ extension RUILongTouchGestureRecognizer {
 #endif
 
 fileprivate extension SIMD where Self.Scalar: FloatingPoint {
-    var magnitude: Self.Scalar {
-        var sqSum: Self.Scalar = 0
-        for indice in self.indices {
-            sqSum += self[indice] * self[indice]
-        }
-        return sqrt(sqSum)
+  var magnitude: Self.Scalar {
+    var sqSum: Self.Scalar = 0
+    for indice in self.indices {
+      sqSum += self[indice] * self[indice]
     }
+    return sqrt(sqSum)
+  }
 }

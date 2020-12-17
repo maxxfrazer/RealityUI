@@ -60,7 +60,7 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouc
       }
     })
     toggle.transform = Transform(
-        scale: .init(repeating: 0.15), rotation: .init(angle: .pi, axis: [0, 1, 0]), translation: [0, 0.25, -0.25]
+      scale: .init(repeating: 0.15), rotation: .init(angle: .pi, axis: [0, 1, 0]), translation: [0, 0.25, -0.25]
     )
     self.addChild(toggle)
 
@@ -68,9 +68,9 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouc
       self.tumblingCubes.forEach { $0.scale = .init(repeating: slider.value + 0.5)}
     }
     slider.transform = Transform(
-        scale: .init(repeating: 0.1),
-        rotation: .init(angle: .pi, axis: [0, 1, 0]),
-        translation: [0, 1.15, -0.25]
+      scale: .init(repeating: 0.1),
+      rotation: .init(angle: .pi, axis: [0, 1, 0]),
+      translation: [0, 1.15, -0.25]
     )
     self.addChild(slider)
 
@@ -114,21 +114,19 @@ extension ViewController {
     var anchorFoundCallback: Cancellable?
     anchorFoundCallback = self.arView.scene.subscribe(
       to: SceneEvents.AnchoredStateChanged.self, on: controlsAnchor, { anchorEvent in
-      if anchorEvent.isAnchored {
-        controlsAnchor.entityAnchored()
-        if ViewController.letRotate {
-          let visBounds = controlsAnchor.visualBounds(relativeTo: controlsAnchor)
-          print(visBounds.center)
-          controlsAnchor.collision = CollisionComponent(shapes: [
-            ShapeResource.generateBox(size: visBounds.extents * 1.1).offsetBy(translation: visBounds.center)
-          ])
-          self.arView.installGestures(.rotation, for: controlsAnchor)
-        }
-        DispatchQueue.main.async {
-          anchorFoundCallback?.cancel()
+        if anchorEvent.isAnchored {
+          controlsAnchor.entityAnchored()
+          if ViewController.letRotate {
+            let visBounds = controlsAnchor.visualBounds(relativeTo: controlsAnchor)
+            controlsAnchor.collision = CollisionComponent(shapes: [
+              ShapeResource.generateBox(size: visBounds.extents * 1.1).offsetBy(translation: visBounds.center)
+            ])
+            self.arView.installGestures(.rotation, for: controlsAnchor)
+          }
+          DispatchQueue.main.async { anchorFoundCallback?.cancel() }
         }
       }
-    })
+    )
     self.arView.scene.addAnchor(controlsAnchor)
     let textAbove = RUIText(with: "RealityUI")
     textAbove.look(at: [0, 1.5, 0], from: [0, 1.5, -1], relativeTo: nil)

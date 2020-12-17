@@ -12,7 +12,7 @@ import Combine
 /// A new RealityUI Stepper to be added to your RealityKit scene.
 public class RUIStepper: Entity, HasRUI, HasStepper {
   public var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = { clicker, worldPos in
-      (clicker as? HasStepper)?.stepperTap(clicker: clicker, worldTapPos: worldPos)
+    (clicker as? HasStepper)?.stepperTap(clicker: clicker, worldTapPos: worldPos)
   }
 
   // Consider changing to 1 function
@@ -230,7 +230,8 @@ internal extension HasStepper {
       rightModel.orientation = simd_quatf(angle: .pi / 2, axis: [0, 0, -1])
     }
 
-    let leftSubModel1 = ModelEntity(mesh: .generateBox(
+    let leftSubModel1 = ModelEntity(
+      mesh: .generateBox(
         size: [partThickness, partLen, partThickness],
         cornerRadius: partThickness * 0.25
       ), materials: []

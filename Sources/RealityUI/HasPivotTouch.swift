@@ -45,7 +45,7 @@ public struct PivotComponent: Component {
   internal var lastGlobalPosition: SIMD3<Float> = .zero
   public var pivotAxis: SIMD3<Float>
   public var maxPivotDistance: Float?
-    public init(pivotAxis: SIMD3<Float> = [0, 1, 0], maxPivotDistance: Float? = nil) {
+  public init(pivotAxis: SIMD3<Float> = [0, 1, 0], maxPivotDistance: Float? = nil) {
     self.pivotAxis = pivotAxis
     self.maxPivotDistance = maxPivotDistance
   }

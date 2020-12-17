@@ -112,7 +112,7 @@ public extension HasText {
   ) -> [Material] {
     switch part {
     case .textEntity:
-        return [self.getMaterial(with: self.textComponent.color)]
+      return [self.getMaterial(with: self.textComponent.color)]
     }
   }
 
@@ -137,8 +137,8 @@ public extension HasText {
     )
 
     self.textModel = ModelComponent(
-        mesh: textMesh,
-        materials: [SimpleMaterial(color: self.textComponent.color, isMetallic: false)]
+      mesh: textMesh,
+      materials: [SimpleMaterial(color: self.textComponent.color, isMetallic: false)]
     )
     self.getModel(part: .textEntity)?.model = self.textModel
     guard let textModel = self.textModel else {
@@ -164,7 +164,8 @@ public extension HasText {
     let visbounds = self.visualBounds(relativeTo: nil)
     selfCol.collision = CollisionComponent(
       shapes: [ShapeResource.generateBox(size: visbounds.extents)
-                .offsetBy(translation: visbounds.center)]
+                .offsetBy(translation: visbounds.center)
+      ]
     )
   }
 }

@@ -15,8 +15,9 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     (clicker as? HasStepper)?.stepperTap(clicker: clicker, worldTapPos: worldPos)
   }
 
-  // Consider changing to 1 function
+  /// Stepper's positive button has been pressed
   public var upTrigger: ((HasStepper) -> Void)?
+  /// Stepper's negative button has been pressed
   public var downTrigger: ((HasStepper) -> Void)?
 
   /// Creates a RealityUI Stepper entity with optional `StepperComponent`, `RUIComponent`,
@@ -41,6 +42,11 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     self.downTrigger = downTrigger
   }
 
+  /// Create a RUIStepper entity with default properties for a given style.
+  /// - Parameters:
+  ///   - style: Style for the new stepper.
+  ///   - upTrigger: Callback function to receive updates then the positive button has been clicked.
+  ///   - downTrigger: Callback function to receive updates then the negative button has been clicked.
   public convenience init(
     style: StepperComponent.Style,
     upTrigger: ((HasStepper) -> Void)? = nil,
@@ -49,6 +55,10 @@ public class RUIStepper: Entity, HasRUI, HasStepper {
     self.init(stepper: StepperComponent(style: style), upTrigger: upTrigger, downTrigger: downTrigger)
   }
 
+  /// Create a RUIStepper entity with the default style of `.plusMinus`.
+  /// - Parameters:
+  ///   - upTrigger: Callback function to receive updates then the plus button has been clicked.
+  ///   - downTrigger: Callback function to receive updates then the minus button has been clicked.
   public convenience init(
     upTrigger: ((HasStepper) -> Void)? = nil, downTrigger: ((HasStepper) -> Void)? = nil
   ) {
@@ -68,23 +78,29 @@ public struct StepperComponent: Component {
   internal var buttonTint: Material.Color
   /// Color of the second button inside a stepper. If nil, then buttonTint will be used.
   internal var secondButtonTint: Material.Color?
+  /// Style of the stepper.
   internal var style: Style
   internal enum UIPart: String {
     case right
     case left
     case background
   }
+  /// Stepper styles
   public enum Style {
+    /// Style of stepper with a + and - symbol
     case minusPlus
+    /// Style of stepper with a "〈" and "〉" symbol
     case arrowLeftRight
+    /// Style of stepper with up and down pointing symbols
     case arrowDownUp
   }
+  #if os(iOS)
   /// Create a StepperComponent for an RUIStepper object to add to your scene
   /// - Parameters:
+  ///   - style: Style of the stepper.
   ///   - backgroundTint: Background color of the stepper.
   ///   - buttonTint: Color of the buttons inside a stepper, default `.systemBlue`.
   ///   - secondaryTint: Color of the second button inside a stepper. If nil, then buttonTint will be used.
-  #if os(iOS)
   public init(
     style: StepperComponent.Style = .minusPlus,
     backgroundTint: Material.Color = .tertiarySystemBackground,
@@ -97,6 +113,12 @@ public struct StepperComponent: Component {
     self.secondButtonTint = secondaryTint
   }
   #elseif os(macOS)
+  /// Create a StepperComponent for an RUIStepper object to add to your scene
+  /// - Parameters:
+  ///   - style: Style of the stepper.
+  ///   - backgroundTint: Background color of the stepper, default `.windowBackgroundColor`
+  ///   - buttonTint: Color of the buttons inside a stepper, default `.systemBlue`.
+  ///   - secondaryTint: Color of the second button inside a stepper. If nil, then buttonTint will be used.
   public init(
     style: StepperComponent.Style = .minusPlus,
     backgroundTint: Material.Color = .windowBackgroundColor,
@@ -109,10 +131,14 @@ public struct StepperComponent: Component {
     self.secondButtonTint = secondaryTint
   }
   #endif
+  /// Create a StepperComponent with default properties of a given style
+  /// - Parameter style: Stepper style.
   public init(style: StepperComponent.Style) {
     self.init(style: style, secondaryTint: nil)
   }
 }
+
+/// An interface used for entities with mutliple click actions, like RUIStepper.
 public protocol HasStepper: HasClick {}
 
 public extension HasStepper {
@@ -136,10 +162,12 @@ public extension HasStepper {
     }
     self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)
   }
+  /// Stepper component, containing all properties relating to the rendering of the stepper.
   internal(set) var stepper: StepperComponent {
     get { self.components[StepperComponent.self] ?? StepperComponent() }
     set { self.components[StepperComponent.self] = newValue }
   }
+  /// Style of the stepper.
   internal(set) var style: StepperComponent.Style {
     get { self.stepper.style }
     set { self.stepper.style = newValue }

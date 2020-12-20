@@ -9,6 +9,7 @@
 import RealityKit
 import CoreGraphics
 
+/// A collection of properties for all RealityUI Entities.
 public struct RUIComponent: Component {
   /// A Boolean value indicating whether the RealityUI Entity is enabled.
   public internal(set) var ruiEnabled: Bool
@@ -25,6 +26,7 @@ public struct RUIComponent: Component {
   }
 }
 
+/// An interface used for all entities in the RealityUI package
 public protocol HasRUI: Entity {
   /// All RealityUI Entities should have a method for updating all the materials
   /// This is in case of disabling entities or changing their responsiveness to light.
@@ -52,11 +54,14 @@ public extension HasRUI {
     }
   }
 
+  /// Replace the current RUIComponent
+  /// - Parameter RUI: new RUIComponent
   func replaceRUI(with RUI: RUIComponent) {
     self.RUI = RUI
     self.materialsShouldChange()
   }
 
+  /// RealityUI Component for the entity.
   internal(set) var RUI: RUIComponent {
     get {
       if let ruiComp = self.components[RUIComponent.self] as? RUIComponent {

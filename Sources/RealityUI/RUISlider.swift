@@ -16,6 +16,9 @@ public class RUISlider: Entity, HasSlider, HasModel {
     return self.transformMatrix(relativeTo: nil)
       * float4x4(simd_quatf(angle: .pi / 2, axis: [1, 0, 0]))
   }
+  /// Called whenever the slider value updates.
+  /// set isContinuous to `true` to get every change,
+  /// `false` to just get start and end on each gesture.
   public var sliderUpdated: ((HasSlider, SliderComponent.SlidingState) -> Void)?
 
   /// Creates a RealityUI Slider entity with optional `SliderComponent`, `RUIComponent` and `updateCallback`.
@@ -37,6 +40,13 @@ public class RUISlider: Entity, HasSlider, HasModel {
     self.updateCollision()
   }
 
+  /// Creates a RealityUI Slider entity with default visual appearance
+  /// - Parameters:
+  ///   - length: Length of the slider. The default for RUISlider is 10m.
+  ///   - start: Starting value for the slider.
+  ///   - steps: An Integer value indicating how many steps the slider should have.
+  ///            0 is fluid, 1 has only lowest and highest steps
+  ///   - updateCallback: Callback function to receive updates on slider value changes.
   public convenience init(
     length: Float, start: Float, steps: Int,
     updateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? = nil
@@ -46,6 +56,11 @@ public class RUISlider: Entity, HasSlider, HasModel {
       updateCallback: updateCallback)
   }
 
+  /// Creates a RealityUI Slider entity with default visual appearance
+  /// - Parameters:
+  ///   - length: Length of the slider. The default for RUISlider is 10m.
+  ///   - start: Starting value for the slider.
+  ///   - updateCallback: Callback function to receive updates on slider value changes.
   required public convenience init(
     length: Float, start: Float = 0,
     updateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? = nil
@@ -56,15 +71,24 @@ public class RUISlider: Entity, HasSlider, HasModel {
     )
   }
 
+  /// Create an RUISlider with default configurations
   required public convenience init() {
     self.init(length: 10)
   }
 
+  /// Called when a new touch has begun on an Entity
+  /// - Parameters:
+  ///   - worldCoordinate: Collision of the object or collision plane
+  ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
   public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
     let localPos = self.convert(position: worldCoordinate, from: nil)
     self.panGestureOffset = self.value - (0.5 - localPos.x / self.sliderLength)
     self.sliderUpdated?(self, .started)
   }
+  /// Called when a touch is still on screen or a mouse is still down.
+  /// - Parameters:
+  ///   - worldCoordinate: Where is the touch currently hits in world space
+  ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
   public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
     let localPos = self.convert(position: worldCoordinate, from: nil)
     var newPercent = (0.5 - localPos.x / self.sliderLength) + self.panGestureOffset
@@ -92,31 +116,36 @@ public class RUISlider: Entity, HasSlider, HasModel {
 /// A collection of resources that create the visual appearance a RealityUI Slider, `RUISlider`.
 public struct SliderComponent: Component {
   /// Length of the slider. The default is 10m.
-  var length: Float
-  /// The slider's current value.
-  var value: Float
+  public internal(set) var length: Float
+  /// The slider's current value. Ranges from 0 to 1.
+  public internal(set) var value: Float
   /// The color set to the material on the left side of the slider. Default `.systemBlue`
-  var minTrackColor: Material.Color
+  public internal(set) var minTrackColor: Material.Color
   /// The color set to the material on the right side of the slider. Default `.systemGray`
-  var maxTrackColor: Material.Color
+  public internal(set) var maxTrackColor: Material.Color
   /// The color set to the material of the thumb. Default `.white`
-  var thumbColor: Material.Color
+  public internal(set) var thumbColor: Material.Color
   /// A Boolean value indicating whether changes in the slider’s value generate continuous update events.
   /// If set to true, you can receive all changes to the value,
   /// otherwise only at the start and end of changes made via touch.
-  var isContinuous: Bool
+  public var isContinuous: Bool
   /// The thickness of the track in meters, default is 0.2.
-  var thickness: Float
+  public internal(set) var thickness: Float
 
   /// The nubmer of steps the slider should have.
   /// 0 (default) for continuous, no clamping.
   /// 1 would mean two possible values (0 and 1)
   /// 2 would allow 0, 0.5 and 1 etc.
-  var steps: Int
+  public internal(set) var steps: Int
 
+  /// What stage the slider is in. Start is the first update, ended is the last, and updated
+  /// means the slider is still updating, so you should expect another update on the next frame.
   public enum SlidingState {
+    /// Slider has started updating.
     case started
+    /// Slider has updated its value, but not for the first or last time in this update.
     case updated
+    /// Slider has reached its final position for this update.
     case ended
   }
 
@@ -159,7 +188,11 @@ public struct SliderComponent: Component {
   }
 }
 
+/// An interface used for an entity where a thumb is dragged along a fixed space.
 public protocol HasSlider: HasPanTouch {
+  /// Called whenever the slider value updates.
+  /// set isContinuous to `true` to get every change,
+  /// `false` to just get start and end on each gesture.
   var sliderUpdated: ((HasSlider, SliderComponent.SlidingState) -> Void)? { get set }
 }
 
@@ -173,20 +206,30 @@ public extension HasSlider {
     get { self.slider.arGestureOffset }
     set { self.slider.arGestureOffset = newValue }
   }
+  /// Length of the slider. The default is 10m.
   var sliderLength: Float { self.slider.length }
+  /// The slider's current value. Ranges from 0 to 1.
   internal(set) var value: Float {
     get { self.slider.value }
     set { self.slider.value = newValue }
   }
 
+  /// The nubmer of steps the slider should have.
+  /// 0 (default) for continuous, no clamping.
+  /// 1 would mean two possible values (0 and 1)
+  /// 2 would allow 0, 0.5 and 1 etc.
   var steps: Int {
     get { self.slider.steps }
     set { self.slider.steps = newValue }
   }
+  /// A Boolean value indicating whether changes in the slider’s value generate continuous update events.
+  /// If set to true, you can receive all changes to the value,
+  /// otherwise only at the start and end of changes made via touch.
   var isContinuous: Bool {
     get { self.slider.isContinuous }
     set { self.slider.isContinuous = newValue }
   }
+  /// The thickness of the track in meters, default is 0.2.
   var trackThickness: Float {
     self.slider.thickness
   }

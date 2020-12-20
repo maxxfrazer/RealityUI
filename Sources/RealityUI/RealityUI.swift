@@ -16,18 +16,26 @@ import AppKit
 
 import Combine
 
+/// RealityUI contains some properties for RealityUI to run in your application.
+/// ![RealityUI Banner](https://repository-images.githubusercontent.com/265939509/77c8eb00-a362-11ea-995e-482183f9acbd)
 @objc public class RealityUI: NSObject {
   private var componentsRegistered = false
+
   /// Registers RealityUI's component types. Call this before creating any RealityUI classes to avoid issues.
   /// This method will be automatically called when `ARView.enableRealityUIGestures(_:)` is called,
   public static func registerComponents() {
     RealityUI.shared.logActivated()
   }
+  /// Orientation of all RealityUI Entities upon creation. If nil, none will be set.
   public static var startingOrientation: simd_quatf?
+
+  /// Mask to exclude entities from being hit by the long/panning gesture
   public static var longGestureMask: CollisionGroup = .all
+
+  /// Mask to exclude entities from being hit by the tap gesture.
   public static var tapGestureMask: CollisionGroup = .all
   private func logActivated() {
-    RealityUI.RUIPrint("RealityUI: Activated, registered components")
+    RealityUI.RUIPrint("Activated, registered components")
   }
   internal static func RUIPrint(_ message: String) {
     print("RealityUI: \(message)")
@@ -41,18 +49,24 @@ import Combine
     }
   }
 
+  /// Different type of gestures used by RealityUI and set to an ARView object.
   public struct RUIGesture: OptionSet {
+    /// Integer raw value used by the OptionSet
     public let rawValue: Int
 
+    /// Initialise a new option set
+    /// - Parameter rawValue: Integer raw value used by the OptionSet
     public init(rawValue: Int) {
       self.rawValue = rawValue
     }
 
+    /// OptionSet value for tap gestures.
     public static let tap = RUIGesture(rawValue: 1 << 0)
 
-    /// For now, longTouch is used for RealityUI gestures that are more complex than a simple tap
+    /// OptionSet value for long touch gestures.
     public static let longTouch = RUIGesture(rawValue: 1 << 1)
 
+    /// Encapsulates all the possible values of this OptionSet
     public static let all: RUIGesture = [.tap, .longTouch]
   }
 

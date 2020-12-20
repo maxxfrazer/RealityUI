@@ -7,15 +7,25 @@
 
 import CoreGraphics
 import RealityKit
+import CoreText
 
-/// A  RealityUI Text object to be added to a RealityKit scene.
+/// A RealityUI Text object to be added to a RealityKit scene.
 open class RUIText: Entity, HasText, HasClick {
+  /// Action to occus when the user taps on this Entity.
   public var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? {
     didSet {
       self.updateCollision()
     }
   }
 
+  /// Create a new RUIText object, adding text to your RealityKit scene.
+  /// - Parameters:
+  ///   - text: The text to render.
+  ///   - width: The maximum width, in meters, of the text frame in the local coordinate system.
+  ///   - height: The maximum height, in meters, of the text frame in the local coordinate system.
+  ///   - font: The font to use.
+  ///   - extrusion: The extent, in meters, of the extruded text in the z-axis direction.
+  ///   - color: The color applied to the text mesh's material.
   public convenience init(
     with text: String, width: CGFloat = 0, height: CGFloat = 0,
     font: MeshResource.Font = RUIText.mediumFont, extrusion: Float = 0.1,
@@ -31,7 +41,7 @@ open class RUIText: Entity, HasText, HasClick {
 
   /// Creates a RealityUI Text entity.
   /// - Parameters:
-  ///   - textComponent: Details about the text object, including text, font, extrusion and others.
+  ///   - textComponent: Details about the text object, including text, font, extrusion and more.
   ///   - RUI: Details about the RealityUI Entity.
   ///   - tapAction: callback function to receive updates touchUpInside the RealityUI Text.
   required public init(
@@ -46,40 +56,56 @@ open class RUIText: Entity, HasText, HasClick {
     self.makeModels()
   }
 
-  func makeModels() {
+  internal func makeModels() {
     self.addModel(part: .textEntity)
       .look(at: [0, 0, 1], from: .zero, upVector: [0, 1, 0], relativeTo: self)
     self.setText(self.text)
   }
 
-  required public init() {
-    fatalError("init() has not been implemented")
+  /// Initialise the RUIText object with no text and default properties.
+  required convenience public init() {
+    self.init(textComponent: nil)
   }
 }
 
+/// Component containing all the data for the text to be rendered.
 public struct TextComponent: Component {
+  /// The text to render.
   public var text: String?
+  /// The font to use.
   public var font: MeshResource.Font = .systemFont(ofSize: 0.1)
+  /// The maximum width, in meters, of the text frame in the local coordinate system.
+  /// Set to `0` (default) for unbounded.
   public var width: CGFloat = 0
+  /// The maximum height, in meters, of the text frame in the local coordinate system.
+  /// Set to `0` (default) for unbounded.
   public var height: CGFloat = 0
   #if os(iOS)
+  /// The color of the text material. `.label` by default (iOS)
   public var color: Material.Color = .label
   #elseif os(macOS)
+  /// The color of the text material. `.labelColor` by default (macOS)
   public var color: Material.Color = .labelColor
   #endif
+  /// The extent, in meters, of the extruded text in the z-axis direction.
   public var extrusion: Float = 1
+  /// How the text should wrap when reaching a frame boundary.
+  public var lineBreakMode: CTLineBreakMode = .byWordWrapping
 
-  enum UIPart: String {
+  internal enum UIPart: String {
     case textEntity
   }
 }
 
+/// An interface used for all entities that render text
 public protocol HasText: HasRUI {}
 public extension HasText {
+  /// Component containing all the data for the text to be rendered.
   var textComponent: TextComponent {
     get { self.components[TextComponent.self] ?? TextComponent() }
     set { self.components[TextComponent.self] = newValue }
   }
+  /// The text to render.
   var text: String? {
     get { self.textComponent.text }
     set {
@@ -87,14 +113,17 @@ public extension HasText {
     }
   }
 
-  var textModel: ModelComponent? {
+  /// ModelComponent containig the visual text
+  internal var textModel: ModelComponent? {
     get { self.getModel(part: .textEntity)?.model }
     set { self.addModel(part: .textEntity).model = newValue }
   }
 
+  /// The font to use.
   var font: MeshResource.Font {
     self.textComponent.font
   }
+  /// The color of the text material.
   var color: Material.Color {
     self.textComponent.color
   }
@@ -116,10 +145,13 @@ public extension HasText {
     }
   }
 
+  /// Update materials for all models in this RUIEntity
   func updateMaterials() {
     self.getModel(part: .textEntity)?.model?.materials = self.getMaterials(for: .textEntity)
   }
 
+  /// Change the text currently presented on the HasText Entity
+  /// - Parameter text: New text to be rendered.
   func setText(_ text: String?) {
     guard let text = text else {
       self.getModel(part: .textEntity)?.model = nil
@@ -133,7 +165,7 @@ public extension HasText {
         origin: .zero,
         size: CGSize(width: self.textComponent.width, height: self.textComponent.height)),
       alignment: .center,
-      lineBreakMode: .byWordWrapping
+      lineBreakMode: self.textComponent.lineBreakMode
     )
 
     self.textModel = ModelComponent(
@@ -153,7 +185,7 @@ public extension HasText {
     ]
     self.updateCollision()
   }
-  func updateCollision() {
+  internal func updateCollision() {
     guard let selfCol = (self as? HasClick) else {
       return
     }

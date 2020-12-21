@@ -10,7 +10,7 @@ import RealityKit
 import Combine
 
 /// A new RealityUI Stepper to be added to your RealityKit scene.
-public class RUIStepper: Entity, HasRUI, HasStepper {
+public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
   public var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = { clicker, worldPos in
     (clicker as? HasStepper)?.stepperTap(clicker: clicker, worldTapPos: worldPos)
   }
@@ -139,7 +139,7 @@ public struct StepperComponent: Component {
 }
 
 /// An interface used for entities with mutliple click actions, like RUIStepper.
-public protocol HasStepper: HasClick {}
+public protocol HasStepper: HasClick, HasRUIMaterials {}
 
 public extension HasStepper {
   func updateMaterials() {

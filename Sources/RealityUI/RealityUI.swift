@@ -34,6 +34,16 @@ import Combine
 
   /// Mask to exclude entities from being hit by the tap gesture.
   public static var tapGestureMask: CollisionGroup = .all
+
+  /// Use this to add GestureRecognisers for different RealityUI elements in your scene.
+  /// You do not need multiple GestureRecognisers for multiple elements in the scene.
+  /// - Parameters:
+  ///   - gestures: A list of gestures to be installed, such as .longTouch and .tap
+  ///   - arView: ARView the gestures will be enabled on
+  public static func enableGestures(_ gestures: RealityUI.RUIGesture, on arView: ARView) {
+    RealityUI.shared.enable(gestures: gestures, on: arView)
+  }
+
   private func logActivated() {
     RealityUI.RUIPrint("Activated, registered components")
   }
@@ -83,7 +93,7 @@ import Combine
     SwitchComponent.self,
     StepperComponent.self,
     SliderComponent.self,
-    PivotComponent.self,
+    TurnComponent.self,
     TextComponent.self
   ]
 
@@ -94,7 +104,7 @@ import Combine
     self.registerComponents()
   }
 
-  internal func enable(gestures: RealityUI.RUIGesture, on arView: ARView) {
+  fileprivate func enable(gestures: RealityUI.RUIGesture, on arView: ARView) {
     /// This method is gross, I tried to use `OptionSet` and think I'm doing it wrong
     /// These multiple if statements make me feel uncomfortable.
     if !self.enabledGestures.contains(where: { $0.key == arView}) {
@@ -157,7 +167,8 @@ import Combine
 public extension ARView {
   /// Use this method on your ARView to add GestureRecognisers for different RealityKit elements in your scene.
   /// You do not need multiple GestureRecognisers for multiple elements in the scene.
-  /// - Parameter gestures: A list of gestures to be installed, such as .pan and .tap
+  /// - Parameter gestures: A list of gestures to be installed, such as .longTouch and .tap
+  @available(*, deprecated, message: "Instead call RealityUI.enableGestures(:)")
   func enableRealityUIGestures(_ gestures: RealityUI.RUIGesture) {
     RealityUI.shared.enable(gestures: gestures, on: self)
   }

@@ -150,7 +150,7 @@ public struct ButtonComponent: Component {
 }
 
 /// An interface that provides a button component that defines the visual appearance.
-public protocol HasButton: HasTouchUpInside {
+public protocol HasButton: HasTouchUpInside, HasRUIMaterials {
   /// Button has been clicked callback, similar to UIKit `.touchUpInside`
   var touchUpCompleted: ((HasButton) -> Void)? { get set }
 }

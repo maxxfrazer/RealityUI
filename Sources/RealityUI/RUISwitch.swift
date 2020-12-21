@@ -47,7 +47,7 @@ public class RUISwitch: Entity, HasSwitch, HasClick {
 }
 
 /// An interface used for all entities that have a toggling option
-public protocol HasSwitch: HasRUI {
+public protocol HasSwitch: HasRUIMaterials {
   /// Switch's isOn property has changed
   var switchChanged: ((HasSwitch) -> Void)? { get set }
 }

@@ -107,7 +107,7 @@ public protocol HasTouchUpInside: HasARTouch {}
       if let planeCollisionPoint = self.arView.unproject(
         touchInView, ontoPlane: collisionPlane
       ) {
-        if let thisPivot = hitEntity as? HasPivotTouch, let maxDist = thisPivot.maxPivotDistance {
+        if let maxDist = (hitEntity as? HasTurnTouch)?.maxDistance {
           let convPoint = hitEntity.convert(position: planeCollisionPoint, from: nil)
           if convPoint.magnitude > maxDist {
             return

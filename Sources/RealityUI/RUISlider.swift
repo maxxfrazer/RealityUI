@@ -189,7 +189,7 @@ public struct SliderComponent: Component {
 }
 
 /// An interface used for an entity where a thumb is dragged along a fixed space.
-public protocol HasSlider: HasPanTouch {
+public protocol HasSlider: HasPanTouch, HasRUIMaterials {
   /// Called whenever the slider value updates.
   /// set isContinuous to `true` to get every change,
   /// `false` to just get start and end on each gesture.

@@ -20,7 +20,7 @@
 		F3F68532256BB91D0090A6C0 /* RUILongTouchGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F68528256BB91D0090A6C0 /* RUILongTouchGestureRecognizer.swift */; };
 		F3F68533256BB91D0090A6C0 /* RUIStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F68529256BB91D0090A6C0 /* RUIStepper.swift */; };
 		F3F68534256BB91D0090A6C0 /* RUISwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852A256BB91D0090A6C0 /* RUISwitch.swift */; };
-		F3F68535256BB91D0090A6C0 /* HasPivotTouch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852B256BB91D0090A6C0 /* HasPivotTouch.swift */; };
+		F3F68535256BB91D0090A6C0 /* HasTurnTouch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852B256BB91D0090A6C0 /* HasTurnTouch.swift */; };
 		F3F68536256BB91D0090A6C0 /* RUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852C256BB91D0090A6C0 /* RUIButton.swift */; };
 		F3F68537256BB91D0090A6C0 /* HasRUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852D256BB91D0090A6C0 /* HasRUI.swift */; };
 		F3F68538256BB91D0090A6C0 /* HasClick.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F6852E256BB91D0090A6C0 /* HasClick.swift */; };
@@ -42,7 +42,7 @@
 		F3F68528256BB91D0090A6C0 /* RUILongTouchGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUILongTouchGestureRecognizer.swift; path = ../../../Sources/RealityUI/RUILongTouchGestureRecognizer.swift; sourceTree = "<group>"; };
 		F3F68529256BB91D0090A6C0 /* RUIStepper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIStepper.swift; path = ../../../Sources/RealityUI/RUIStepper.swift; sourceTree = "<group>"; };
 		F3F6852A256BB91D0090A6C0 /* RUISwitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUISwitch.swift; path = ../../../Sources/RealityUI/RUISwitch.swift; sourceTree = "<group>"; };
-		F3F6852B256BB91D0090A6C0 /* HasPivotTouch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasPivotTouch.swift; path = ../../../Sources/RealityUI/HasPivotTouch.swift; sourceTree = "<group>"; };
+		F3F6852B256BB91D0090A6C0 /* HasTurnTouch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasTurnTouch.swift; path = ../../../Sources/RealityUI/HasTurnTouch.swift; sourceTree = "<group>"; };
 		F3F6852C256BB91D0090A6C0 /* RUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIButton.swift; path = ../../../Sources/RealityUI/RUIButton.swift; sourceTree = "<group>"; };
 		F3F6852D256BB91D0090A6C0 /* HasRUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasRUI.swift; path = ../../../Sources/RealityUI/HasRUI.swift; sourceTree = "<group>"; };
 		F3F6852E256BB91D0090A6C0 /* HasClick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasClick.swift; path = ../../../Sources/RealityUI/HasClick.swift; sourceTree = "<group>"; };
@@ -97,7 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				F3F6852E256BB91D0090A6C0 /* HasClick.swift */,
-				F3F6852B256BB91D0090A6C0 /* HasPivotTouch.swift */,
+				F3F6852B256BB91D0090A6C0 /* HasTurnTouch.swift */,
 				F3F6852D256BB91D0090A6C0 /* HasRUI.swift */,
 				F3F68527256BB91D0090A6C0 /* RealityUI.swift */,
 				F3F6852C256BB91D0090A6C0 /* RUIButton.swift */,
@@ -218,7 +218,7 @@
 				F3F68531256BB91D0090A6C0 /* RealityUI.swift in Sources */,
 				F3F68536256BB91D0090A6C0 /* RUIButton.swift in Sources */,
 				F3F68537256BB91D0090A6C0 /* HasRUI.swift in Sources */,
-				F3F68535256BB91D0090A6C0 /* HasPivotTouch.swift in Sources */,
+				F3F68535256BB91D0090A6C0 /* HasTurnTouch.swift in Sources */,
 				F3DB9D81247D8BF8006D6CE5 /* ViewController+NonRealityUI.swift in Sources */,
 				F301D8A8247A62ED004AE1FA /* ViewController+RealityControls.swift in Sources */,
 				F3414191246FF53E006B1ECA /* AppDelegate.swift in Sources */,
@@ -365,7 +365,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -383,7 +382,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

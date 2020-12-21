@@ -59,7 +59,7 @@ All components used in RealityUI must be registered before they are used, simply
 If you plan on using RUISwitch or RUIStepper, then you should at least enable `.tap`
 RUISlider uses `.pan`, but I would just recommend using `.all` to avoid issues, as these will inevitably move around ad RealityUI develops, and will not interfere with the rest of your RealityKit scene.
 
-`arView.enableRealityUIGestures(.all)`
+`RealityUI.enableGestures(.all, on: arView)`
 
 ---
 ## Creating RealityUI Entities

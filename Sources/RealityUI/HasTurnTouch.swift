@@ -1,5 +1,5 @@
 //
-//  HasPivotTouch.swift
+//  HasTurnTouch.swift
 //
 //
 //  Created by Max Cobb on 5/31/20.
@@ -9,13 +9,13 @@
 import RealityKit
 
 /// An interface used for entities which are to be rotated via one finger drag gestures
-public protocol HasPivotTouch: HasPanTouch {}
+public protocol HasTurnTouch: HasPanTouch {}
 
-public extension HasPivotTouch {
+public extension HasTurnTouch {
   /// Plane that we run the raycast against.
   var collisionPlane: float4x4? {
     return self.transformMatrix(relativeTo: nil)
-      * float4x4(pivotRotation)
+      * float4x4(self.pivotRotation)
   }
 
   /// Called when a new touch has begun on an Entity
@@ -38,7 +38,7 @@ public extension HasPivotTouch {
     let lastAngle = atan2f(lastLocalPos.x, lastLocalPos.z)
     let angle = atan2f(localPos.x, localPos.z)
 
-    self.orientation *= simd_quatf(angle: angle - lastAngle, axis: self.pivotAxis)
+    self.orientation *= simd_quatf(angle: angle - lastAngle, axis: self.turnAxis)
     self.lastGlobalPosition = worldCoordinate
   }
   func arTouchCancelled() {
@@ -49,47 +49,47 @@ public extension HasPivotTouch {
   }
 }
 
-/// A collection of properties for the entities that conform to `HasPivotTouch`.
-public struct PivotComponent: Component {
+/// A collection of properties for the entities that conform to `HasTurnTouch`.
+public struct TurnComponent: Component {
   internal var lastTouchAngle: Float?
   internal var lastGlobalPosition: SIMD3<Float> = .zero
   /// Axis upon which the object will rotate.
-  public var pivotAxis: SIMD3<Float>
+  public var axis: SIMD3<Float>
   /// Maximum distance from the Entity centre where touches will still be picked up
   /// Default: `nil` means infinite distance.
-  public var maxPivotDistance: Float?
-  /// Create a new `PivotComponent`
+  public var maxDistance: Float?
+  /// Create a new `TurnComponent`
   /// - Parameters:
-  ///   - pivotAxis: Axis upon which the object will rotate.
-  ///   - maxPivotDistance: Maximum distance from the Entity centre where touches will still be picked up.
-  public init(pivotAxis: SIMD3<Float> = [0, 1, 0], maxPivotDistance: Float? = nil) {
-    self.pivotAxis = pivotAxis
-    self.maxPivotDistance = maxPivotDistance
+  ///   - axis: Axis upon which the object will rotate.
+  ///   - maxDistance: Maximum distance from the Entity centre where touches will still be picked up.
+  public init(axis: SIMD3<Float> = [0, 1, 0], maxDistance: Float? = nil) {
+    self.axis = axis
+    self.maxDistance = maxDistance
   }
 }
 
-public extension HasPivotTouch {
+public extension HasTurnTouch {
   internal var pivotRotation: simd_quatf {
-    simd_quaternion(self.pivotAxis, [0, 1, 0])
+    simd_quaternion(self.turnAxis, [0, 1, 0])
   }
-  /// The pivot component for the entity.
-  var pivotTouch: PivotComponent {
-    get { self.components[PivotComponent.self] ?? PivotComponent() }
-    set { self.components[PivotComponent.self] = newValue }
+  /// The turn component for the entity.
+  var turnTouch: TurnComponent {
+    get { self.components[TurnComponent.self] ?? TurnComponent() }
+    set { self.components[TurnComponent.self] = newValue }
   }
-  /// The pivot axis for the entity.
-  var pivotAxis: SIMD3<Float> {
-    get { self.pivotTouch.pivotAxis }
-    set { self.pivotTouch.pivotAxis = newValue }
+  /// The axis to turn around for the entity.
+  var turnAxis: SIMD3<Float> {
+    get { self.turnTouch.axis }
+    set { self.turnTouch.axis = newValue }
   }
 
-  /// Maximum distance away from the center of the object where the pivot touch is active
-  var maxPivotDistance: Float? {
-    get { self.pivotTouch.maxPivotDistance }
-    set { self.pivotTouch.maxPivotDistance = newValue }
+  /// Maximum distance away from the center of the object where the turn touch is active
+  var maxDistance: Float? {
+    get { self.turnTouch.maxDistance }
+    set { self.turnTouch.maxDistance = newValue }
   }
   internal var lastGlobalPosition: SIMD3<Float> {
-    get { self.pivotTouch.lastGlobalPosition }
-    set { self.pivotTouch.lastGlobalPosition = newValue }
+    get { self.turnTouch.lastGlobalPosition }
+    set { self.turnTouch.lastGlobalPosition = newValue }
   }
 }

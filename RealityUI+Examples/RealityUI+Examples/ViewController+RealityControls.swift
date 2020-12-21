@@ -12,8 +12,7 @@ import Combine
 
 //import RealityUI
 
-class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouch {
-  func updateMaterials() {}
+class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasTurnTouch {
 
   var tumbler: ContainerCube?
   var tumblingCubes: [ModelEntity] = []
@@ -22,9 +21,9 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasPivotTouc
     self.anchoring = AnchoringComponent(.plane(
       .horizontal, classification: .any, minimumBounds: [0.5, 0.5]
     ))
-    self.maxPivotDistance = 0.75
+    self.maxDistance = 0.75
     self.addControls()
-    /// Uncomment this to try out HasPivotTouch, but it's still in an experimental stage.
+    /// Uncomment this to try out HasTurnTouch, but it's still in an experimental stage.
     if let rotateImg = try? TextureResource.load(named: "rotato") {
       self.collision = CollisionComponent(shapes: [.generateBox(size: [10, 0.1, 10])])
       var unlitTextured = UnlitMaterial(color: .white)

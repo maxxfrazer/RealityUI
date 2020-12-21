@@ -98,7 +98,7 @@ public struct TextComponent: Component {
 }
 
 /// An interface used for all entities that render text
-public protocol HasText: HasRUI {}
+public protocol HasText: HasRUIMaterials {}
 public extension HasText {
   /// Component containing all the data for the text to be rendered.
   var textComponent: TextComponent {

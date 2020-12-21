@@ -28,10 +28,6 @@ public struct RUIComponent: Component {
 
 /// An interface used for all entities in the RealityUI package
 public protocol HasRUI: Entity {
-  /// All RealityUI Entities should have a method for updating all the materials
-  /// This is in case of disabling entities or changing their responsiveness to light.
-  /// This method does not need to be called by outside of a RealityUI class.
-  func updateMaterials()
 }
 public extension HasRUI {
   /// A Boolean value that determines whether touch events are ignored on this RealityUI Entity
@@ -40,7 +36,7 @@ public extension HasRUI {
     set {
       if self.RUI.ruiEnabled == newValue { return }
       self.RUI.ruiEnabled = newValue
-      self.materialsShouldChange()
+      (self as? HasRUIMaterials)?.materialsShouldChange()
     }
   }
 
@@ -50,7 +46,7 @@ public extension HasRUI {
     set {
       if self.RUI.respondsToLighting == newValue { return }
       self.RUI.respondsToLighting = newValue
-      self.materialsShouldChange()
+      (self as? HasRUIMaterials)?.materialsShouldChange()
     }
   }
 
@@ -58,7 +54,7 @@ public extension HasRUI {
   /// - Parameter RUI: new RUIComponent
   func replaceRUI(with RUI: RUIComponent) {
     self.RUI = RUI
-    self.materialsShouldChange()
+    (self as? HasRUIMaterials)?.materialsShouldChange()
   }
 
   /// RealityUI Component for the entity.
@@ -76,25 +72,9 @@ public extension HasRUI {
     }
   }
 
-  private func materialsShouldChange() {
-    self.updateMaterials()
-  }
 }
-internal extension HasRUI {
-  func getMaterial(with color: Material.Color) -> Material {
-    var alpha: CGFloat = 0
-    #if os(macOS)
-    alpha = color.alphaComponent
-    #else
-    color.getWhite(nil, alpha: &alpha)
-    #endif
-    let adjustedColor = color.withAlphaComponent(alpha * (self.ruiEnabled ? 1 : 0.5))
-    if self.RUI.respondsToLighting {
-      return SimpleMaterial(color: adjustedColor, isMetallic: false)
-    }
-    return UnlitMaterial(color: adjustedColor)
-  }
 
+internal extension HasRUI {
   func getModel(part: String) -> ModelEntity? {
     self.findEntity(named: part) as? ModelEntity
   }
@@ -111,5 +91,30 @@ internal extension HasRUI {
     newModelPart.name = part
     self.addChild(newModelPart)
     return newModelPart
+  }
+}
+
+public protocol HasRUIMaterials: HasRUI {
+  /// All RealityUI Entities should have a method for updating all the materials
+  /// This is in case of disabling entities or changing their responsiveness to light.
+  /// This method does not need to be called by outside of a RealityUI class.
+  func updateMaterials()
+}
+extension HasRUIMaterials {
+  fileprivate func materialsShouldChange() {
+    self.updateMaterials()
+  }
+  func getMaterial(with color: Material.Color) -> Material {
+    var alpha: CGFloat = 0
+    #if os(macOS)
+    alpha = color.alphaComponent
+    #else
+    color.getWhite(nil, alpha: &alpha)
+    #endif
+    let adjustedColor = color.withAlphaComponent(alpha * (self.ruiEnabled ? 1 : 0.5))
+    if self.RUI.respondsToLighting {
+      return SimpleMaterial(color: adjustedColor, isMetallic: false)
+    }
+    return UnlitMaterial(color: adjustedColor)
   }
 }

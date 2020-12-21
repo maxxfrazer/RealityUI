@@ -38,7 +38,7 @@ class ViewController: UIViewController {
     self.addARView()
 
     // Add all RealityUI gestures to the current ARView
-    self.arView.enableRealityUIGestures(.all)
+    RealityUI.enableGestures(.all, on: self.arView)
     self.addObjectToPlane()
   }
 }

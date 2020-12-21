@@ -94,6 +94,8 @@ internal extension HasRUI {
   }
 }
 
+/// An interface used for RealityUI entities that have materials generated from colours
+/// These materials change with ruiEnabled and `self.RUI.respondsToLighting`.
 public protocol HasRUIMaterials: HasRUI {
   /// All RealityUI Entities should have a method for updating all the materials
   /// This is in case of disabling entities or changing their responsiveness to light.

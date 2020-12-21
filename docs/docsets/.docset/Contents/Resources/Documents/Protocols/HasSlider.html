@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>HasSlider Protocol Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Protocol/HasSlider" class="dashAnchor"></a>
+    <a title="HasSlider Protocol Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html"> Docs</a> (100% documented)</p>
+        <p class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html"> Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        HasSlider Protocol Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/RUIButton.html">RUIButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUISlider.html">RUISlider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUIStepper.html">RUIStepper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUISwitch.html">RUISwitch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUIText.html">RUIText</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RealityUI.html">RealityUI</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RealityUI/RUIGesture.html">– RUIGesture</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/ARView.html">ARView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Entity.html">Entity</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/HasARTouch.html">HasARTouch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasButton.html">HasButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasClick.html">HasClick</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols.html#/s:9RealityUI11HasPanTouchP">HasPanTouch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasRUI.html">HasRUI</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasRUIMaterials.html">HasRUIMaterials</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasSlider.html">HasSlider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasStepper.html">HasStepper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasSwitch.html">HasSwitch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasText.html">HasText</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols.html#/s:9RealityUI16HasTouchUpInsideP">HasTouchUpInside</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasTurnTouch.html">HasTurnTouch</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/ButtonComponent.html">ButtonComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ButtonComponent/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/RUIComponent.html">RUIComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SliderComponent.html">SliderComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SliderComponent/SlidingState.html">– SlidingState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/StepperComponent.html">StepperComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/StepperComponent/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SwitchComponent.html">SwitchComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/TextComponent.html">TextComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/TurnComponent.html">TurnComponent</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/GestureBase">GestureBase</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:9RealityUI11GestureBasea">GestureBase</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>HasSlider</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">HasSlider</span> <span class="p">:</span> <span class="kt"><a href="../Protocols.html#/s:9RealityUI11HasPanTouchP">HasPanTouch</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/HasRUIMaterials.html">HasRUIMaterials</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>An interface used for an entity where a thumb is dragged along a fixed space.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI9HasSliderP13sliderUpdatedyAaB_p_AA0D9ComponentV12SlidingStateOtcSgvp"></a>
+                    <a name="//apple_ref/swift/Property/sliderUpdated" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI9HasSliderP13sliderUpdatedyAaB_p_AA0D9ComponentV12SlidingStateOtcSgvp">sliderUpdated</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called whenever the slider value updates.
+set isContinuous to <code>true</code> to get every change,
+<code>false</code> to just get start and end on each gesture.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">sliderUpdated</span><span class="p">:</span> <span class="p">((</span><span class="kt">HasSlider</span><span class="p">,</span> <span class="kt"><a href="../Structs/SliderComponent.html">SliderComponent</a></span><span class="o">.</span><span class="kt">SlidingState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI9HasSliderPAAE12sliderLengthSfvp"></a>
+                    <a name="//apple_ref/swift/Property/sliderLength" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI9HasSliderPAAE12sliderLengthSfvp">sliderLength</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Length of the slider. The default is 10m.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">sliderLength</span><span class="p">:</span> <span class="kt">Float</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI9HasSliderPAAE5valueSfvp"></a>
+                    <a name="//apple_ref/swift/Property/value" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI9HasSliderPAAE5valueSfvp">value</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The slider&rsquo;s current value. Ranges from 0 to 1.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Float</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI9HasSliderPAAE5stepsSivp"></a>
+                    <a name="//apple_ref/swift/Property/steps" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI9HasSliderPAAE5stepsSivp">steps</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The nubmer of steps the slider should have.
+0 (default) for continuous, no clamping.
+1 would mean two possible values (0 and 1)
+2 would allow 0, 0.5 and 1 etc.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">steps</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI9HasSliderPAAE12isContinuousSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isContinuous" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI9HasSliderPAAE12isContinuousSbvp">isContinuous</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A Boolean value indicating whether changes in the slider’s value generate continuous update events.
+If set to true, you can receive all changes to the value,
+otherwise only at the start and end of changes made via touch.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isContinuous</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI9HasSliderPAAE14trackThicknessSfvp"></a>
+                    <a name="//apple_ref/swift/Property/trackThickness" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI9HasSliderPAAE14trackThicknessSfvp">trackThickness</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The thickness of the track in meters, default is 0.2.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">trackThickness</span><span class="p">:</span> <span class="kt">Float</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI9HasSliderPAAE10setPercent2to8animatedySf_SbtF"></a>
+                    <a name="//apple_ref/swift/Method/setPercent(to:animated:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI9HasSliderPAAE10setPercent2to8animatedySf_SbtF">setPercent(to:<wbr>animated:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Set the sliders position</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">setPercent</span><span class="p">(</span><span class="n">to</span> <span class="nv">percent</span><span class="p">:</span> <span class="kt">Float</span><span class="p">,</span> <span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>percent</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A Float value representing the slider progression from start to end.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>animated</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A Boolean value of whether the change in percentage should animate.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI15HasRUIMaterialsP15updateMaterialsyyF"></a>
+                    <a name="//apple_ref/swift/Method/updateMaterials()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI15HasRUIMaterialsP15updateMaterialsyyF">updateMaterials()</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">updateMaterials</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2020 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2020-12-21)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

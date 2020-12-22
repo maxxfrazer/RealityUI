@@ -14,12 +14,12 @@ public extension Entity {
   /// - Parameters:
   ///   - axis: Axis on which to rotate around.
   ///   - period: TIme interval for one revolution.
-  ///   - times: Number of revolutions.
+  ///   - times: Number of revolutions. Default is -1, meaning spin forever.
   ///   - completion: Action to take place once the last spin has completed.
   ///                 This will not execute if the animation is interrupted.
   func ruiSpin(
     by axis: SIMD3<Float>, period: TimeInterval,
-    times: Int, completion: (() -> Void)? = nil
+    times: Int = -1, completion: (() -> Void)? = nil
   ) {
     self.spinPrivate(by: axis, period: period, times: max(-1, times * 3 - 1), completion: completion)
   }
@@ -39,7 +39,12 @@ public extension Entity {
     var shakeCancellable: Cancellable!
     shakeCancellable = self.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self, { _ in
       shakeCancellable.cancel()
-      self.shakePrivate(by: simd_quatf(angle: -quat.angle * 2, axis: quat.axis), period: period, remaining: times == -1 ? times : max(times * 2 - 1, 0), completion: completion)
+      self.shakePrivate(
+        by: simd_quatf(angle: -quat.angle * 2, axis: quat.axis),
+        period: period,
+        remaining: times == -1 ? times : max(times * 2 - 1, 0),
+        completion: completion
+      )
     })
   }
 
@@ -56,7 +61,7 @@ public extension Entity {
     if tryfor > 0 {
       let startTime = DispatchTime.now().uptimeNanoseconds
       var updCancellable: Cancellable!
-      updCancellable = self.scene?.subscribe(to: SceneEvents.Update.self, { event in
+      updCancellable = self.scene?.subscribe(to: SceneEvents.Update.self, { _ in
         self.stopAllAnimations()
         if DispatchTime.now().uptimeNanoseconds - startTime > tryfor {
           updCancellable.cancel()
@@ -66,7 +71,10 @@ public extension Entity {
     }
   }
 
-  private func spinPrivate(by axis: SIMD3<Float>, period: TimeInterval, times: Int, completion: (() -> Void)? = nil) {
+  private func spinPrivate(
+    by axis: SIMD3<Float>, period: TimeInterval,
+    times: Int, completion: (() -> Void)? = nil
+  ) {
     let startPos = self.transform
     let spun90 = matrix_multiply(
       startPos.matrix,
@@ -88,7 +96,10 @@ public extension Entity {
     })
   }
 
-  private func shakePrivate(by quat: simd_quatf, period: TimeInterval, remaining: Int, completion: (() -> Void)? = nil) {
+  private func shakePrivate(
+    by quat: simd_quatf, period: TimeInterval,
+    remaining: Int, completion: (() -> Void)? = nil
+  ) {
     var applyQuat: simd_quatf!
     if remaining != 0 {
       applyQuat = quat
@@ -99,7 +110,11 @@ public extension Entity {
       self.transform.matrix,
       Transform(scale: .one, rotation: applyQuat, translation: .zero).matrix
     )
-    self.move(to: rockBit, relativeTo: self.parent, duration: remaining == 0 ? period / 2 : period, timingFunction: remaining == 0 ? .easeOut : .linear)
+    self.move(
+      to: rockBit, relativeTo: self.parent,
+      duration: remaining == 0 ? period / 2 : period,
+      timingFunction: remaining == 0 ? .easeOut : .linear
+    )
     var shakeCancellable: Cancellable!
     shakeCancellable = self.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self, { _ in
       shakeCancellable.cancel()

@@ -14,7 +14,7 @@ The User Interface controls in this repository so far are made to be familiar to
   <img src="https://github.com/maxxfrazer/RealityUI/workflows/swiftlint/badge.svg?branch=main"/>
 </p>
 
-![RealityUI Elements in a RealityKit VR space](media/realityui_banner.gif)
+![RealityUI Elements in a RealityKit VR space](https://github.com/maxxfrazer/RealityUI/blob/main/media/realityui_banner.gif?raw=true)
 
 ## Requirements
 
@@ -26,17 +26,14 @@ The User Interface controls in this repository so far are made to be familiar to
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [RealityUI Entities](#creating-realityui-entities)
-  - [RUISwitch](#ruiswitch-creation)
-  - [RUIStepper](#ruistepper-creation)
-  - [RUISlider](#ruislider-creation)
-  - [RUIButton](#ruibutton-creation)
-- [RealityUI Components](#realityui-components)
-  - [RUIComponent](#ruicomponent)
-  - [SwitchComponent](#switchcomponent)
-  - [StepperComponent](#steppercomponent)
-  - [SliderComponent](#slidercomponent)
-  - [ButtonComponent](#buttoncomponent)
+- [Control Entities](#control-entities)
+- [Gestures](#gestures)
+- [Animations](#animations)
+- [Text](#text)
+- [More](#more)
+  - [RealityUI Wiki](https://github.com/maxxfrazer/RealityUI/wiki)
+  - [Documentation](https://maxxfrazer.github.io/RealityUI/)
+  - [Example Project](https://github.com/maxxfrazer/RealityUI/tree/main/RealityUI%2BExamples)
 
 ## Installation
 
@@ -62,192 +59,99 @@ RUISlider uses `.pan`, but I would just recommend using `.all` to avoid issues, 
 `RealityUI.enableGestures(.all, on: arView)`
 
 ---
-## Creating RealityUI Entities
-
-For the sake of all these examples, the _Simple_ heading will create an Entity with no custom properties or callbacks, and for _Functional_, imagine there is a `ModelEntity` in the scene which we can reference from the variable `adjustmentCuboid`.
+## Control Entities
 
 By default all RealityUI Entities are quite large. This is used to standardize the sizes so that you always know what to expect. For example, all UI thumbs are spheres with a diameter of 1 meter, which is 1 unit in RealityKit, ± any padding adjustments. All RealityUI Entities face `[0, 0, -1]` by default. To have them point at the user camera, or `.zero`, you can use the [`.look(at:,from:,relativeTo:)`](https://developer.apple.com/documentation/realitykit/entity/3244094-look) method like so: `.look(at: .zero, from: [0, 0, 1])`. Or if you want it to turn around straight away if you've positioned it at `[0, 0, -1]`, set the orientation to `simd_quatf(angle: .pi, axis: [0, 1, 0])`. Using the [.look()](https://developer.apple.com/documentation/realitykit/entity/3244094-look) method works here by setting the `at:` value to the direction the button should be used from.
 
-## RUISwitch Creation
+### RUISwitch
 
 RUISwitch is a 3D toggle switch with an on and off state.
-![RUISwitches with and without light responsiveness](media/switches_combined.gif)
-
 Default bounding box is 2x1x1m
 
-##### Simple
+![RUISwitches with and without light responsiveness](https://github.com/maxxfrazer/RealityUI/blob/main/media/switches_combined.gif?raw=true)
 
-```swift
-let newSwitch = RUISwitch()
-```
+[More details](https://github.com/maxxfrazer/RealityUI/wiki/Control-Entities#ruiswitch)
 
-##### Functional
-
-This RUISwitch will respond to lighting, and will change a ModelEntity's material between a red and a green color.
-
-```swift
-let newSwitch = RUISwitch(
-  RUI: [RUIComponent](#ruicomponent)(respondsToLighting: true),
-  changedCallback: { mySwitch in
-    adjustmentCuboid.model?.materials = [
-      SimpleMaterial(
-        color: mySwitch.isOn ? .green : .red,
-        isMetallic: false
-      )
-    ]
-  }
-)
-```
-
-To customise switches further, see [SwitchComponent](#switchcomponent).
-
-## RUIStepper Creation
+### RUIStepper
 
 RUIStepper is used to increment or decrement a value.
-![RUIStepper with light responsiveness](media/stepper_light.gif)
-
 Default bounding box is 2x1x0.25m
 
-##### Simple
+![RUIStepper with light responsiveness](https://github.com/maxxfrazer/RealityUI/blob/main/media/stepper_light.gif?raw=true)
 
-```swift
-let newStepper = RUIStepper()
-```
+[More details](https://github.com/maxxfrazer/RealityUI/wiki/Control-Entities#ruistepper)
 
-##### Functional
-
-This RUIStepper will move a ModelEntity's y position up and down by 0.1m on each tap.
-
-```swift
-let stepper = RUIStepper(upTrigger: { _ in
-  adjustmentCuboid.position.y += 0.1
-}, downTrigger: { _ in
-  adjustmentCuboid.position.y -= 0.1
-})
-```
-To customise steppers further, see [StepperComponent](#steppercomponent).
-
-
-## RUISlider Creation
+### RUISlider
 
 An interactive track to represent an interpolated value.
-![RUISlider with light responsiveness](media/slider_light.gif)
+Default bounding box is 10x1x1m including thumb.
 
-Default bounding box is 10x1x1m (Including thumb)
+![RUISlider with light responsiveness](https://github.com/maxxfrazer/RealityUI/blob/main/media/slider_light.gif?raw=true)
 
-##### Simple
+[More details](https://github.com/maxxfrazer/RealityUI/wiki/Control-Entities#ruislider)
 
-```swift
-let newSlider = RUISlider()
-```
-
-##### Functional
-
-This RUISlider has a starting value of 0.9, meaning that the thumb will be positioned 90% of the way along. The callback function will happen every time the slider value changes (set with `isContinuous`). The callback function will adjust the x scale of an Entity to the slider's value (0-1), plus an arbitrary value of 0.1.
-
-```swift
-let newSlider = RUISlider(
-  slider: SliderComponent(startingValue: 0.9, isContinuous: true)
-) { (slider, _) in
-  adjustmentCuboid.scale.x = slider.value + 0.1
-}
-```
-To customise sliders further, see [SliderComponent](#slidercomponent).
-
-## RUIButton Creation
+### RUIButton
 
 RUIButton is used to initiate a specified action. The action here will only trigger if the gesture begins on a button, and also ends on the same button. This is similar to the [touchUpInside UIControl Event](https://developer.apple.com/documentation/uikit/uicontrol/event/1618236-touchupinside).
-![RUIButton with light responsiveness](media/button_light.gif)
-
 Default button bounding box before depressing the button into the base is `[1, 1, 0.3]`
 
-##### Simple
+![RUIButton with light responsiveness](https://github.com/maxxfrazer/RealityUI/blob/main/media/button_light.gif?raw=true)
 
-```swift
-let newButton = RUIButton()
-```
 
-##### Functional
-
-This RUIButton will animate an Entity to a new transform, and change its own button color to `.systemGreen`.
-
-```swift
-let button = RUIButton(updateCallback: { myButton in
-  adjustmentCuboid.move(
-    to: Transform(
-      scale: .one,
-      rotation: .init(),
-      translation: [0, 1, 0]),
-    relativeTo: adjustmentCuboid.parent,
-    duration: 0.3
-  )
-  myButton.buttonColor = .systemGreen
-})
-```
-To customise buttons further, see [ButtonComponent](#buttoncomponent).
+[More details](https://github.com/maxxfrazer/RealityUI/wiki/Control-Entities#ruibutton)
 
 ---
+## Gestures
 
-## RealityUI Components
+All of the RealityUI Control Entities use custom gestures that aren't standard in RealityKit, but some of them have been isolated so anyone can use them to manipulate their own RealityKit scene.
 
-These components are largely for customising RealityUI entities in terms of colour and sizing. The components default values are great for most use-cases, but there may be times when more customisation is necessary.
+### Turn
 
-### RUIComponent
+Unlock the ability to rotate a RealityKit entity with just one finger.
 
-| Property           | Type | Default | Description|
-|--------------------|------|---------|------------|
-| ruiEnabled         | Bool | `true`    | A Boolean value showing if the entity can be clicked or otherwise affected by gestures.<br><br>When set to `false` all the materials become translucent.|
-| respondsToLighting | Bool | `false`   | A Boolean value which affects the materials used on this Entity to be affected by light.|
+![Turning key](https://github.com/maxxfrazer/RealityUI/raw/e3cb908fa9051512671e01dd3fe01f59c45f0936/media/RealityUI_pivot_key.gif?raw=true)
 
+[More details](https://github.com/maxxfrazer/RealityUI/wiki/Gestures#turn)
 
-### SwitchComponent
+### Tap
 
-SwitchComponent is used for the RUISwitch class, it has properties which affect colour for each model, as well as sizing between components such as the border.
+Create an object in your RealityKit scene with an action, and it will automatically be picked up whenever the user taps on it!
 
-| Property    | Type           | Default      | Description |
-|-------------|----------------|--------------|----------------------------------------------------------------------------|
-| isOn        | Bool           | false        | A Boolean value that determines the off/on state of the switch. |
-| padding     | Float          | 0.05         | Padding (in meters) between the thumb and the inner capsule of the switch. |
-| border      | Float          | 0.05         | Border (in meters) between the two outer capsules of the switch. |
-| onColor     | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .systemGreen | Color of the inner capsule when the switch is set to `on`. |
-| offColor    | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .lightGray   | Color of the inner capsule when the switch is set to `off`. |
-| borderColor | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .black       | Color of the outer border. |
-| thumbColor  | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .white       | Color of the thumb. Default white. |
-
-### StepperComponent
-
-| property | type | Default | Description |
-|------------------|-----------------|---------------------------|------------------------------------------------------------------------------------|
-| backgroundTint | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .tertiarySystemBackground | Background color of the stepper. |
-| buttonTint | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .systemBlue | Color of the buttons inside a stepper, default `.systemBlue`. |
-| secondButtonTint | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color)? | nil | Color of the second button inside a stepper.<br>If nil, then buttonTint will be used. |
-
-### SliderComponent
-
-| Property | Type | Default | Description |
-|---------------|----------------|-------------|--------------------------------------------------------------------------------------------------------------------------|
-| length | Float | 10 | Length of the slider in meters. |
-| value | Float | 0 | The slider's current value (0-1). |
-| minTrackColor | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .systemBlue | The color set to the material on the left side of the slider. |
-| maxTrackColor | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .systemGray | The color set to the material on the right side of the slider. |
-| thumbColor | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .white | The color set to the material of the thumb. |
-| isContinuous | Bool | true | If set to true, you can receive all changes to the value, otherwise only at the start and end of changes made via touch. |
-| thickness | Float | 0.2 | The thickness of the track in meters. |
-
-### ButtonComponent
-
-| Property | Type | Default | Description |
-|--------------|-----------------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| size | [SIMD3\<Float\>](https://developer.apple.com/documentation/swift/simd3) | [1, 1, 0.2] | Size of the button base (in m). |
-| buttonColor | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .systemBlue | Color of the button. |
-| baseColor | [Material.Color](https://developer.apple.com/documentation/realitykit/material/color) | .systemGray | Color of the button base. |
-| padding | Float | 0.1 | Padding (in meters) between the base and the button. |
-| extrude | Float | 0.5 | Multiplyer amount that the button sticks out from the base when unpressed.<br>The extrude amount will be a multiplier of the button z size. |
-| compress | Float | 0.2 | Multiplyer amount that the button sticks out from the base when pressed.<br>The compress amount will be a multiplier of the button z size. |
-| cornerRadius | Float? | nil | A corner radius applied to both the button and the button base.<br>If left as nil, a corner radius will be calculated based on 0.4 * the smallest dimension. |
-| style | ButtonComponent.Style | .rectangular | Style of RUIButton, currently only `.rectangular` is available. |
+No Gif for this one, but check out [RealityUI Gestures wiki](https://github.com/maxxfrazer/RealityUI/wiki/Gestures#tap) to see how to add [HasClick](https://maxxfrazer.github.io/RealityUI/Protocols/HasClick.html) to an entity in your application.
 
 ---
-#### More
+## Animations
 
-To see more, check out [RealityUI+Examples](./RealityUI+Examples) in this repository.
+There aren't many animations added by default to RealityKit, especially none that you can set to repeat. See the [wiki page](https://github.com/maxxfrazer/RealityUI/wiki/Animations) on how to use these animations.
+
+### Spin
+Spin an Entity around an axis easily using ruiSpin.
+
+![Spinning Star](https://github.com/maxxfrazer/RealityUI/blob/main/media/RUISpin_star_example.gif?raw=true)
+[More details](https://github.com/maxxfrazer/RealityUI/wiki/Animations#spin)
+
+### Shake
+
+Shake an entity to attract attention, or signal something was incorrect.
+
+![Shaking Phone Icon](https://github.com/maxxfrazer/RealityUI/blob/main/media/RUIShake_phone_example.gif?raw=true)
+[More details](https://github.com/maxxfrazer/RealityUI/wiki/Animations#shake)
+
+---
+## Text
+
+It's already possible to place text in RealityKit, but I felt it needed a little upgrade.
+
+With RUIText you can easily create an Entity with the specified text placed with its bounding box centre at the middle of your entity.
+
+![Hello Text](https://github.com/maxxfrazer/RealityUI/blob/main/media/RUIText_hello_example.gif?raw=true)
+![Hello Text](https://github.com/maxxfrazer/RealityUI/blob/main/media/RUIText_symbols_example.gif?raw=true)
+[More details](https://github.com/maxxfrazer/RealityUI/wiki/Text)
+
+
+---
+## More
+
+More information on everything provided in this Swift Package in the [GitHub Wiki](https://github.com/maxxfrazer/RealityUI/wiki), and also the [documentation](https://maxxfrazer.github.io/RealityUI/).
+
+Also see the [Example Project](https://github.com/maxxfrazer/RealityUI/tree/main/RealityUI%2BExamples) for iOS in this repository.

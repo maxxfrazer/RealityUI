@@ -1,12 +1,6 @@
 {
   "warnings": [
-    {
-      "file": "/Users/maxcobb/Documents/github/maxxfrazer/RealityUI/Sources/RealityUI/HasRUI.swift",
-      "line": 97,
-      "symbol": "HasRUIMaterials",
-      "symbol_kind": "source.lang.swift.decl.protocol",
-      "warning": "undocumented"
-    }
+
   ],
   "source_directory": "/Users/maxcobb/Documents/github/maxxfrazer/RealityUI"
 }

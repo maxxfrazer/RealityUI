@@ -77,6 +77,7 @@ public extension HasTurnTouch {
     get { self.components[TurnComponent.self] ?? TurnComponent() }
     set { self.components[TurnComponent.self] = newValue }
   }
+
   /// The axis to turn around for the entity.
   var turnAxis: SIMD3<Float> {
     get { self.turnTouch.axis }
@@ -92,4 +93,44 @@ public extension HasTurnTouch {
     get { self.turnTouch.lastGlobalPosition }
     set { self.turnTouch.lastGlobalPosition = newValue }
   }
+}
+
+// MARK: DEPRECATED
+
+/// An interface used for entities which are to be rotated via one finger drag gestures
+@available(*, deprecated, renamed: "HasTurnTouch")
+public typealias HasPivotTouch = HasTurnTouch
+
+/// A collection of properties for the entities that conform to `HasPivotTouch`.
+@available(*, deprecated, renamed: "TurnComponent")
+public typealias PivotComponent = TurnComponent
+public extension HasTurnTouch {
+    /// The axis to turn around for the entity.
+    @available(*, deprecated, renamed: "turnAxis")
+    var pivotAxis: SIMD3<Float> {
+        get { self.turnAxis }
+        set { self.turnAxis = newValue }
+    }
+    /// Maximum distance away from the center of the object where the turn touch is active
+    @available(*, deprecated, renamed: "maxDistance")
+    var maxPivotDistance: Float? {
+        get { self.maxDistance }
+        set { self.maxDistance = newValue }
+    }
+}
+
+public extension TurnComponent {
+    /// Axis upon which the object will rotate.
+    @available(*, deprecated, renamed: "axis")
+    var pivotAxis: SIMD3<Float> {
+        get { self.axis }
+        set { self.axis = newValue }
+    }
+    /// Maximum distance from the Entity centre where touches will still be picked up
+    /// Default: `nil` means infinite distance.
+    @available(*, deprecated, renamed: "maxDistance")
+    var maxPivotDistance: Float? {
+        get { self.maxDistance }
+        set { self.maxDistance = newValue }
+    }
 }

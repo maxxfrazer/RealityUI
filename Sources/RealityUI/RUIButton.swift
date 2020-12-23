@@ -11,8 +11,9 @@ import RealityKit
 /// A  RealityUI Button to be added to a RealityKit scene.
 public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 
-  public var collisionPlane: float4x4?
+  public internal(set) var collisionPlane: float4x4?
 
+  /// Function that will be called when button is successfully tapped.
   public var touchUpCompleted: ((HasButton) -> Void)?
 
   /// Creates a RealityUI Button entity with optional `ButtonComponent`, `RUIComponent` and `updateCallback`.
@@ -32,6 +33,7 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
     self.makeModels()
   }
 
+  /// Creates a default RealityUI Button
   required public convenience init() {
     self.init(button: nil)
   }

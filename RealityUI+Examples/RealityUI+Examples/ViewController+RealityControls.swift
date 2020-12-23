@@ -82,7 +82,6 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasTurnTouch
       scale: .init(repeating: 0.15), rotation: .init(angle: .pi, axis: [0, 1, 0]), translation: [-0.5, 0.25, -0.25]
     )
     self.addChild(minusPlusStepper)
-
     let shapeStepper = RUIStepper(
       style: .arrowLeftRight,
       upTrigger: { stepper in self.shiftShape(1, on: stepper) },

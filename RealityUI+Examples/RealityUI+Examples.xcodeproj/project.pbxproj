@@ -30,17 +30,17 @@
 
 /* Begin PBXFileReference section */
 		F301D8A7247A62ED004AE1FA /* ViewController+RealityControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+RealityControls.swift"; sourceTree = "<group>"; };
-		F33505CA25936A7700B8AE86 /* RUILongTouchGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUILongTouchGestureRecognizer.swift; path = ../../../Sources/RealityUI/RUILongTouchGestureRecognizer.swift; sourceTree = "<group>"; };
-		F33505CB25936A7700B8AE86 /* HasRUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasRUI.swift; path = ../../../Sources/RealityUI/HasRUI.swift; sourceTree = "<group>"; };
-		F33505CC25936A7700B8AE86 /* RUISwitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUISwitch.swift; path = ../../../Sources/RealityUI/RUISwitch.swift; sourceTree = "<group>"; };
-		F33505CD25936A7700B8AE86 /* HasClick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasClick.swift; path = ../../../Sources/RealityUI/HasClick.swift; sourceTree = "<group>"; };
-		F33505CE25936A7700B8AE86 /* RUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIButton.swift; path = ../../../Sources/RealityUI/RUIButton.swift; sourceTree = "<group>"; };
-		F33505CF25936A7700B8AE86 /* RealityUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RealityUI.swift; path = ../../../Sources/RealityUI/RealityUI.swift; sourceTree = "<group>"; };
-		F33505D025936A7700B8AE86 /* RUIStepper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIStepper.swift; path = ../../../Sources/RealityUI/RUIStepper.swift; sourceTree = "<group>"; };
-		F33505D125936A7700B8AE86 /* RUIAnimations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIAnimations.swift; path = ../../../Sources/RealityUI/RUIAnimations.swift; sourceTree = "<group>"; };
-		F33505D225936A7700B8AE86 /* RUISlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUISlider.swift; path = ../../../Sources/RealityUI/RUISlider.swift; sourceTree = "<group>"; };
-		F33505D325936A7700B8AE86 /* RUIText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIText.swift; path = ../../../Sources/RealityUI/RUIText.swift; sourceTree = "<group>"; };
-		F33505D425936A7700B8AE86 /* HasTurnTouch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasTurnTouch.swift; path = ../../../Sources/RealityUI/HasTurnTouch.swift; sourceTree = "<group>"; };
+		F33505CA25936A7700B8AE86 /* RUILongTouchGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUILongTouchGestureRecognizer.swift; path = ../Sources/RealityUI/RUILongTouchGestureRecognizer.swift; sourceTree = SOURCE_ROOT; };
+		F33505CB25936A7700B8AE86 /* HasRUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasRUI.swift; path = ../Sources/RealityUI/HasRUI.swift; sourceTree = SOURCE_ROOT; };
+		F33505CC25936A7700B8AE86 /* RUISwitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUISwitch.swift; path = ../Sources/RealityUI/RUISwitch.swift; sourceTree = SOURCE_ROOT; };
+		F33505CD25936A7700B8AE86 /* HasClick.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasClick.swift; path = ../Sources/RealityUI/HasClick.swift; sourceTree = SOURCE_ROOT; };
+		F33505CE25936A7700B8AE86 /* RUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIButton.swift; path = ../Sources/RealityUI/RUIButton.swift; sourceTree = SOURCE_ROOT; };
+		F33505CF25936A7700B8AE86 /* RealityUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RealityUI.swift; path = ../Sources/RealityUI/RealityUI.swift; sourceTree = SOURCE_ROOT; };
+		F33505D025936A7700B8AE86 /* RUIStepper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIStepper.swift; path = ../Sources/RealityUI/RUIStepper.swift; sourceTree = SOURCE_ROOT; };
+		F33505D125936A7700B8AE86 /* RUIAnimations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIAnimations.swift; path = ../Sources/RealityUI/RUIAnimations.swift; sourceTree = SOURCE_ROOT; };
+		F33505D225936A7700B8AE86 /* RUISlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUISlider.swift; path = ../Sources/RealityUI/RUISlider.swift; sourceTree = SOURCE_ROOT; };
+		F33505D325936A7700B8AE86 /* RUIText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RUIText.swift; path = ../Sources/RealityUI/RUIText.swift; sourceTree = SOURCE_ROOT; };
+		F33505D425936A7700B8AE86 /* HasTurnTouch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HasTurnTouch.swift; path = ../Sources/RealityUI/HasTurnTouch.swift; sourceTree = SOURCE_ROOT; };
 		F341418D246FF53E006B1ECA /* RealityUI+Examples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RealityUI+Examples.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3414190246FF53E006B1ECA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F3414192246FF53E006B1ECA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -78,7 +78,8 @@
 				F33505CC25936A7700B8AE86 /* RUISwitch.swift */,
 				F33505D325936A7700B8AE86 /* RUIText.swift */,
 			);
-			path = RealityUI;
+			name = RealityUI;
+			path = ../../Sources/RealityUI;
 			sourceTree = "<group>";
 		};
 		F3414184246FF53E006B1ECA = {

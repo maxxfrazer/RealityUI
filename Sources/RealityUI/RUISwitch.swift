@@ -19,6 +19,7 @@ public class RUISwitch: Entity, HasSwitch, HasClick {
       toggleObj.setOn(!toggleObj.isOn)
   }
 
+  /// Switch's isOn property has changed
   public var switchChanged: ((HasSwitch) -> Void)?
 
   /// Creates a RealityUI Switch entity with optional `SwitchComponent`, `RUIComponent` and `changedCallback`.
@@ -39,12 +40,15 @@ public class RUISwitch: Entity, HasSwitch, HasClick {
     self.switchChanged = changedCallback
   }
 
+  /// Create a RUISwitch entity with the default styling.
   required public convenience init() {
     self.init(switchness: SwitchComponent())
   }
 }
 
-public protocol HasSwitch: HasRUI {
+/// An interface used for all entities that have a toggling option
+public protocol HasSwitch: HasRUIMaterials {
+  /// Switch's isOn property has changed
   var switchChanged: ((HasSwitch) -> Void)? { get set }
 }
 
@@ -75,8 +79,8 @@ public struct SwitchComponent: Component {
   /// Creates a SwitchComponent using a list of completely optional parameters.
   /// - Parameters:
   ///   - isOn: A Boolean value that determines the off/on state of the switch. Default to `false`, meaning off.
-  ///   - onColor: Color of the inner capsule when the switch is set to `off`. Default `Material.Color.systemGreen`
-  ///   - offColor: Color of the inner capsule when the switch is set to `on`. Default `Material.Color.lightGray`
+  ///   - onColor: Color of the inner capsule when the switch is set to `on`. Default `Material.Color.systemGreen`
+  ///   - offColor: Color of the inner capsule when the switch is set to `off`. Default `Material.Color.lightGray`
   ///   - padding: Padding (in meters) between the thumb and the inner capsule of the switch. Default 0.05.
   ///   - border: Border (in meters) between the two outer capsules of the switch. No border if set to 0. Default 0.05.
   ///   - borderColor: Color of the outer border. Default `Material.Color.black`
@@ -101,6 +105,10 @@ public struct SwitchComponent: Component {
     self.thumbColor = thumbColor
   }
 
+  /// Creates the SwitchComponent with all default styles, only custom colours.
+  /// - Parameters:
+  ///   - onColor: Color of the inner capsule when the switch is set to `on`.
+  ///   - offColor: Color of the inner capsule when the switch is set to `off`.
   public init(onColor: Material.Color, offColor: Material.Color) {
     self.init(isOn: false, onColor: onColor, offColor: offColor)
   }
@@ -108,6 +116,7 @@ public struct SwitchComponent: Component {
 
 public extension HasSwitch {
 
+  /// The switch properties that defines the visual appearance and state.
   internal(set) var switchness: SwitchComponent {
     get {
       self.components[SwitchComponent.self] ?? SwitchComponent()}
@@ -116,11 +125,16 @@ public extension HasSwitch {
     }
   }
 
+  /// Set the switch's current value
+  /// - Parameters:
+  ///   - isOn: The switch's new state
+  ///   - animated: Should the switch animate to the new state, if an animation is available.
   func setOn(_ isOn: Bool, animated: Bool = true) {
     if self.isOn == isOn {
       return
     }
     self.isOn = isOn
+
     self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)
     let thumbTransform = Transform(
       scale: .one, rotation: .init(), translation: togglePos
@@ -149,8 +163,11 @@ public extension HasSwitch {
     get { self.switchness.isOn }
     set { self.switchness.isOn = newValue }
   }
+  /// Color of the outer border. Default `Material.Color.black`
   var borderColor: Material.Color { self.switchness.borderColor }
+  /// Color of the inner capsule when the switch is set to off. Default `Material.Color.systemGreen`
   var onColor: Material.Color { self.switchness.onColor }
+  /// Color of the inner capsule when the switch is set to on. Default `Material.Color.lightGray`
   var offColor: Material.Color { self.switchness.offColor }
   private var togglePos: SIMD3<Float> {
     [(isOn ? -1 : 1) * (self.switchness.length - 1)/2, 0, 0]

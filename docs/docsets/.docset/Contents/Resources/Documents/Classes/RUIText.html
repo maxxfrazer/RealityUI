@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>RUIText Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/RUIText" class="dashAnchor"></a>
+    <a title="RUIText Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html"> Docs</a> (100% documented)</p>
+        <p class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html"> Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        RUIText Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/RUIButton.html">RUIButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUISlider.html">RUISlider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUIStepper.html">RUIStepper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUISwitch.html">RUISwitch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUIText.html">RUIText</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RealityUI.html">RealityUI</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RealityUI/RUIGesture.html">– RUIGesture</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/ARView.html">ARView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Entity.html">Entity</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/HasARTouch.html">HasARTouch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasButton.html">HasButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasClick.html">HasClick</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols.html#/s:9RealityUI11HasPanTouchP">HasPanTouch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasRUI.html">HasRUI</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasRUIMaterials.html">HasRUIMaterials</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasSlider.html">HasSlider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasStepper.html">HasStepper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasSwitch.html">HasSwitch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasText.html">HasText</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols.html#/s:9RealityUI16HasTouchUpInsideP">HasTouchUpInside</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasTurnTouch.html">HasTurnTouch</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/ButtonComponent.html">ButtonComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ButtonComponent/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/RUIComponent.html">RUIComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SliderComponent.html">SliderComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SliderComponent/SlidingState.html">– SlidingState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/StepperComponent.html">StepperComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/StepperComponent/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SwitchComponent.html">SwitchComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/TextComponent.html">TextComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/TurnComponent.html">TurnComponent</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/GestureBase">GestureBase</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:9RealityUI11GestureBasea">GestureBase</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:9RealityUI13HasPivotToucha">HasPivotTouch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:9RealityUI14PivotComponenta">PivotComponent</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>RUIText</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">RUIText</span> <span class="p">:</span> <span class="kt">Entity</span><span class="p">,</span> <span class="kt"><a href="../Protocols/HasText.html">HasText</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/HasClick.html">HasClick</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>A RealityUI Text object to be added to a RealityKit scene.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI7RUITextC9tapActionyAA8HasClick_p_s5SIMD3VySfGSgtcSgvp"></a>
+                    <a name="//apple_ref/swift/Property/tapAction" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI7RUITextC9tapActionyAA8HasClick_p_s5SIMD3VySfGSgtcSgvp">tapAction</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Action to occus when the user taps on this Entity.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">tapAction</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Protocols/HasClick.html">HasClick</a></span><span class="p">,</span> <span class="kt">SIMD3</span><span class="o">&lt;</span><span class="kt">Float</span><span class="o">&gt;</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI7RUITextC4with5width6height4font9extrusion5colorACSS_12CoreGraphics7CGFloatVALSo6NSFontCSfSo7NSColorCtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(with:width:height:font:extrusion:color:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI7RUITextC4with5width6height4font9extrusion5colorACSS_12CoreGraphics7CGFloatVALSo6NSFontCSfSo7NSColorCtcfc">init(with:<wbr>width:<wbr>height:<wbr>font:<wbr>extrusion:<wbr>color:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Create a new RUIText object, adding text to your RealityKit scene.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">convenience</span> <span class="nf">init</span><span class="p">(</span>
+  <span class="n">with</span> <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">width</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">height</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nv">font</span><span class="p">:</span> <span class="kt">MeshResource</span><span class="o">.</span><span class="kt">Font</span> <span class="o">=</span> <span class="kt">RUIText</span><span class="o">.</span><span class="n"><a href="../Classes/RUIText.html#/mediumFont">mediumFont</a></span><span class="p">,</span> <span class="nv">extrusion</span><span class="p">:</span> <span class="kt">Float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+  <span class="nv">color</span><span class="p">:</span> <span class="kt">Material</span><span class="o">.</span><span class="kt">Color</span> <span class="o">=</span> <span class="o">.</span><span class="n">green</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>text</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The text to render.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>width</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The maximum width, in meters, of the text frame in the local coordinate system.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>height</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The maximum height, in meters, of the text frame in the local coordinate system.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>font</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The font to use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>extrusion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The extent, in meters, of the extruded text in the z-axis direction.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>color</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The color applied to the text mesh&rsquo;s material.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI7RUITextC13textComponent3RUI9tapActionAcA04TextE0VSg_AA12RUIComponentVyAA8HasClick_p_s5SIMD3VySfGSgtcSgtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(textComponent:RUI:tapAction:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI7RUITextC13textComponent3RUI9tapActionAcA04TextE0VSg_AA12RUIComponentVyAA8HasClick_p_s5SIMD3VySfGSgtcSgtcfc">init(textComponent:<wbr>RUI:<wbr>tapAction:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a RealityUI Text entity.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">required</span> <span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
+  <span class="nv">textComponent</span><span class="p">:</span> <span class="kt"><a href="../Structs/TextComponent.html">TextComponent</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="kt">RUI</span><span class="p">:</span> <span class="kt"><a href="../Structs/RUIComponent.html">RUIComponent</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/RUIComponent.html">RUIComponent</a></span><span class="p">(),</span>
+  <span class="nv">tapAction</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Protocols/HasClick.html">HasClick</a></span><span class="p">,</span> <span class="kt">SIMD3</span><span class="o">&lt;</span><span class="kt">Float</span><span class="o">&gt;</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>textComponent</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Details about the text object, including text, font, extrusion and more.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>RUI</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Details about the RealityUI Entity.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tapAction</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>callback function to receive updates touchUpInside the RealityUI Text.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI7RUITextCACycfc"></a>
+                    <a name="//apple_ref/swift/Method/init()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI7RUITextCACycfc">init()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initialise the RUIText object with no text and default properties.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">required</span> <span class="kd">convenience</span> <span class="kd">public</span> <span class="nf">init</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Variable/largeFont" class="dashAnchor"></a>
+                    <a class="token" href="#/">largeFont</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Used as default larger text to be displayed in the scene</p>
+
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Variable/mediumFont" class="dashAnchor"></a>
+                    <a class="token" href="#/">mediumFont</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Used as default medium text to be displayed in the scene</p>
+
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI7RUITextC9largeFontSo6NSFontCvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/largeFont" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI7RUITextC9largeFontSo6NSFontCvpZ">largeFont</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Used as default larger text to be displayed in the scene</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">largeFont</span><span class="p">:</span> <span class="kt">MeshResource</span><span class="o">.</span><span class="kt">Font</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI7RUITextC10mediumFontSo6NSFontCvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/mediumFont" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI7RUITextC10mediumFontSo6NSFontCvpZ">mediumFont</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Used as default medium text to be displayed in the scene</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">mediumFont</span><span class="p">:</span> <span class="kt">MeshResource</span><span class="o">.</span><span class="kt">Font</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2020 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2020-12-23)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

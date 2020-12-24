@@ -11,8 +11,9 @@ import RealityKit
 /// A  RealityUI Button to be added to a RealityKit scene.
 public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 
-  public var collisionPlane: float4x4?
+  public internal(set) var collisionPlane: float4x4?
 
+  /// Function that will be called when button is successfully tapped.
   public var touchUpCompleted: ((HasButton) -> Void)?
 
   /// Creates a RealityUI Button entity with optional `ButtonComponent`, `RUIComponent` and `updateCallback`.
@@ -32,6 +33,7 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
     self.makeModels()
   }
 
+  /// Creates a default RealityUI Button
   required public convenience init() {
     self.init(button: nil)
   }
@@ -61,25 +63,39 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 
 }
 
+/// A collection of properties for the entities that conform to `HasButton`.
 public struct ButtonComponent: Component {
+  /// Size of the RUIButton base.
   let size: SIMD3<Float>
+  /// Color of the button.
   var buttonColor: Material.Color
+  /// Color of the button base.
   var baseColor: Material.Color
+  /// Padding (in meters) between the base and the button.
   let padding: Float
+  /// Multiplyer amount that the button sticks out from the base when unpressed.
+  /// The extrude amount will be a multiplier of the button z size
   let extrude: Float
+  /// Multiplyer amount that the button sticks out from the base when pressed.
+  /// The compress amount will be a multiplier of the button z size
   let compress: Float
+  /// A corner radius applied to both the button and the button base.
   let cornerRadius: Float?
   internal var isCompressed = false
+  /// Style of button used.
   let style: ButtonComponent.Style
 
-  enum UIPart: String {
+  internal enum UIPart: String {
     case button
     case base
   }
+  /// Style for an RUIButton object
   public enum Style {
+    /// A button style that is cuboid in shape.
     case rectangular
   }
 
+  /// Default size of the button, if no properties are specifically set.
   public static let defaultSize: SIMD3<Float> = [1, 1, 0.2]
 
   /// Creates a ButtonComponent specifying the layout and appearance of a RUIButton
@@ -114,9 +130,19 @@ public struct ButtonComponent: Component {
     self.cornerRadius = cornerRadius
     self.style = style
   }
+  /// Create a new ButtonComponent with defautl values for a given style
+  /// - Parameter style: Style of the button.
   public init(style: Style) {
     self.init(size: ButtonComponent.defaultSize, style: style)
   }
+
+  /// Create a new rectangular style button.
+  /// - Parameters:
+  ///   - width: Width of the rectangular button
+  ///   - height: Height of the rectangular button
+  ///   - depth: Depth of the rectangular button
+  ///   - padding: Padding (in meters) between the base and the button. Default 0.1.
+  ///   - cornerRadius: A corner radius applied to both the button and the button base.
   public init(
     width: Float = 1, height: Float = 1, depth: Float = 0.2,
     padding: Float = 0.1, cornerRadius: Float? = nil
@@ -125,11 +151,14 @@ public struct ButtonComponent: Component {
   }
 }
 
-public protocol HasButton: HasTouchUpInside {
+/// An interface that provides a button component that defines the visual appearance.
+public protocol HasButton: HasTouchUpInside, HasRUIMaterials {
+  /// Button has been clicked callback, similar to UIKit `.touchUpInside`
   var touchUpCompleted: ((HasButton) -> Void)? { get set }
 }
 
 public extension HasButton {
+  /// Properties of the button to be rendered
   internal(set) var button: ButtonComponent {
     get { self.components[ButtonComponent.self] ?? ButtonComponent() }
     set { self.components[ButtonComponent.self] = newValue }

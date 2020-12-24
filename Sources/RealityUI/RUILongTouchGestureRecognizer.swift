@@ -9,13 +9,17 @@
 import RealityKit
 #if os(iOS)
 import UIKit
+/// Typealias to easily access UIGestureRecognizer and NSGestureRecognizer on iOS and macOS respectively
 public typealias GestureBase = UIGestureRecognizer
 #elseif os(macOS)
 import AppKit
+/// Typealias to easily access UIGestureRecognizer and NSGestureRecognizer on iOS and macOS respectively
 public typealias GestureBase = NSGestureRecognizer
 #endif
 import Combine
 
+/// An interface used for RealityUI entities which respond to gestures beyond just a tap.
+/// ie: panning gestures
 public protocol HasARTouch: HasRUI, HasCollision {
   /// Called when a new touch has begun on an Entity
   /// - Parameters:
@@ -44,10 +48,14 @@ public protocol HasARTouch: HasRUI, HasCollision {
 extension HasARTouch {
 }
 
+/// An interface used for all entities that have long touches where movement
+/// is the main interest (vs HasTouchUpInside)
 public protocol HasPanTouch: HasARTouch {}
 
 public extension HasPanTouch {}
 
+/// An interface used for all entities that have long touches where movement
+/// is is not the main interest (vs HasPanTouch)
 public protocol HasTouchUpInside: HasARTouch {}
 
 /// This Gesture is currently used for any gesture other than simple taps.
@@ -99,7 +107,7 @@ public protocol HasTouchUpInside: HasARTouch {}
       if let planeCollisionPoint = self.arView.unproject(
         touchInView, ontoPlane: collisionPlane
       ) {
-        if let thisPivot = hitEntity as? HasPivotTouch, let maxDist = thisPivot.maxPivotDistance {
+        if let maxDist = (hitEntity as? HasTurnTouch)?.maxDistance {
           let convPoint = hitEntity.convert(position: planeCollisionPoint, from: nil)
           if convPoint.magnitude > maxDist {
             return
@@ -144,8 +152,12 @@ public protocol HasTouchUpInside: HasARTouch {}
 }
 
 #if os(iOS)
-extension RUILongTouchGestureRecognizer {
-  open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+internal extension RUILongTouchGestureRecognizer {
+  /// Sent to the gesture recognizer when one or more fingers touch down in the associated view.
+  /// - Parameters:
+  ///   - touches: A set of UITouch instances in the event represented by event that represent the touches in the UITouch.Phase.began phase.
+  ///   - event: A `UIEvent` object representing the event to which the touches belong.
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
     guard activeTouch == nil,
       let firstTouch = touches.first,
       let touchInView = touches.first?.location(in: self.arView),
@@ -168,7 +180,11 @@ extension RUILongTouchGestureRecognizer {
     super.touchesBegan(touches, with: event)
     self.state = .began
   }
-  open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
+  /// Sent to the gesture recognizer when one or more fingers move in the associated view.
+  /// - Parameters:
+  ///   - touches: A set of `UITouch` instances in the event represented by event that represent touches in the `UITouch.Phase.moved` phase.
+  ///   - event: A `UIEvent` object representing the event to which the touches belong.
+  override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
     guard let activeTouch = self.activeTouch else {
       return
     }
@@ -189,11 +205,19 @@ extension RUILongTouchGestureRecognizer {
     self.state = .changed
   }
 
-  open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
+  /// Sent to the gesture recognizer when a system event (such as an incoming phone call) cancels a touch event.
+  /// - Parameters:
+  ///   - touches: A set of `UITouch` instances in the event represented by event that represent the touches in the `UITouch.Phase.cancelled` phase.
+  ///   - event: A `UIEvent` object representing the event to which the touches belong.
+  override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
     self.clearTouch(touches, with: event, state: .cancelled)
   }
 
-  open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
+  /// Sent to the gesture recognizer when one or more fingers lift from the associated view.
+  /// - Parameters:
+  ///   - touches: A set of `UITouch` instances in the event represented by event that represent the touches in the `UITouch.Phase.ended` phase.
+  ///   - event: A `UIEvent` object representing the event to which the touches belong.
+  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
     self.clearTouch(touches, with: event, state: .ended)
   }
 

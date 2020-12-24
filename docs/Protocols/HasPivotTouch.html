@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>HasPivotTouch Protocol Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Protocol/HasPivotTouch" class="dashAnchor"></a>
+    <a title="HasPivotTouch Protocol Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html"> Docs</a> (100% documented)</p>
+        <p class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html"> Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        HasPivotTouch Protocol Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/RUIButton.html">RUIButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUISlider.html">RUISlider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUIStepper.html">RUIStepper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUISwitch.html">RUISwitch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RUIText.html">RUIText</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RealityUI.html">RealityUI</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RealityUI/RUIGesture.html">– RUIGesture</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/ARView.html">ARView</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/HasARTouch.html">HasARTouch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasButton.html">HasButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasClick.html">HasClick</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols.html#/s:9RealityUI11HasPanTouchP">HasPanTouch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasPivotTouch.html">HasPivotTouch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasRUI.html">HasRUI</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasSlider.html">HasSlider</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasStepper.html">HasStepper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasSwitch.html">HasSwitch</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/HasText.html">HasText</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols.html#/s:9RealityUI16HasTouchUpInsideP">HasTouchUpInside</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/ButtonComponent.html">ButtonComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ButtonComponent/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/PivotComponent.html">PivotComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/RUIComponent.html">RUIComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SliderComponent.html">SliderComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SliderComponent/SlidingState.html">– SlidingState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/StepperComponent.html">StepperComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/StepperComponent/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SwitchComponent.html">SwitchComponent</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/TextComponent.html">TextComponent</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/GestureBase">GestureBase</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:9RealityUI11GestureBasea">GestureBase</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>HasPivotTouch</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">HasPivotTouch</span> <span class="p">:</span> <span class="kt"><a href="../Protocols.html#/s:9RealityUI11HasPanTouchP">HasPanTouch</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>An interface used for entities which are to be rotated via one finger drag gestures</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI13HasPivotTouchPAAE14collisionPlaneSo13simd_float4x4aSgvp"></a>
+                    <a name="//apple_ref/swift/Property/collisionPlane" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI13HasPivotTouchPAAE14collisionPlaneSo13simd_float4x4aSgvp">collisionPlane</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Plane that we run the raycast against.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">collisionPlane</span><span class="p">:</span> <span class="n">float4x4</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI13HasPivotTouchPAAE02arE7Started_11hasCollidedys5SIMD3VySfG_SbtF"></a>
+                    <a name="//apple_ref/swift/Method/arTouchStarted(_:hasCollided:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI13HasPivotTouchPAAE02arE7Started_11hasCollidedys5SIMD3VySfG_SbtF">arTouchStarted(_:<wbr>hasCollided:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called when a new touch has begun on an Entity</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">arTouchStarted</span><span class="p">(</span><span class="n">_</span> <span class="nv">worldCoordinate</span><span class="p">:</span> <span class="kt">SIMD3</span><span class="o">&lt;</span><span class="kt">Float</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">hasCollided</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>worldCoordinate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Collision of the object or collision plane</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>hasCollided</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Is the touch colliding with the <code>CollisionComponent</code> or not.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI13HasPivotTouchPAAE02arE7Updated_11hasCollidedys5SIMD3VySfG_SbtF"></a>
+                    <a name="//apple_ref/swift/Method/arTouchUpdated(_:hasCollided:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI13HasPivotTouchPAAE02arE7Updated_11hasCollidedys5SIMD3VySfG_SbtF">arTouchUpdated(_:<wbr>hasCollided:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called when a touch is still on screen or a mouse is still down.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">arTouchUpdated</span><span class="p">(</span><span class="n">_</span> <span class="nv">worldCoordinate</span><span class="p">:</span> <span class="kt">SIMD3</span><span class="o">&lt;</span><span class="kt">Float</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">hasCollided</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>worldCoordinate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Where is the touch currently hits in world space</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>hasCollided</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Is the touch colliding with the <code>CollisionComponent</code> or not.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI10HasARTouchP16arTouchCancelledyyF"></a>
+                    <a name="//apple_ref/swift/Method/arTouchCancelled()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI10HasARTouchP16arTouchCancelledyyF">arTouchCancelled()</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">arTouchCancelled</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI10HasARTouchP12arTouchEndedyys5SIMD3VySfGSgF"></a>
+                    <a name="//apple_ref/swift/Method/arTouchEnded(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI10HasARTouchP12arTouchEndedyys5SIMD3VySfGSgF">arTouchEnded(_:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">arTouchEnded</span><span class="p">(</span><span class="n">_</span> <span class="nv">worldCoordinate</span><span class="p">:</span> <span class="kt">SIMD3</span><span class="o">&lt;</span><span class="kt">Float</span><span class="o">&gt;</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI13HasPivotTouchPAAE05pivotE0AA0D9ComponentVvp"></a>
+                    <a name="//apple_ref/swift/Property/pivotTouch" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI13HasPivotTouchPAAE05pivotE0AA0D9ComponentVvp">pivotTouch</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The pivot component for the entity.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">pivotTouch</span><span class="p">:</span> <span class="kt"><a href="../Structs/PivotComponent.html">PivotComponent</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI13HasPivotTouchPAAE9pivotAxiss5SIMD3VySfGvp"></a>
+                    <a name="//apple_ref/swift/Property/pivotAxis" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI13HasPivotTouchPAAE9pivotAxiss5SIMD3VySfGvp">pivotAxis</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The pivot axis for the entity.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">pivotAxis</span><span class="p">:</span> <span class="kt">SIMD3</span><span class="o">&lt;</span><span class="kt">Float</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9RealityUI13HasPivotTouchPAAE03maxD8DistanceSfSgvp"></a>
+                    <a name="//apple_ref/swift/Property/maxPivotDistance" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9RealityUI13HasPivotTouchPAAE03maxD8DistanceSfSgvp">maxPivotDistance</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Maximum distance away from the center of the object where the pivot touch is active</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">maxPivotDistance</span><span class="p">:</span> <span class="kt">Float</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2020 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2020-12-18)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

@@ -87,6 +87,8 @@ public struct TextComponent: Component {
   /// The color of the text material. `.labelColor` by default (macOS)
   public var color: Material.Color = .labelColor
   #endif
+  /// How the text should be aligned in the text frame
+  public var alignment: CTTextAlignment = .center
   /// The extent, in meters, of the extruded text in the z-axis direction.
   public var extrusion: Float = 1
   /// How the text should wrap when reaching a frame boundary.
@@ -164,7 +166,7 @@ public extension HasText {
       containerFrame: .init(
         origin: .zero,
         size: CGSize(width: self.textComponent.width, height: self.textComponent.height)),
-      alignment: .center,
+      alignment: self.textComponent.alignment,
       lineBreakMode: self.textComponent.lineBreakMode
     )
 

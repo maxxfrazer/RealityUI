@@ -289,25 +289,24 @@ internal extension HasStepper {
   }
 
   func stepperTap(clicker: HasClick, worldTapPos: SIMD3<Float>?) {
-      guard let stepperObj = (clicker as? RUIStepper) else {
-        return
-      }
-      guard let tapPos = worldTapPos else {
-        return
-      }
-      let localPos = stepperObj.convert(position: tapPos, from: nil)
+    guard let stepperObj = (clicker as? RUIStepper) else {
+      return
+    }
+    guard let tapPos = worldTapPos else {
+      return
+    }
+    let localPos = stepperObj.convert(position: tapPos, from: nil)
 
-      if localPos.x > 0 {
-        if let downModel = stepperObj.getModel(part: .left) {
-          stepperObj.springAnimate(entity: downModel)
-        }
-        stepperObj.downTrigger?(stepperObj)
-      } else {
-        if let upModel = stepperObj.getModel(part: .right) {
-          stepperObj.springAnimate(entity: upModel)
-        }
-        stepperObj.upTrigger?(stepperObj)
+    if localPos.x > 0 {
+      if let downModel = stepperObj.getModel(part: .left) {
+        stepperObj.springAnimate(entity: downModel)
       }
-      //toggleObj.setOn(!toggleObj.isOn)
+      stepperObj.downTrigger?(stepperObj)
+    } else {
+      if let upModel = stepperObj.getModel(part: .right) {
+        stepperObj.springAnimate(entity: upModel)
+      }
+      stepperObj.upTrigger?(stepperObj)
+    }
   }
 }

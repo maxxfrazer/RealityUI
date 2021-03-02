@@ -87,6 +87,8 @@ public struct TextComponent: Component {
   /// The color of the text material. `.labelColor` by default (macOS)
   public var color: Material.Color = .labelColor
   #endif
+  /// How the text should be aligned in the text frame
+  public var alignment: CTTextAlignment = .center
   /// The extent, in meters, of the extruded text in the z-axis direction.
   public var extrusion: Float = 1
   /// How the text should wrap when reaching a frame boundary.
@@ -95,6 +97,35 @@ public struct TextComponent: Component {
   internal enum UIPart: String {
     case textEntity
   }
+
+  /// Create a new TextComponent, all values are optional
+  /// - Parameters:
+  ///   - text: The text to render.
+  ///   - font: The font to use.
+  ///   - width: The maximum width, in meters, of the text frame in the local coordinate system.
+  ///   - height: The maximum height, in meters, of the text frame in the local coordinate system.
+  ///   - color: The color of the text material. `.label`/`.labelColor` by default (iOS/macOS)
+  ///   - alignment: How the text should be aligned in the text frame
+  ///   - extrusion: The extent, in meters, of the extruded text in the z-axis direction.
+  ///   - lineBreakMode: How the text should wrap when reaching a frame boundary.
+  public init(
+    text: String? = nil, font: MeshResource.Font? = nil,
+    width: CGFloat? = nil, height: CGFloat? = nil, color: Material.Color? = nil,
+    alignment: CTTextAlignment? = nil, extrusion: Float? = nil,
+    lineBreakMode: CTLineBreakMode? = nil
+  ) {
+    if let text = text { self.text = text }
+    if let font = font { self.font = font }
+    if let width = width { self.width = width }
+    if let height = height { self.height = height }
+    if let color = color { self.color = color }
+    if let alignment = alignment { self.alignment = alignment }
+    if let extrusion = extrusion { self.extrusion = extrusion }
+    if let lineBreakMode = lineBreakMode { self.lineBreakMode = lineBreakMode }
+  }
+
+  /// Create a new TextComponent using only the default values.
+  public init() {}
 }
 
 /// An interface used for all entities that render text
@@ -164,7 +195,7 @@ public extension HasText {
       containerFrame: .init(
         origin: .zero,
         size: CGSize(width: self.textComponent.width, height: self.textComponent.height)),
-      alignment: .center,
+      alignment: self.textComponent.alignment,
       lineBreakMode: self.textComponent.lineBreakMode
     )
 

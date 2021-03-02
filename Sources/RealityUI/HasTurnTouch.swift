@@ -105,32 +105,32 @@ public typealias HasPivotTouch = HasTurnTouch
 @available(*, deprecated, renamed: "TurnComponent")
 public typealias PivotComponent = TurnComponent
 public extension HasTurnTouch {
-    /// The axis to turn around for the entity.
-    @available(*, deprecated, renamed: "turnAxis")
-    var pivotAxis: SIMD3<Float> {
-        get { self.turnAxis }
-        set { self.turnAxis = newValue }
-    }
-    /// Maximum distance away from the center of the object where the turn touch is active
-    @available(*, deprecated, renamed: "maxDistance")
-    var maxPivotDistance: Float? {
-        get { self.maxDistance }
-        set { self.maxDistance = newValue }
-    }
+  /// The axis to turn around for the entity.
+  @available(*, deprecated, renamed: "turnAxis")
+  var pivotAxis: SIMD3<Float> {
+    get { self.turnAxis }
+    set { self.turnAxis = newValue }
+  }
+  /// Maximum distance away from the center of the object where the turn touch is active
+  @available(*, deprecated, renamed: "maxDistance")
+  var maxPivotDistance: Float? {
+    get { self.maxDistance }
+    set { self.maxDistance = newValue }
+  }
 }
 
 public extension TurnComponent {
-    /// Axis upon which the object will rotate.
-    @available(*, deprecated, renamed: "axis")
-    var pivotAxis: SIMD3<Float> {
-        get { self.axis }
-        set { self.axis = newValue }
-    }
-    /// Maximum distance from the Entity centre where touches will still be picked up
-    /// Default: `nil` means infinite distance.
-    @available(*, deprecated, renamed: "maxDistance")
-    var maxPivotDistance: Float? {
-        get { self.maxDistance }
-        set { self.maxDistance = newValue }
-    }
+  /// Axis upon which the object will rotate.
+  @available(*, deprecated, renamed: "axis")
+  var pivotAxis: SIMD3<Float> {
+    get { self.axis }
+    set { self.axis = newValue }
+  }
+  /// Maximum distance from the Entity centre where touches will still be picked up
+  /// Default: `nil` means infinite distance.
+  @available(*, deprecated, renamed: "maxDistance")
+  var maxPivotDistance: Float? {
+    get { self.maxDistance }
+    set { self.maxDistance = newValue }
+  }
 }

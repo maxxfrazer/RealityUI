@@ -42,16 +42,18 @@ public extension RUIConversions {
             }
         }
     }
-    private static func loadResourceCompletion(
+    static func loadResourceCompletion(
         contentsOf url: URL,
         completion: @escaping (Result<TextureResource, Error>
     ) -> Void) {
-        _ = TextureResource.loadAsync(contentsOf: url).sink(
+        var canc: Cancellable?
+        canc = TextureResource.loadAsync(contentsOf: url).sink(
             receiveCompletion: { loadCompletion in
                 // Added this switch just as an example
                 switch loadCompletion {
                 case .failure(let loadErr):
                     completion(.failure(loadErr))
+                    canc?.cancel()
                 case .finished: break
                 }
             }, receiveValue: { textureResource in
@@ -93,17 +95,19 @@ public extension RUIConversions {
     ///   - resourceName: Name of the resource
     ///   - loadMethod: Method that takes the file URL and filename, and returns a LoadRequest of the entity.
     ///   - completion: Completion callback giving the Entity or error message.
-    public static func loadModelCompletion(
+    static func loadModelCompletion(
         contentsOf url: URL, withName resourceName: String?,
         using loadMethod: ((_ contentsOf: URL, _: String?) -> LoadRequest<Entity>),
-        completion: @escaping Result<Entity, Error> -> Void
+        completion: @escaping (Result<Entity, Error>) -> Void
     ) {
-        _ = loadMethod(url, resourceName).sink(
+        var canc: Cancellable?
+        canc = loadMethod(url, resourceName).sink(
             receiveCompletion: { loadCompletion in
                 // Added this switch just as an example
                 switch loadCompletion {
                 case .failure(let loadErr):
                     completion(.failure(loadErr))
+                    canc?.cancel()
                 case .finished: break
                 }
             }, receiveValue: { entity in

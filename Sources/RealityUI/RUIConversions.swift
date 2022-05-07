@@ -27,13 +27,13 @@ public extension RUIConversions {
     /// Load texture from Remote URL and return as a TextureResource in the completion
     /// - Parameters:
     ///   - url: URL for remote file, including file name and extension
-    ///   - override: Whether the file should be overridden if previously downloaded
+    ///   - useCache: Whether any previously downloaded version should be used
     ///   - completion: Result type callback to either get the TextureResource or an Error
     static func loadRemoteTexture(
-        contentsOf url: URL, override: Bool = false,
+        contentsOf url: URL, useCache: Bool = true,
         completion: @escaping (Result<TextureResource, Error>) -> Void
     ) {
-        RUIConversions.downloadRemoteFile(contentsOf: url, override: override) { result in
+        RUIConversions.downloadRemoteFile(contentsOf: url, useCache: useCache) { result in
             switch result {
             case .failure(let err):
                 completion(.failure(err))
@@ -52,8 +52,7 @@ public extension RUIConversions {
                 switch loadCompletion {
                 case .failure(let loadErr):
                     completion(.failure(loadErr))
-                case .finished:
-                    print("entity loaded without errors")
+                case .finished: break
                 }
             }, receiveValue: { textureResource in
                 completion(.success(textureResource))
@@ -68,14 +67,15 @@ public extension RUIConversions {
     /// - Parameters:
     ///   - url: A file URL representing the file to load.
     ///   - resourceName: A unique name to assign to the loaded resource, for use in network synchronization.
-    ///   - override: Whether the file should be overridden if previously downloaded
+    ///   - useCache: Whether the file should be overridden if previously downloaded
+    ///   - loadMethod: Method that takes the file URL and filename, and returns a LoadRequest of the entity.
     ///   - completion: Result type callback to either get the Entity or an Error
     static func loadEntityAsync(
-        contentsOf url: URL, withName resourceName: String? = nil, override: Bool = false,
+        contentsOf url: URL, withName resourceName: String? = nil, useCache: Bool = true,
         using loadMethod: @escaping ((_ contentsOf: URL, _: String?) -> LoadRequest<Entity>) = Entity.loadAsync,
         completion: @escaping (Result<Entity, Error>) -> Void
     ) {
-        RUIConversions.downloadRemoteFile(contentsOf: url, override: override) { result in
+        RUIConversions.downloadRemoteFile(contentsOf: url, useCache: useCache) { result in
             switch result {
             case .success(let endURL):
                 RUIConversions.loadModelCompletion(
@@ -87,10 +87,16 @@ public extension RUIConversions {
         }
     }
 
-    private static func loadModelCompletion(
+    /// Load a model with a given local URL
+    /// - Parameters:
+    ///   - url: local URL of a USDZ resource
+    ///   - resourceName: Name of the resource
+    ///   - loadMethod: Method that takes the file URL and filename, and returns a LoadRequest of the entity.
+    ///   - completion: Completion callback giving the Entity or error message.
+    public static func loadModelCompletion(
         contentsOf url: URL, withName resourceName: String?,
         using loadMethod: ((_ contentsOf: URL, _: String?) -> LoadRequest<Entity>),
-        completion: @escaping (Result<Entity, Error>) -> Void
+        completion: @escaping Result<Entity, Error> -> Void
     ) {
         _ = loadMethod(url, resourceName).sink(
             receiveCompletion: { loadCompletion in
@@ -98,8 +104,7 @@ public extension RUIConversions {
                 switch loadCompletion {
                 case .failure(let loadErr):
                     completion(.failure(loadErr))
-                case .finished:
-                    print("entity loaded without errors")
+                case .finished: break
                 }
             }, receiveValue: { entity in
                 completion(.success(entity))
@@ -126,38 +131,36 @@ public extension RUIConversions {
     ) {
         let destinationURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("\(UUID().uuidString).usdz")
-        if scene.write(to: destinationURL, delegate: delegate) {
-            self.loadModelCompletion(
-                contentsOf: destinationURL, withName: nil,
-                using: loadMethod, completion: completion
-            )
-        } else {
-            completion(.failure(SceneKitConversionError.writeSceneFailed))
+        if !scene.write(to: destinationURL, delegate: delegate) {
+            // If we cannot export the scene, return failure
+            return completion(.failure(SceneKitConversionError.writeSceneFailed))
         }
+        self.loadModelCompletion(
+            contentsOf: destinationURL, withName: nil,
+            using: loadMethod, completion: completion
+        )
     }
 }
 
 // MARK: Helper Methods
 private extension RUIConversions {
     private static func downloadRemoteFile(
-        contentsOf url: URL, override: Bool = false,
+        contentsOf url: URL, useCache: Bool = true,
         completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         var request = URLRequest(url: url, timeoutInterval: 10)
         let endLocation = FileManager.default.temporaryDirectory
             .appendingPathComponent(url.lastPathComponent)
         if FileManager.default.fileExists(atPath: endLocation.path) {
-            if override {
-                do {
-                    try FileManager.default.removeItem(atPath: endLocation.path)
-                } catch let err {
-                    print("Could not remove item: \(err)")
-                    completion(.failure(LoadRemoteError.cannotDelete))
-                    return
-                }
-            } else {
-
-                return
+            if useCache {
+                RealityUI.RUIPrint("Item was cached")
+                return completion(.success(endLocation))
+            }
+            do {
+                try FileManager.default.removeItem(atPath: endLocation.path)
+            } catch let err {
+                RealityUI.RUIPrint("Could not remove item: \(err)")
+                return completion(.failure(LoadRemoteError.cannotDelete))
             }
         }
         request.httpMethod = "GET"
@@ -165,23 +168,20 @@ private extension RUIConversions {
             with: request
         ) { location, _, error in
             if let error = error {
-                completion(.failure(error))
-                return
+                return completion(.failure(error))
             }
             guard let location = location else {
-                completion(.failure(LoadRemoteError.downloadError))
-                return
+                return completion(.failure(LoadRemoteError.downloadError))
             }
             do {
                 try FileManager.default.moveItem(
                     atPath: location.path, toPath: endLocation.path
                 )
             } catch let err {
-                print("Could not move item")
-                completion(.failure(err))
-                return
+                RealityUI.RUIPrint("Could not move item")
+                return completion(.failure(err))
             }
-            completion(.success(endLocation))
+            return completion(.success(endLocation))
         }
         task.resume()
     }

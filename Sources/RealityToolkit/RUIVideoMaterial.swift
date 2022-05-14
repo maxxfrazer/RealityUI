@@ -8,7 +8,7 @@
 import RealityKit
 import AVKit
 
-@available(macOS 11.0, *)
+@available(iOS 14.0, macOS 11.0, *)
 public class RUIVideoMaterial {
 
     private var playing = false
@@ -103,4 +103,3 @@ public class RUIVideoMaterial {
         }
     }
 }
-

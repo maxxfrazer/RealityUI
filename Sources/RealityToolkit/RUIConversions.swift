@@ -157,13 +157,13 @@ private extension RUIConversions {
             .appendingPathComponent(url.lastPathComponent)
         if FileManager.default.fileExists(atPath: endLocation.path) {
             if useCache {
-                RealityUI.RUIPrint("Item was cached")
+                RealityToolkit.RUIPrint("Item was cached")
                 return completion(.success(endLocation))
             }
             do {
                 try FileManager.default.removeItem(atPath: endLocation.path)
             } catch let err {
-                RealityUI.RUIPrint("Could not remove item: \(err)")
+                RealityToolkit.RUIPrint("Could not remove item: \(err)")
                 return completion(.failure(LoadRemoteError.cannotDelete))
             }
         }
@@ -182,7 +182,7 @@ private extension RUIConversions {
                     atPath: location.path, toPath: endLocation.path
                 )
             } catch let err {
-                RealityUI.RUIPrint("Could not move item")
+                RealityToolkit.RUIPrint("Could not move item")
                 return completion(.failure(err))
             }
             return completion(.success(endLocation))

@@ -20,7 +20,7 @@ public class RUIVideoMaterial {
     /// Whether the video will loop.
     public let loops: Bool
     /// Source of the video file or stream.
-    public let videoSource: VideoSource
+    public internal(set) var videoSource: VideoSource
 
     private var player: AVPlayer?
 
@@ -64,13 +64,22 @@ public class RUIVideoMaterial {
         }
     }
 
-    fileprivate func preparePlayer() -> Bool {
+    public func updateItemSource(with source: VideoSource) -> Bool {
+        self.videoSource = source
         let playerItem = createVideoPlayerItem()
+        self.player?.replaceCurrentItem(with: playerItem)
+        self.player?.actionAtItemEnd = .pause
+        self.player?.pause()
+        self.videoState = .ready
+        return true
+    }
+
+    fileprivate func preparePlayer() -> Bool {
+        self.playerItem = createVideoPlayerItem()
         if loops {
             guard let avPlayerItem = playerItem else { return false }
             let queuePlayer = AVQueuePlayer()
             self.playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: avPlayerItem)
-            self.playerItem = avPlayerItem
             self.player = queuePlayer
         } else {
             self.player = AVPlayer()

@@ -2,8 +2,6 @@ name: Deploy DocC
 
 on:
   push:
-    branches:
-      - "*"
     tags:
       - '*'
 

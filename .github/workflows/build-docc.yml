@@ -1,0 +1,29 @@
+name: Deploy DocC
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+jobs:
+  build_docs:
+    runs-on: macos-12
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Build DocC
+        run: |
+          swift package resolve;
+          xcodebuild docbuild -scheme RealityUI -derivedDataPath /tmp/docbuild -destination 'generic/platform=iOS';
+          $(xcrun --find docc) process-archive \
+            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/RealityUI.doccarchive \
+            --hosting-base-path RealityUI \
+            --output-path docs;
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs

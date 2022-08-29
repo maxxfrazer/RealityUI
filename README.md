@@ -32,7 +32,7 @@ The User Interface controls in this repository so far are made to be familiar to
 - [Text](#text)
 - [More](#more)
   - [RealityUI Wiki](https://github.com/maxxfrazer/RealityUI/wiki)
-  - [Documentation](https://maxxfrazer.github.io/RealityUI/)
+  - [Documentation](https://maxxfrazer.github.io/RealityUI/documentation/realityui/)
   - [Example Project](https://github.com/maxxfrazer/RealityUI/tree/main/RealityUI%2BExamples)
 
 ## Installation
@@ -117,7 +117,7 @@ Unlock the ability to rotate a RealityKit entity with just one finger.
 
 Create an object in your RealityKit scene with an action, and it will automatically be picked up whenever the user taps on it!
 
-No Gif for this one, but check out [RealityUI Gestures wiki](https://github.com/maxxfrazer/RealityUI/wiki/Gestures#tap) to see how to add [HasClick](https://maxxfrazer.github.io/RealityUI/Protocols/HasClick.html) to an entity in your application.
+No Gif for this one, but check out [RealityUI Gestures wiki](https://github.com/maxxfrazer/RealityUI/wiki/Gestures#tap) to see how to add [HasClick](https://maxxfrazer.github.io/RealityUI/documentation/realityui/HasClick.html) to an entity in your application.
 
 ---
 ## Animations
@@ -152,6 +152,6 @@ With RUIText you can easily create an Entity with the specified text placed with
 ---
 ## More
 
-More information on everything provided in this Swift Package in the [GitHub Wiki](https://github.com/maxxfrazer/RealityUI/wiki), and also the [documentation](https://maxxfrazer.github.io/RealityUI/).
+More information on everything provided in this Swift Package in the [GitHub Wiki](https://github.com/maxxfrazer/RealityUI/wiki), and also the [documentation](https://maxxfrazer.github.io/RealityUI/documentation/realityui/).
 
 Also see the [Example Project](https://github.com/maxxfrazer/RealityUI/tree/main/RealityUI%2BExamples) for iOS in this repository.

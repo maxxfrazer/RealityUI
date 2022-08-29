@@ -44,7 +44,11 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 
   public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
     if hasCollided != self.isCompressed {
-      hasCollided ? self.compressButton() : self.releaseButton()
+      if hasCollided {
+        self.compressButton()
+      } else {
+        self.releaseButton()
+      }
     }
   }
 

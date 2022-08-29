@@ -16,11 +16,12 @@ jobs:
 
       - name: Build DocC
         run: |
-          xcodebuild docbuild -scheme RealityUI -derivedDataPath 'docc' -destination 'generic/platform=iOS';
+          swift package resolve;
+          xcodebuild docbuild -scheme RealityUI -derivedDataPath /tmp/docbuild -destination 'generic/platform=iOS';
           $(xcrun --find docc) process-archive \
-            transform-for-static-hosting docc/Build/Products/Debug-iphoneos/RealityUI.doccarchive \
-            --output-path docs \
-            --hosting-base-path RealityUI
+            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/RealityUI.doccarchive \
+            --hosting-base-path RealityUI \
+            --output-path docs;
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:

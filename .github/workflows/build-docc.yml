@@ -16,6 +16,7 @@ jobs:
 
       - name: Build DocC
         run: |
+          sudo xcode-select -s /Applications/Xcode_14.0.app;
           swift package resolve;
           xcodebuild docbuild -scheme RealityUI -derivedDataPath /tmp/docbuild -destination 'generic/platform=iOS';
           $(xcrun --find docc) process-archive \
@@ -23,7 +24,6 @@ jobs:
             --hosting-base-path RealityUI \
             --output-path docs;
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+          folder: docs

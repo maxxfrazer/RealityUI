@@ -11,7 +11,7 @@ The User Interface controls in this repository so far are made to be familiar to
   <img src="https://img.shields.io/badge/Swift-5.2-orange?logo=swift"/>
   <img src="https://img.shields.io/github/license/maxxfrazer/RealityUI"/>
   <img src="https://github.com/maxxfrazer/RealityUI/workflows/build/badge.svg?branch=main"/>
-  <img src="https://github.com/maxxfrazer/RealityUI/workflows/swiftlint/badge.svg?branch=main"/>
+  <img src="https://github.com/maxxfrazer/RealityUI/workflows/Deploy%20DocC/badge.svg?branch=main"/>
 </p>
 
 ![RealityUI Elements in a RealityKit VR space](https://github.com/maxxfrazer/RealityUI/blob/main/media/realityui_banner.gif?raw=true)

@@ -29,7 +29,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Build DocC
         run: |
-          sudo xcode-select -s /Applications/Xcode_14.0.app;
           xcodebuild docbuild -scheme RealityUI -derivedDataPath /tmp/docbuild -destination 'generic/platform=iOS';
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/RealityUI.doccarchive \

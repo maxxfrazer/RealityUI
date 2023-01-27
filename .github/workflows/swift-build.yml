@@ -12,6 +12,8 @@ on:
 
 jobs:
   build:
+    env:
+      SCHEME: RealityUI
     runs-on: macOS-12
     steps:
     - uses: actions/checkout@v3
@@ -22,15 +24,9 @@ jobs:
         swift package generate-xcodeproj
     - name: Test iOS
       run: |
-        xcodebuild clean build -project $PROJECT -scheme $SCHEME -sdk $SDK CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO | xcpretty
-      env:
-        PROJECT: RealityUI.xcodeproj
-        SCHEME: RealityUI-Package
-        SDK: iphoneos
+        xcodebuild build -scheme $SCHEME -destination "generic/platform=iOS" | xcpretty
+        xcodebuild test -scheme $SCHEME -destination "platform=iOS Simulator,name=iPhone 14" | xcpretty
     - name: Test macOS
       run: |
-        xcodebuild clean build -project $PROJECT -scheme $SCHEME -sdk $SDK CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO | xcpretty
-      env:
-        PROJECT: RealityUI.xcodeproj
-        SCHEME: RealityUI-Package
-        SDK: macosx
+        xcodexcodebuild build -scheme $SCHEME -destination "platform=macOS" | xcpretty
+        xcodebuild test -scheme $SCHEME -destination "platform=macOS" | xcpretty

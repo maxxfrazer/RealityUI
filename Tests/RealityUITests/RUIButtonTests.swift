@@ -30,7 +30,7 @@ final class RUIButtonTests: XCTestCase {
         button.touchUpCompleted = { _ in
             expectation.fulfill()
         }
-        button.arTouchStarted(SIMD3<Float>(0,0,0), hasCollided: true)
+        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
         button.arTouchEnded(nil)
         waitForExpectations(timeout: 0.1, handler: nil)
     }
@@ -51,16 +51,16 @@ final class RUIButtonTests: XCTestCase {
         button.touchUpCompleted = { _ in
             expectation.fulfill()
         }
-        button.arTouchStarted(SIMD3<Float>(0,0,0), hasCollided: true)
-        button.arTouchUpdated(SIMD3<Float>(5,5,0), hasCollided: false)
+        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
+        button.arTouchUpdated(SIMD3<Float>(5, 5, 0), hasCollided: false)
         button.arTouchEnded(nil)
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 
     func testCompressButton() {
-        button.arTouchStarted(SIMD3<Float>(0,0,0), hasCollided: true)
+        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
         XCTAssertTrue(button.button.isCompressed)
-        button.arTouchStarted(SIMD3<Float>(0,0,0), hasCollided: true)
+        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
     }
 
     func testCancelReleaseButton() {
@@ -69,7 +69,7 @@ final class RUIButtonTests: XCTestCase {
         button.touchUpCompleted = { _ in
             expectation.fulfill()
         }
-        button.arTouchStarted(SIMD3<Float>(0,0,0), hasCollided: true)
+        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
         button.arTouchCancelled()
         waitForExpectations(timeout: 0.1, handler: nil)
     }

@@ -107,7 +107,7 @@ final class RUILongTouchButtonTests: XCTestCase {
 }
 
 #if os(iOS)
-private class TestTouch: UITouch {
+internal class TestTouch: UITouch {
     var currentLocation: CGPoint
 
     init(location: CGPoint) {

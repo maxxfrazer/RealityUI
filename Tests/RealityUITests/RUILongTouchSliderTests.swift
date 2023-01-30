@@ -59,5 +59,21 @@ final class RUILongTouchSliderTests: XCTestCase {
         gestureRecognizer.updateRUILongTouch(nil)
         XCTAssertEqual(entity.value, 0.5)
     }
-    #endif
+
+    func testDoubleTouchesBegan() {
+        let mytouch = TestTouch(location: CGPoint(x: 128, y: 128))
+        gestureRecognizer.touchesBegan([mytouch], with: UIEvent())
+        gestureRecognizer.touchesBegan([mytouch], with: UIEvent())
+        XCTAssertNil(gestureRecognizer.activeTouch)
+    }
+
+    func testTwoFingersTouching() {
+        let mytouches: Set<UITouch> = [
+            TestTouch(location: CGPoint(x: 128, y: 128)),
+            TestTouch(location: CGPoint(x: 200, y: 128))
+        ]
+        gestureRecognizer.touchesBegan(mytouches, with: UIEvent())
+        XCTAssertNil(gestureRecognizer.activeTouch)
+    }
+#endif
 }

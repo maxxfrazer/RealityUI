@@ -32,9 +32,9 @@ final class RUISliderTests: XCTestCase {
     func testARTouchMovedHalfway() {
         let slider = RUISlider()
         let worldCoordinate = SIMD3<Float>.zero
-        var value = slider.value
+        let startValue = slider.value
         slider.arTouchStarted(worldCoordinate)
-        XCTAssertEqual(value, slider.value)
+        XCTAssertEqual(startValue, slider.value)
         slider.arTouchUpdated([-5, 0, 0])
         XCTAssertEqual(slider.value, 0.5, accuracy: 0.0001)
         slider.arTouchUpdated([-5, 0, 0])
@@ -46,11 +46,11 @@ final class RUISliderTests: XCTestCase {
     func testARTouchCancelled() {
         let slider = RUISlider()
         let worldCoordinate = SIMD3<Float>.zero
-        var value = slider.value
+        let startValue = slider.value
         slider.arTouchStarted(worldCoordinate)
-        XCTAssertEqual(value, slider.value)
+        XCTAssertEqual(startValue, slider.value)
         slider.arTouchCancelled()
-        XCTAssertEqual(value, slider.value)
+        XCTAssertEqual(startValue, slider.value)
     }
 
     func testAnimateSliderThumbPos() {

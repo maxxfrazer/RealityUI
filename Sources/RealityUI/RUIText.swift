@@ -140,6 +140,7 @@ public extension HasText {
   var text: String? {
     get { self.textComponent.text }
     set {
+      self.textComponent.text = newValue
       self.setText(newValue)
     }
   }
@@ -183,7 +184,7 @@ public extension HasText {
 
   /// Change the text currently presented on the HasText Entity
   /// - Parameter text: New text to be rendered.
-  func setText(_ text: String?) {
+  internal func setText(_ text: String?) {
     guard let text = text else {
       self.getModel(part: .textEntity)?.model = nil
       return
@@ -226,9 +227,7 @@ public extension HasText {
     }
     let visbounds = self.visualBounds(relativeTo: nil)
     selfCol.collision = CollisionComponent(
-      shapes: [ShapeResource.generateBox(size: visbounds.extents)
-                .offsetBy(translation: visbounds.center)
-      ]
+      shapes: [ShapeResource.generateBox(size: visbounds.extents).offsetBy(translation: visbounds.center)]
     )
   }
 }

@@ -10,7 +10,7 @@ import UIKit
 import RealityKit
 import ARKit
 
-// import RealityUI
+import RealityUI
 
 class ViewController: UIViewController {
 

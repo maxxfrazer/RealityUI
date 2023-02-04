@@ -9,6 +9,9 @@ The User Interface controls in this repository so far are made to be familiar to
   <img src="https://img.shields.io/github/v/release/maxxfrazer/RealityUI?color=orange&label=SwiftPM&logo=swift"/>
   <img src="https://img.shields.io/badge/platform-iOS%20%7C%20macOS-lightgrey"/>
   <img src="https://img.shields.io/badge/Swift-5.2-orange?logo=swift"/>
+  <!-- <a href="https://codecov.io/gh/maxxfrazer/RealityUI" > 
+    <img src="https://codecov.io/gh/maxxfrazer/RealityUI/branch/main/graph/badge.svg?token=3PCDBMSCLL"/> 
+  </a> -->
   <img src="https://img.shields.io/github/license/maxxfrazer/RealityUI"/>
   <img src="https://github.com/maxxfrazer/RealityUI/workflows/build/badge.svg?branch=main"/>
   <img src="https://github.com/maxxfrazer/RealityUI/workflows/Deploy%20DocC/badge.svg?branch=main"/>

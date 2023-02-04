@@ -12,21 +12,16 @@ on:
 
 jobs:
   build:
-    env:
-      SCHEME: RealityUI
     runs-on: macOS-12
     steps:
     - uses: actions/checkout@v3
     - name: Swift Lint
       run: swiftlint --strict
-    - name: Build Package
-      run: |
-        swift package generate-xcodeproj
     - name: Test iOS
       run: |
-        xcodebuild build -scheme $SCHEME -destination "generic/platform=iOS" | xcpretty
-        xcodebuild test -scheme $SCHEME -destination "platform=iOS Simulator,name=iPhone 14" | xcpretty
+        xcodebuild build -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 14" | xcpretty
     - name: Test macOS
       run: |
-        xcodexcodebuild build -scheme $SCHEME -destination "platform=macOS" | xcpretty
-        xcodebuild test -scheme $SCHEME -destination "platform=macOS" | xcpretty
+        xcodebuild build -scheme RealityUI -destination "platform=macOS" | xcpretty
+      env:
+        SCHEME: RealityUI

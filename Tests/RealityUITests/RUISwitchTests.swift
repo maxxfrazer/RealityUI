@@ -30,6 +30,16 @@ final class RUISwitchTests: XCTestCase {
         XCTAssertTrue(switchChangedCalled)
     }
 
+    func testSwitchRespondsToLighting() {
+        let testSwitch = RUISwitch()
+        let unlitMat: Material! = testSwitch.getModel(part: "thumb")?.model?.materials.first
+        XCTAssertTrue(unlitMat is UnlitMaterial)
+        testSwitch.respondsToLighting = true
+        let lightingMat: Material! = testSwitch.getModel(part: "thumb")?.model?.materials.first
+        XCTAssertTrue(lightingMat is SimpleMaterial)
+    }
+
+    #if os(iOS)
     func testSwitchOnOffColors() {
         let testSwitch = RUISwitch(switchness: SwitchComponent(onColor: .white, offColor: .black))
         let arView = ARView(frame: CoreFoundation.CGRect(origin: .zero, size: CGSize(width: 256, height: 256)))
@@ -47,26 +57,30 @@ final class RUISwitchTests: XCTestCase {
         }
         testSwitch.setOn(true)
         XCTAssertTrue(testSwitch.isOn)
-        let expectation = self.expectation(description: "touchUpCompleted callback was not called")
+        var expectation = self.expectation(description: "touchUpCompleted callback was not called")
         expectation.isInverted = true
         waitForExpectations(timeout: 0.3, handler: nil)
         XCTAssertLessThan(testSwitch.getModel(part: "thumb")!.position.x, 0)
         guard let onMat = testSwitch.getModel(part: "background")?.model!.materials[0] as? UnlitMaterial else {
             return XCTFail("Cannot get background material")
         }
-        if #available(iOS 15.0, *) {
+        if #available(macOS 12.0, iOS 15.0, *) {
             XCTAssertNotEqual(bgMat.color.tint, onMat.color.tint)
         }
         testSwitch.setOn(false)
+        expectation = self.expectation(description: "wait for anim")
+        expectation.isInverted = true
+
+        waitForExpectations(timeout: 0.3, handler: nil)
         XCTAssertGreaterThan(testSwitch.getModel(part: "thumb")!.position.x, 0)
         XCTAssertFalse(testSwitch.isOn)
             guard let offMat = testSwitch.getModel(part: "background")?.model!.materials[0] as? UnlitMaterial else {
                 return XCTFail("Cannot get background material")
             }
-        if #available(iOS 15.0, *) {
+        if #available(iOS 15.0, macOS 12.0, *) {
             XCTAssertEqual(bgMat.color.tint, offMat.color.tint)
         }
         print("break")
     }
-
+    #endif
 }

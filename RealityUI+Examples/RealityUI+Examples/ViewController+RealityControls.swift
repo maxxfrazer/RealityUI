@@ -10,7 +10,7 @@ import RealityKit
 import Foundation
 import Combine
 
-// import RealityUI
+import RealityUI
 
 class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasTurnTouch {
 
@@ -46,17 +46,14 @@ class ControlsParent: Entity, HasAnchoring, HasCollision, HasModel, HasTurnTouch
     )
     button.transform = Transform(
       scale: .init(repeating: 0.2),
-      rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0]),
-      translation: .zero
+      rotation: simd_quatf(angle: .pi / 2, axis: [1, 0, 0]), translation: .zero
     )
     self.addChild(button)
     let toggle = RUISwitch(changedCallback: { tog in
       if tog.isOn {
         self.tumbler?.spin(in: [0, 0, 1], duration: 3)
         self.popBoxes(power: 0.1)
-      } else {
-        self.tumbler?.stopAllAnimations()
-      }
+      } else { self.tumbler?.ruiStopAnim() }
     })
     toggle.transform = Transform(
       scale: .init(repeating: 0.15), rotation: .init(angle: .pi, axis: [0, 1, 0]), translation: [0, 0.25, -0.25]

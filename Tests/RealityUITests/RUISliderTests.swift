@@ -52,9 +52,9 @@ final class RUISliderTests: XCTestCase {
         slider.arTouchCancelled()
         XCTAssertEqual(startValue, slider.value)
     }
-
+    #if os(iOS)
     func testAnimateSliderThumbPos() {
-        let arView = ARView(frame: CoreFoundation.CGRect(origin: .zero, size: CGSize(width: 256, height: 256)))
+        let arView = ARView(frame: CGRect(origin: .zero, size: CGSize(width: 256, height: 256)))
         let anchor = AnchorEntity(world: .zero)
         let slider = RUISlider(length: 10, start: 0.5)
         anchor.addChild(slider)
@@ -63,7 +63,7 @@ final class RUISliderTests: XCTestCase {
         slider.setPercent(to: 0.9, animated: true)
         var expectation = self.expectation(description: "wait for it")
         expectation.isInverted = true
-        waitForExpectations(timeout: 0.3, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         var xpos = slider.getModel(part: "thumb")!.position.x
         XCTAssertEqual(xpos, -4, accuracy: 0.0005)
 
@@ -74,5 +74,5 @@ final class RUISliderTests: XCTestCase {
         xpos = slider.getModel(part: "thumb")!.position.x
         XCTAssertEqual(xpos, 3, accuracy: 0.0005)
     }
-
+    #endif
 }

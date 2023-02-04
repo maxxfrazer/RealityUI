@@ -66,9 +66,7 @@ final class RUIButtonTests: XCTestCase {
     func testCancelReleaseButton() {
         let expectation = self.expectation(description: "touchUpCompleted callback was not called")
         expectation.isInverted = true
-        button.touchUpCompleted = { _ in
-            expectation.fulfill()
-        }
+        button.touchUpCompleted = { _ in expectation.fulfill() }
         button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
         button.arTouchCancelled()
         waitForExpectations(timeout: 0.1, handler: nil)

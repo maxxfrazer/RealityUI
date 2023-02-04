@@ -122,7 +122,7 @@ public protocol HasTouchUpInside: HasARTouch {}
     self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, updateRUILongTouch(_:))
   }
 
-  func updateRUILongTouch(_ event: SceneEvents.Update) {
+  func updateRUILongTouch(_ event: SceneEvents.Update?) {
     guard let touchLocation = self.touchLocation,
       let hitEntity = self.entity
       else {

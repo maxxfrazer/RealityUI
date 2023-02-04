@@ -19,7 +19,7 @@ import Combine
 /// RealityUI contains some properties for RealityUI to run in your application.
 /// ![RealityUI Banner](https://repository-images.githubusercontent.com/265939509/77c8eb00-a362-11ea-995e-482183f9acbd)
 @objc public class RealityUI: NSObject {
-  private var componentsRegistered = false
+  internal var componentsRegistered = false
 
   /// Registers RealityUI's component types. Call this before creating any RealityUI classes to avoid issues.
   /// This method will be automatically called when `ARView.enableRealityUIGestures(_:)` is called,
@@ -35,6 +35,8 @@ import Combine
   /// Mask to exclude entities from being hit by the tap gesture.
   public static var tapGestureMask: CollisionGroup = .all
 
+  /// Store all the RealityUI Animations for an Entity. It's important for memory management that this is empty when it should be.
+  internal static var anims: [Entity: [String: Cancellable]] = [:]
   /// Use this to add GestureRecognisers for different RealityUI elements in your scene.
   /// You do not need multiple GestureRecognisers for multiple elements in the scene.
   /// - Parameters:
@@ -57,6 +59,7 @@ import Combine
     for comp in RealityUI.RUIComponents {
       comp.registerComponent()
     }
+    self.componentsRegistered = true
   }
 
   /// Different type of gestures used by RealityUI and set to an ARView object.

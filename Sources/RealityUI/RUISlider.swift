@@ -331,6 +331,7 @@ public extension HasSlider {
 
   private func updateFill(to position: SIMD3<Float>, animated: Bool) {
     guard let fthread = self.findEntity(named: "fill") else {return}
+    fthread.stopAllAnimations()
     var threadTransform = fthread.transform
     threadTransform.scale.x = self.value
     threadTransform.translation = position
@@ -343,6 +344,7 @@ public extension HasSlider {
 
   private func updateEmpty(to position: SIMD3<Float>, animated: Bool) {
     guard let fthread = self.getModel(part: .empty) else {return}
+    fthread.stopAllAnimations()
     var threadTransform = fthread.transform
     threadTransform.scale.x = 1 - self.value
     threadTransform.translation = position

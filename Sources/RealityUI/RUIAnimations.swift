@@ -36,9 +36,9 @@ public extension Entity {
       Transform(scale: .one, rotation: quat, translation: .zero).matrix
     )
     self.move(to: rockBit, relativeTo: self.parent, duration: period / 2, timingFunction: .easeIn)
-    var shakeCancellable: Cancellable!
-    shakeCancellable = self.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self, { _ in
-      shakeCancellable.cancel()
+    let shakeCancellable = self.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self, { _ in
+      RealityUI.anims[self]?["shake"]?.cancel()
+        RealityUI.anims[self]?["shake"] = nil
       self.shakePrivate(
         by: simd_quatf(angle: -quat.angle * 2, axis: quat.axis),
         period: period,
@@ -46,29 +46,18 @@ public extension Entity {
         completion: completion
       )
     })
+    if RealityUI.anims[self] == nil {
+      RealityUI.anims[self] = [:]
+    }
+    RealityUI.anims[self]?["shake"] = shakeCancellable
   }
 
   /// Stop all animations on an object, not letting any slip through the net.
-  /// - Parameters:
-  ///   - tryfor: How long (in nanoseconds) to keep calling `stopAllAnimations()`. Default is 1e8 (0.1s)
-  ///   - completion: Action to take place once the last call to stopAllAnimations has run.
-  ///
-  /// Because these animations aren't completely native, there are a few tricks to get them to work,
-  /// I've found that sometimes the call to stop has been made on the same frame a new animation is starting.
-  /// Therefor it's sometimes necessary to use this method as a last resort. **Yes, very hacky, please don't judge me.**
-  func ruiStopAnim(tryfor: UInt64 = UInt64(1e8), completion: ((Entity) -> Void)? = nil) {
+  /// A static property of RealityUI stores all animations, as well as a reference to the entity.
+  func ruiStopAnim() {
     self.stopAllAnimations()
-    if tryfor > 0 {
-      let startTime = DispatchTime.now().uptimeNanoseconds
-      var updCancellable: Cancellable!
-      updCancellable = self.scene?.subscribe(to: SceneEvents.Update.self, { _ in
-        self.stopAllAnimations()
-        if DispatchTime.now().uptimeNanoseconds - startTime > tryfor {
-          updCancellable.cancel()
-          completion?(self)
-        }
-      })
-    }
+    RealityUI.anims[self]?.forEach { $0.value.cancel() }
+    RealityUI.anims.removeValue(forKey: self)
   }
 
   private func spinPrivate(
@@ -85,15 +74,20 @@ public extension Entity {
       relativeTo: self.parent,
       duration: period / 3,
       timingFunction: times == 0 ? .easeOut : .linear)
-    var spinCancellable: Cancellable!
-    spinCancellable = self.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self, { _ in
-      spinCancellable.cancel()
+    let spinCancellable = self.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self, { _ in
+      RealityUI.anims[self]?["spin"]?.cancel()
+      RealityUI.anims[self]?.removeValue(forKey: "spin")
       if times != 0 {
         self.spinPrivate(by: axis, period: period, times: max(-1, times - 1), completion: completion)
       } else {
         completion?()
+        if RealityUI.anims[self]?.count == 0 { RealityUI.anims.removeValue(forKey: self) }
       }
     })
+    if RealityUI.anims[self] == nil {
+      RealityUI.anims[self] = [:]
+    }
+    RealityUI.anims[self]?["spin"] = spinCancellable
   }
 
   private func shakePrivate(
@@ -117,14 +111,17 @@ public extension Entity {
     )
     var shakeCancellable: Cancellable!
     shakeCancellable = self.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self, { _ in
-      shakeCancellable.cancel()
+      RealityUI.anims[self]?["shake"]?.cancel()
+      RealityUI.anims[self]?.removeValue(forKey: "shake")
       if remaining != 0 {
         let newQuat = simd_quatf(angle: -quat.angle, axis: quat.axis)
         self.shakePrivate(by: newQuat, period: period, remaining: remaining - 1, completion: completion)
       } else {
         completion?()
+        if RealityUI.anims[self]?.count == 0 { RealityUI.anims.removeValue(forKey: self) }
       }
     })
+    RealityUI.anims[self]?["shake"] = shakeCancellable
   }
 
 }

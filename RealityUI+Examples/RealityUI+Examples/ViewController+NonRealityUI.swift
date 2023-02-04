@@ -8,7 +8,7 @@
 
 import RealityKit
 
-// import RealityUI
+ import RealityUI
 
 class ContainerCube: Entity, HasPhysicsBody, HasModel {
   private static var boxPositions: [SIMD3<Float>] = [

@@ -17,20 +17,11 @@ jobs:
     - uses: actions/checkout@v3
     - name: Swift Lint
       run: swiftlint --strict
-    - name: Build Package
-      run: |
-        swift package generate-xcodeproj
     - name: Test iOS
       run: |
-        xcodebuild clean build -project $PROJECT -scheme $SCHEME -sdk $SDK CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO | xcpretty
-      env:
-        PROJECT: RealityUI.xcodeproj
-        SCHEME: RealityUI-Package
-        SDK: iphoneos
+        xcodebuild build -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 14" | xcpretty
     - name: Test macOS
       run: |
-        xcodebuild clean build -project $PROJECT -scheme $SCHEME -sdk $SDK CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO | xcpretty
+        xcodebuild build -scheme RealityUI -destination "platform=macOS" | xcpretty
       env:
-        PROJECT: RealityUI.xcodeproj
-        SCHEME: RealityUI-Package
-        SDK: macosx
+        SCHEME: RealityUI

@@ -13,7 +13,7 @@ let package = Package(
   ],
   dependencies: [],
   targets: [
-    .target(name: "RealityUI", dependencies: [])
-//    .testTarget(name: "RealityUITests", dependencies: ["RealityUI"])
+    .target(name: "RealityUI", dependencies: []),
+    .testTarget(name: "RealityUITests", dependencies: ["RealityUI"])
   ]
 )

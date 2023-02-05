@@ -15,16 +15,25 @@ import RealityUI
 class ViewController: UIViewController {
 
   var arView = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: false)
-
+  var arMode = true
   func addARView() {
+
     arView.frame = self.view.bounds
     self.arView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     self.view.addSubview(arView)
+    RealityUI.enableGestures(.all, on: self.arView)
     self.arView.renderOptions.insert(.disableGroundingShadows)
 
-    let config = ARWorldTrackingConfiguration()
-    config.planeDetection = [.horizontal]
-    arView.session.run(config, options: [])
+      if self.arMode {
+          let config = ARWorldTrackingConfiguration()
+          config.planeDetection = [.horizontal]
+          arView.session.run(config, options: [])
+          self.addObjectToPlane()
+      } else {
+          arView.cameraMode = .nonAR
+          arView.environment.background = .color(.orange)
+          self.addNonARParts()
+      }
     // Replaces camera feed, if 6dof VR look is wanted
 //    arView.environment.background = .color(.systemGray)
 
@@ -32,13 +41,16 @@ class ViewController: UIViewController {
     RealityUI.registerComponents()
   }
 
+    func addNonARParts() {
+        let stepper = RUIStepper()
+        let anchor = AnchorEntity(world: .zero)
+        self.arView.scene.addAnchor(anchor)
+        anchor.addChild(stepper)
+    }
+
   override func viewDidLoad() {
     super.viewDidLoad()
-
-    self.addARView()
-
     // Add all RealityUI gestures to the current ARView
-    RealityUI.enableGestures(.all, on: self.arView)
-    self.addObjectToPlane()
+    self.addARView()
   }
 }

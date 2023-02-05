@@ -74,6 +74,8 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
 public struct StepperComponent: Component {
   /// Background color of the stepper.
   internal var backgroundTint: Material.Color
+  /// Background color of the stepper.
+  internal var separatorTint: Material.Color
   /// Color of the buttons inside a stepper, default `.systemBlue`.
   internal var buttonTint: Material.Color
   /// Color of the second button inside a stepper. If nil, then buttonTint will be used.
@@ -84,6 +86,7 @@ public struct StepperComponent: Component {
     case right
     case left
     case background
+    case separator
   }
   /// Stepper styles
   public enum Style {
@@ -103,12 +106,14 @@ public struct StepperComponent: Component {
   ///   - secondaryTint: Color of the second button inside a stepper. If nil, then buttonTint will be used.
   public init(
     style: StepperComponent.Style = .minusPlus,
-    backgroundTint: Material.Color = .tertiarySystemBackground,
+    backgroundTint: Material.Color = .secondarySystemBackground.withAlphaComponent(0.8),
+    separatorTint: Material.Color = .tertiarySystemBackground.withAlphaComponent(0.8),
     buttonTint: Material.Color = .systemBlue,
     secondaryTint: Material.Color? = nil
   ) {
     self.style = style
     self.backgroundTint = backgroundTint
+    self.separatorTint = separatorTint
     self.buttonTint = buttonTint
     self.secondButtonTint = secondaryTint
   }
@@ -160,7 +165,8 @@ public extension HasStepper {
 //    default:
 //      break
     }
-    self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)
+      self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)
+      self.getModel(part: .separator)?.model?.materials = self.getMaterials(for: .separator)
   }
   /// Stepper component, containing all properties relating to the rendering of the stepper.
   internal(set) var stepper: StepperComponent {
@@ -187,6 +193,8 @@ internal extension HasStepper {
     switch part {
     case .background:
       return [self.getMaterial(with: stepper.backgroundTint)]
+    case .separator:
+      return [self.getMaterial(with: stepper.separatorTint)]
     case .left:
       return [self.getMaterial(with: stepper.buttonTint)]
     case .right:
@@ -239,6 +247,10 @@ internal extension HasStepper {
     let background = self.addModel(part: .background)
     background.model = ModelComponent(mesh: .generateBox(size: [2, 1, 0.25], cornerRadius: 0.125), materials: [])
     background.scale = .init(repeating: -1)
+
+    let separator = self.addModel(part: .separator)
+    separator.model = ModelComponent(mesh: .generateBox(size: [0.1, 1, 0.1], cornerRadius: 0.05), materials: [])
+    separator.scale = .init(repeating: -1)
 
     self.updateMaterials()
     self.collision = CollisionComponent(shapes: [.generateBox(size: [2, 1, 0.25])])

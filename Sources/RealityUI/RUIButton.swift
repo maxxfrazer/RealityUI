@@ -84,7 +84,7 @@ public struct ButtonComponent: Component {
   /// The compress amount will be a multiplier of the button z size
   let compress: Float
   /// A corner radius applied to both the button and the button base.
-  let cornerRadius: Float?
+  let cornerRadius: Float
   internal var isCompressed = false
   /// Style of button used.
   let style: ButtonComponent.Style
@@ -107,7 +107,7 @@ public struct ButtonComponent: Component {
   ///   - size: Size of the RUIButton base
   ///   - buttonColor: Color of the button
   ///   - baseColor: Color of the button base
-  ///   - padding: Padding (in meters) between the base and the button. Default 0.1.
+  ///   - padding: Padding (in meters) between the base and the button. Default 5% of the button's min(x, y) size.
   ///   - extrude: Multiplyer amount that the button sticks out from the base when unpressed.
   ///              The extrude amount will be a multiplier of the button z size
   ///   - compress: Multiplyer amount that the button sticks out from the base when pressed.
@@ -118,7 +118,7 @@ public struct ButtonComponent: Component {
     size: SIMD3<Float> = ButtonComponent.defaultSize,
     buttonColor: Material.Color = .systemBlue,
     baseColor: Material.Color = .systemGray,
-    padding: Float = 0.1,
+    padding: Float? = nil,
     extrude: Float = 0.5,
     compress: Float = 0.2,
     cornerRadius: Float? = nil,
@@ -127,11 +127,11 @@ public struct ButtonComponent: Component {
     self.size = size
     self.buttonColor = buttonColor
     self.baseColor = baseColor
-    assert(min(size.x, size.y) / 2 > padding, "Padding is too large for this button")
-    self.padding = padding
+    self.padding = padding ?? (min(size.x, size.y) * 0.05)
+    assert(min(size.x, size.y) / 2 > self.padding, "Padding is too large for this button")
     self.extrude = extrude
     self.compress = compress
-    self.cornerRadius = cornerRadius
+    self.cornerRadius = cornerRadius ?? self.size.min() * 0.2
     self.style = style
   }
   /// Create a new ButtonComponent with defautl values for a given style
@@ -149,7 +149,7 @@ public struct ButtonComponent: Component {
   ///   - cornerRadius: A corner radius applied to both the button and the button base.
   public init(
     width: Float = 1, height: Float = 1, depth: Float = 0.2,
-    padding: Float = 0.1, cornerRadius: Float? = nil
+    padding: Float? = nil, cornerRadius: Float? = nil
   ) {
     self.init(size: [width, height, depth], padding: padding, cornerRadius: cornerRadius)
   }
@@ -173,7 +173,8 @@ public extension HasButton {
   /// Size of the RUIButton base
   var size: SIMD3<Float> { self.button.size }
   /// A corner radius applied to both the button and the button base.
-  var cornerRadius: Float? { self.button.cornerRadius }
+  var cornerRadius: Float { self.button.cornerRadius }
+
   /// Multiplyer amount that the button sticks out from the base when unpressed.
   /// The extrude amount will be a multiplier of the button z size, which is 0.9 * the base
   var extrude: Float { self.button.extrude }
@@ -219,8 +220,8 @@ public extension HasButton {
 
 internal extension HasButton {
   var innerBoxSize: SIMD3<Float> {[
-    self.size.x - self.padding,
-    self.size.y - self.padding,
+    self.size.x - self.padding * 2,
+    self.size.y - self.padding * 2,
     self.size.z
   ]}
   var buttonOutPos: SIMD3<Float> {
@@ -256,7 +257,7 @@ internal extension HasButton {
     buttonOuter.model = ModelComponent(
       mesh: .generateBox(
         size: self.size,
-        cornerRadius: cornerRadius ?? self.size.min() * 0.4
+        cornerRadius: cornerRadius
       ), materials: []
     )
     let buttonInner = self.addModel(part: .button)
@@ -264,7 +265,7 @@ internal extension HasButton {
     buttonInner.model = ModelComponent(
       mesh: MeshResource.generateBox(
         size: innerBoxSize,
-        cornerRadius: cornerRadius ?? innerBoxSize.min() * 0.4
+        cornerRadius: cornerRadius
       ), materials: []
     )
     buttonInner.position = self.buttonOutPos

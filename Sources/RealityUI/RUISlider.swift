@@ -106,7 +106,7 @@ public class RUISlider: Entity, HasSlider, HasModel {
     self.arTouchEnded(nil)
   }
 
-  public func arTouchEnded(_ worldCoordinate: SIMD3<Float>? = nil) {
+    public func arTouchEnded(_ worldCoordinate: SIMD3<Float>? = nil, _ hasCollided: Bool? = nil) {
     self.panGestureOffset = 0
     updateCollision()
     self.sliderUpdated?(self, .ended)
@@ -202,7 +202,7 @@ public extension HasSlider {
     get { self.components[SliderComponent.self] ?? SliderComponent() }
     set { self.components[SliderComponent.self] = newValue }
   }
-  internal var panGestureOffset: Float {
+  var panGestureOffset: Float {
     get { self.slider.arGestureOffset }
     set { self.slider.arGestureOffset = newValue }
   }

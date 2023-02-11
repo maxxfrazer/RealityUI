@@ -11,6 +11,8 @@ import Combine
 
 /// A new RealityUI Stepper to be added to your RealityKit scene.
 public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
+    public var collisionPlane: float4x4?
+
   public var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = { clicker, worldPos in
     (clicker as? HasStepper)?.stepperTap(clicker: clicker, worldTapPos: worldPos)
   }

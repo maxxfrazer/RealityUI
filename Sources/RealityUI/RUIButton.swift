@@ -58,7 +58,7 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
     }
   }
 
-  public func arTouchEnded(_ worldCoordinate: SIMD3<Float>?) {
+  public func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool?) {
     if self.isCompressed {
       self.releaseButton()
       self.touchUpCompleted?(self)

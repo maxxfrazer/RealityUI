@@ -9,8 +9,90 @@
 import RealityKit
 
 /// A  RealityUI Switch to be added to a RealityKit scene.
-public class RUISwitch: Entity, HasSwitch, HasClick {
-  public var tapAction: (
+public class RUISwitch: Entity, HasSwitch, HasPanTouch {
+    public var panGestureOffset: Float = 0
+
+    public var collisionPlane: float4x4? {
+      return self.transformMatrix(relativeTo: nil)
+        * float4x4(simd_quatf(angle: .pi / 2, axis: [1, 0, 0]))
+    }
+
+    var thumbCompressed = false
+    func compressThumb() {
+      self.getModel(part: .thumb)?.scale = .one * 0.95
+      thumbCompressed = true
+    }
+    func deCompressThumb() {
+      self.getModel(part: .thumb)?.scale = .one
+      thumbCompressed = false
+    }
+    var startedOnThumb = false
+    var distanceTravelled: Float = 0
+
+    public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+      let localPos = self.convert(position: worldCoordinate, from: nil)
+        self.startedOnThumb = pow(togglePos.x - localPos.x, 2) + pow(togglePos.y - localPos.y, 2) < 0.25
+      self.panGestureOffset = localPos.x
+      self.distanceTravelled = 0
+      self.compressThumb()
+    }
+
+    func clampThumbValue(_ thumbPos: inout Float) {
+        thumbPos = min(max(thumbPos, -self.toggleXSpan), self.toggleXSpan)
+    }
+
+    public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+        if self.startedOnThumb, let thumb = self.getModel(part: .thumb) {
+            let localPos = self.convert(position: worldCoordinate, from: nil)
+            var newThumbPos = self.togglePos.x + localPos.x - self.panGestureOffset
+            self.clampThumbValue(&newThumbPos)
+            self.distanceTravelled += abs(thumb.position.x - newThumbPos)
+            thumb.position.x = newThumbPos
+        } else if hasCollided != self.thumbCompressed {
+            if self.thumbCompressed {
+                self.deCompressThumb()
+            } else {
+                self.compressThumb()
+            }
+        }
+    }
+
+    internal func startedOnThumbShouldToggle(hasCollided: Bool?) -> Bool {
+        let startingPos = self.togglePos.x
+        guard let thumb = self.getModel(part: .thumb) else {
+            return false
+        }
+        let currentPos = thumb.position.x
+        let signsEqual = currentPos.sign == self.togglePos.x.sign
+        if !signsEqual {
+            return true
+        }
+        if (self.distanceTravelled * 1000).rounded() / 1000 * 0.8 <= abs(currentPos - startingPos), hasCollided == true {
+            // If the total movement is more than 80% of the positional diff.
+            // And on the same side as we started.
+            return true
+        }
+        return false
+    }
+
+    public func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool? = nil) {
+        if !self.startedOnThumb, self.thumbCompressed {
+            self.setOn(!self.isOn)
+        } else if self.startedOnThumb, self.startedOnThumbShouldToggle(hasCollided: hasCollided) {
+            self.setOn(!self.isOn)
+        } else {
+            self.setOn(self.isOn)
+        }
+
+        self.thumbCompressed = false
+    }
+
+    public func arTouchCancelled() {
+        print("cancelled then")
+        self.deCompressThumb()
+    }
+
+    public var tapAction: (
     (HasClick, SIMD3<Float>?) -> Void
     )? = { tapthing, _ in
       guard let toggleObj = (tapthing as? RUISwitch) else {
@@ -130,9 +212,7 @@ public extension HasSwitch {
   ///   - isOn: The switch's new state
   ///   - animated: Should the switch animate to the new state, if an animation is available.
   func setOn(_ isOn: Bool, animated: Bool = true) {
-    if self.isOn == isOn {
-      return
-    }
+    var valueChanged = self.isOn != isOn
     self.isOn = isOn
 
     self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)
@@ -146,7 +226,7 @@ public extension HasSwitch {
     } else {
       thumbEntity?.transform = thumbTransform
     }
-    self.switchChanged?(self)
+    if valueChanged { self.switchChanged?(self) }
   }
 
   /// Padding (in meters) between the thumb and the inner capsule of the switch.
@@ -169,14 +249,15 @@ public extension HasSwitch {
   var onColor: Material.Color { self.switchness.onColor }
   /// Color of the inner capsule when the switch is set to on. Default `Material.Color.lightGray`
   var offColor: Material.Color { self.switchness.offColor }
-  private var togglePos: SIMD3<Float> {
-    [(isOn ? -1 : 1) * (self.switchness.length - 1)/2, 0, 0]
+  fileprivate var togglePos: SIMD3<Float> {
+    [(isOn ? -1 : 1) * self.toggleXSpan, 0, 0]
   }
+  fileprivate var toggleXSpan: Float { (self.switchness.length - 1) / 2 }
   private var thumbColor: Material.Color {
     self.switchness.thumbColor
   }
 
-  private func getModel(part: SwitchComponent.UIPart) -> ModelEntity? {
+  fileprivate func getModel(part: SwitchComponent.UIPart) -> ModelEntity? {
     return (self as HasRUI).getModel(part: part.rawValue)
   }
   private func addModel(part: SwitchComponent.UIPart) -> ModelEntity {

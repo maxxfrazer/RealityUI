@@ -42,9 +42,9 @@ public extension HasTurnTouch {
     self.lastGlobalPosition = worldCoordinate
   }
   func arTouchCancelled() {
-    self.arTouchEnded(nil)
+    self.arTouchEnded(nil, nil)
   }
-  func arTouchEnded(_ worldCoordinate: SIMD3<Float>?) {
+  func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool?) {
     self.lastGlobalPosition = .zero
   }
 }

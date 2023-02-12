@@ -285,7 +285,7 @@ extension RUILongTouchGestureRecognizer {
         return
       }
       self.touchLocation = nil
-      entity?.arTouchEnded(nil)
+      entity?.arTouchEnded(nil, nil)
       self.entity = nil
       self.viewSubscriber?.cancel()
     }

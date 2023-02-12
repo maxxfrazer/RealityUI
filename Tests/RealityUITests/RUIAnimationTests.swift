@@ -35,28 +35,21 @@ final class RUIAnimationTests: XCTestCase {
 
     func testRuiSpin() {
         let expectation = XCTestExpectation(description: "Spin animation completed")
-
-        print(entity.orientation.angle)
         entity.ruiSpin(by: [0, 1, 0], period: 0.3, times: 1) {
             expectation.fulfill()
         }
-        print(entity.orientation.angle)
-
         wait(for: [expectation], timeout: 0.4)
-        print(entity.orientation.angle)
         XCTAssertEqual(RealityUI.anims.count, 0)
     }
 
     func testRuiShake() {
         let expectation = XCTestExpectation(description: "Spin animation completed")
 
-        print(entity.orientation.angle)
         entity.ruiShake(by: simd_quatf(angle: .pi / 2, axis: [0, 0, 1]), period: 0.25, times: 1) {
             expectation.fulfill()
         }
         // just over 2x the period, as the first and last half period are always added.
         wait(for: [expectation], timeout: 0.55)
-        print(entity.orientation.angle)
         // calling stop when there are no animations running
         entity.ruiStopAnim()
         entity.orientation = .init(angle: .zero, axis: [0, 1, 0])
@@ -66,11 +59,9 @@ final class RUIAnimationTests: XCTestCase {
     func testRuiStopAnims() {
         let expectation = XCTestExpectation(description: "Spin animation completed")
         expectation.isInverted = true
-        print(entity.orientation.angle)
         entity.ruiSpin(by: [0, 1, 0], period: 0.3, times: 1) {
             expectation.fulfill()
         }
-        print(entity.orientation.angle)
         XCTAssertEqual(RealityUI.anims.count, 1)
 
         wait(for: [expectation], timeout: 0.17)

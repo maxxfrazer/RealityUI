@@ -22,7 +22,7 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
       self.getModel(part: .thumb)?.scale = .one * 0.95
       thumbCompressed = true
     }
-    func deCompressThumb() {
+    func uncompressThumb() {
       self.getModel(part: .thumb)?.scale = .one
       thumbCompressed = false
     }
@@ -50,7 +50,7 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
             thumb.position.x = newThumbPos
         } else if hasCollided != self.thumbCompressed {
             if self.thumbCompressed {
-                self.deCompressThumb()
+                self.uncompressThumb()
             } else {
                 self.compressThumb()
             }
@@ -59,9 +59,7 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
 
     internal func startedOnThumbShouldToggle(hasCollided: Bool?) -> Bool {
         let startingPos = self.togglePos.x
-        guard let thumb = self.getModel(part: .thumb) else {
-            return false
-        }
+        guard let thumb = self.getModel(part: .thumb) else { return false }
         let currentPos = thumb.position.x
         let signsEqual = currentPos.sign == self.togglePos.x.sign
         if !signsEqual {
@@ -76,7 +74,8 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
     }
 
     public func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool? = nil) {
-        if !self.startedOnThumb, self.thumbCompressed {
+        if !self.startedOnThumb, self.thumbCompressed, hasCollided == true {
+            // if didn't start on thumb, but thumb is still compressed
             self.setOn(!self.isOn)
         } else if self.startedOnThumb, self.startedOnThumbShouldToggle(hasCollided: hasCollided) {
             self.setOn(!self.isOn)
@@ -88,18 +87,8 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
     }
 
     public func arTouchCancelled() {
-        print("cancelled then")
-        self.deCompressThumb()
+        self.uncompressThumb()
     }
-
-    public var tapAction: (
-    (HasClick, SIMD3<Float>?) -> Void
-    )? = { tapthing, _ in
-      guard let toggleObj = (tapthing as? RUISwitch) else {
-        return
-      }
-      toggleObj.setOn(!toggleObj.isOn)
-  }
 
   /// Switch's isOn property has changed
   public var switchChanged: ((HasSwitch) -> Void)?

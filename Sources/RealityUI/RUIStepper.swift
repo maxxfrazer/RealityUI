@@ -11,6 +11,60 @@ import Combine
 
 /// A new RealityUI Stepper to be added to your RealityKit scene.
 public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
+    fileprivate var _startedOnButton: StepperComponent.UIPart?
+    /// The button that the touch started on
+    var buttonStarted: StepperComponent.UIPart? {
+        get { _startedOnButton }
+        set {
+            if [StepperComponent.UIPart.left, StepperComponent.UIPart.right].contains(newValue) {
+                self._startedOnButton = newValue
+            }
+        }
+    }
+    var isCompressed: Bool = false
+    func compressButton(compress: Bool = true) {
+        guard let buttonStarted else { return }
+        self.isCompressed = compress
+        self.getModel(part: buttonStarted)?.scale = (
+            compress ? .init(repeating: 0.95) : .one
+        )
+    }
+    func releaseButton() {
+        self.isCompressed = false
+    }
+    public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+      let localPos = self.convert(position: worldCoordinate, from: nil)
+      self.buttonStarted = localPos.x > 0 ? .left : .right
+      self.compressButton()
+    }
+
+    public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+        let localPos = self.convert(position: worldCoordinate, from: nil)
+        let touchingObj: StepperComponent.UIPart = localPos.x > 0 ? .left : .right
+        if self.isCompressed, (!hasCollided || touchingObj != buttonStarted) {
+            self.compressButton(compress: false)
+        } else if !self.isCompressed, hasCollided, touchingObj == buttonStarted {
+            self.compressButton()
+        }
+    }
+
+    public func arTouchCancelled() {
+      if self.isCompressed {
+          self.compressButton(compress: false)
+      }
+    }
+
+    public func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool?) {
+      if self.isCompressed {
+          if self.buttonStarted == .left {
+              self.upTrigger?(self)
+          } else if self.buttonStarted == .right {
+              self.downTrigger?(self)
+          }
+      }
+        self.compressButton(compress: false)
+    }
+
     public var collisionPlane: float4x4?
 
   public var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = { clicker, worldPos in
@@ -128,12 +182,14 @@ public struct StepperComponent: Component {
   ///   - secondaryTint: Color of the second button inside a stepper. If nil, then buttonTint will be used.
   public init(
     style: StepperComponent.Style = .minusPlus,
-    backgroundTint: Material.Color = .windowBackgroundColor,
+    backgroundTint: Material.Color = .windowBackgroundColor.withAlphaComponent(0.8),
+    separatorTint: Material.Color = .controlBackgroundColor.withAlphaComponent(0.8),
     buttonTint: Material.Color = .systemBlue,
     secondaryTint: Material.Color? = nil
   ) {
     self.style = style
     self.backgroundTint = backgroundTint
+    self.separatorTint = separatorTint
     self.buttonTint = buttonTint
     self.secondButtonTint = secondaryTint
   }
@@ -146,7 +202,7 @@ public struct StepperComponent: Component {
 }
 
 /// An interface used for entities with mutliple click actions, like RUIStepper.
-public protocol HasStepper: HasClick, HasRUIMaterials {}
+public protocol HasStepper: HasPanTouch, HasRUIMaterials {}
 
 public extension HasStepper {
   func updateMaterials() {

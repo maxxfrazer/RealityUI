@@ -31,7 +31,7 @@ final class RUIButtonTests: XCTestCase {
             expectation.fulfill()
         }
         button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
-        button.arTouchEnded(nil)
+        button.arTouchEnded(nil, nil)
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 
@@ -41,7 +41,7 @@ final class RUIButtonTests: XCTestCase {
         button.touchUpCompleted = { _ in
             expectation.fulfill()
         }
-        button.arTouchEnded(nil)
+        button.arTouchEnded(nil, nil)
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 
@@ -53,7 +53,7 @@ final class RUIButtonTests: XCTestCase {
         }
         button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
         button.arTouchUpdated(SIMD3<Float>(5, 5, 0), hasCollided: false)
-        button.arTouchEnded(nil)
+        button.arTouchEnded(nil, nil)
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 

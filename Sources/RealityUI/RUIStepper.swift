@@ -67,10 +67,6 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
 
     public var collisionPlane: float4x4?
 
-  public var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = { clicker, worldPos in
-    (clicker as? HasStepper)?.stepperTap(clicker: clicker, worldTapPos: worldPos)
-  }
-
   /// Stepper's positive button has been pressed
   public var upTrigger: ((HasStepper) -> Void)?
   /// Stepper's negative button has been pressed
@@ -260,22 +256,6 @@ internal extension HasStepper {
     }
   }
 
-  func springAnimate(entity: Entity) {
-    var cancellable: Cancellable?
-    let pos = entity.position
-    cancellable = entity.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, { _ in
-      cancellable?.cancel()
-      entity.move(
-        to: Transform(scale: .one, rotation: entity.orientation, translation: pos),
-        relativeTo: self, duration: 0.1, timingFunction: .linear
-      )
-    })
-    entity.move(
-      to: Transform(scale: .init(repeating: 0.9), rotation: entity.orientation, translation: pos),
-      relativeTo: self, duration: 0.1, timingFunction: .linear
-    )
-  }
-
   fileprivate func makeModels() {
     let rightModel = self.addModel(part: .right)
     rightModel.position.x = -0.5
@@ -356,27 +336,5 @@ internal extension HasStepper {
     leftModel.addChild(leftSubModel2)
     rightModel.addChild(rightSubModel1)
     rightModel.addChild(rightSubModel2)
-  }
-
-  func stepperTap(clicker: HasClick, worldTapPos: SIMD3<Float>?) {
-    guard let stepperObj = (clicker as? RUIStepper) else {
-      return
-    }
-    guard let tapPos = worldTapPos else {
-      return
-    }
-    let localPos = stepperObj.convert(position: tapPos, from: nil)
-
-    if localPos.x > 0 {
-      if let downModel = stepperObj.getModel(part: .left) {
-        stepperObj.springAnimate(entity: downModel)
-      }
-      stepperObj.downTrigger?(stepperObj)
-    } else {
-      if let upModel = stepperObj.getModel(part: .right) {
-        stepperObj.springAnimate(entity: upModel)
-      }
-      stepperObj.upTrigger?(stepperObj)
-    }
   }
 }

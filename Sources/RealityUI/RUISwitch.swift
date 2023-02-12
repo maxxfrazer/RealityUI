@@ -65,7 +65,9 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
         if !signsEqual {
             return true
         }
-        if (self.distanceTravelled * 1000).rounded() / 1000 * 0.8 <= abs(currentPos - startingPos), hasCollided == true {
+        let distanceTravelledRound = (self.distanceTravelled * 1000).rounded() / 1000
+        if distanceTravelledRound * 0.8 <= abs(currentPos - startingPos),
+           hasCollided == true {
             // If the total movement is more than 80% of the positional diff.
             // And on the same side as we started.
             return true
@@ -201,7 +203,7 @@ public extension HasSwitch {
   ///   - isOn: The switch's new state
   ///   - animated: Should the switch animate to the new state, if an animation is available.
   func setOn(_ isOn: Bool, animated: Bool = true) {
-    var valueChanged = self.isOn != isOn
+    let valueChanged = self.isOn != isOn
     self.isOn = isOn
 
     self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)

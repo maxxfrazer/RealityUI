@@ -21,8 +21,8 @@ import Combine
 @objc public class RealityUI: NSObject {
   internal var componentsRegistered = false
 
-  /// Registers RealityUI's component types. Call this before creating any RealityUI classes to avoid issues.
-  /// This method will be automatically called when `ARView.enableRealityUIGestures(_:)` is called,
+  /// Registers all RealityUI's component types. Call this before creating any RealityUI classes to avoid issues.
+  /// This method will be automatically called when ``enableGestures(_:on:)`` is called.
   public static func registerComponents() {
     RealityUI.shared.logActivated()
   }
@@ -40,7 +40,7 @@ import Combine
   /// Use this to add GestureRecognisers for different RealityUI elements in your scene.
   /// You do not need multiple GestureRecognisers for multiple elements in the scene.
   /// - Parameters:
-  ///   - gestures: A list of gestures to be installed, such as .longTouch and .tap
+  ///   - gestures: A list of gestures to be installed, such as ``RUIGesture/longTouch`` and ``RUIGesture/tap``
   ///   - arView: ARView the gestures will be enabled on
   public static func enableGestures(_ gestures: RealityUI.RUIGesture, on arView: ARView) {
     RealityUI.shared.enable(gestures: gestures, on: arView)
@@ -76,14 +76,14 @@ import Combine
     /// OptionSet value for tap gestures.
     public static let tap = RUIGesture(rawValue: 1 << 0)
 
-    /// OptionSet value for long touch gestures.
+    /// OptionSet value for long touch gestures. This will catch all ``HasARTouch`` entities with a collision body.
     public static let longTouch = RUIGesture(rawValue: 1 << 1)
 
     /// Encapsulates all the possible values of this OptionSet
     public static let all: RUIGesture = [.tap, .longTouch]
   }
 
-  /// Gestures that have been enalbed, `.tap`, `.longTouch` etc
+  /// Gestures that have been enabled, ``RUIGesture/tap``, ``RUIGesture/longTouch`` etc
   public internal(set) var enabledGestures: [ARView: RUIGesture] = [:]
 
   /// Gestures that have been installed. Plan to expose this property later.
@@ -108,8 +108,6 @@ import Combine
   }
 
   fileprivate func enable(gestures: RealityUI.RUIGesture, on arView: ARView) {
-    /// This method is gross, I tried to use `OptionSet` and think I'm doing it wrong
-    /// These multiple if statements make me feel uncomfortable.
     if !self.enabledGestures.contains(where: { $0.key == arView}) {
       self.enabledGestures[arView] = []
     }

@@ -91,8 +91,8 @@ final class RUILongTouchButtonTests: XCTestCase {
         XCTAssertEqual(gestureRecognizer.entity, entity)
         XCTAssertTrue(entity.isCompressed)
 
-        let expectation = self.expectation(description: "touchUpCompleted callback was called")
-        entity.touchUpCompleted = { _ in
+        let expectation = self.expectation(description: "touchUpInside callback was called")
+        entity.touchUpInside = { _ in
             expectation.fulfill()
         }
 

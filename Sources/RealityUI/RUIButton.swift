@@ -13,21 +13,35 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 
   public internal(set) var collisionPlane: float4x4?
 
-  /// Function that will be called when button is successfully tapped.
-  public var touchUpCompleted: ((HasButton) -> Void)?
+  @available(*, deprecated, renamed: "touchUpInside")
+    public var touchUpCompleted: ((HasButton) -> Void)? {
+        get { self.touchUpInside}
+        set { self.touchUpInside = newValue }
+    }
 
-  /// Creates a RealityUI Button entity with optional `ButtonComponent`, `RUIComponent` and `updateCallback`.
+  /// Function that will be called when button is successfully tapped.
+  public var touchUpInside: ((HasButton) -> Void)?
+
+    @available(*, deprecated, renamed: "init(button:rui:touchUpInside:)")
+    public convenience init(
+      button: ButtonComponent? = nil, RUI: RUIComponent? = nil,
+      updateCallback: ((HasButton) -> Void)? = nil
+    ) {
+        self.init(button: button, rui: RUI, touchUpInside: updateCallback)
+    }
+
+  /// Creates a RealityUI Button entity with optional ``ButtonComponent``, ``RUIComponent`` and ``touchUpInside``.
   /// - Parameters:
   ///   - button: Details about the button to be set when initialized.
-  ///   - RUI: Details about the RealityUI Entity.
-  ///   - updateCallback: callback function to receive updates touchUpInside the RealityUI Button.
+  ///   - rui: Details about the RealityUI Entity.
+  ///   - touchUpInside: callback function to receive updates touchUpInside the RealityUI Button.
   required public init(
-    button: ButtonComponent? = nil, RUI: RUIComponent? = nil,
-    updateCallback: ((HasButton) -> Void)? = nil
+    button: ButtonComponent? = nil, rui: RUIComponent? = nil,
+    touchUpInside: ((HasButton) -> Void)? = nil
   ) {
-    self.touchUpCompleted = updateCallback
+    self.touchUpInside = touchUpInside
     super.init()
-    self.RUI = RUI ?? RUIComponent()
+    self.rui = rui ?? RUIComponent()
     self.button = button ?? ButtonComponent()
     self.ruiOrientation()
     self.makeModels()
@@ -38,11 +52,11 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
     self.init(button: nil)
   }
 
-  public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+  public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
     self.compressButton()
   }
 
-  public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+  public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
     if hasCollided != self.isCompressed {
       if hasCollided {
         self.compressButton()
@@ -58,16 +72,16 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
     }
   }
 
-  public func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool?) {
+  public func arTouchEnded(at worldCoordinate: SIMD3<Float>?, hasCollided: Bool?) {
     if self.isCompressed {
       self.releaseButton()
-      self.touchUpCompleted?(self)
+      self.touchUpInside?(self)
     }
   }
 
 }
 
-/// A collection of properties for the entities that conform to `HasButton`.
+/// A collection of properties for the entities that conform to ``HasButton``.
 public struct ButtonComponent: Component {
   /// Size of the RUIButton base.
   let size: SIMD3<Float>
@@ -158,7 +172,7 @@ public struct ButtonComponent: Component {
 /// An interface that provides a button component that defines the visual appearance.
 public protocol HasButton: HasTouchUpInside, HasRUIMaterials {
   /// Button has been clicked callback, similar to UIKit `.touchUpInside`
-  var touchUpCompleted: ((HasButton) -> Void)? { get set }
+  var touchUpInside: ((HasButton) -> Void)? { get set }
 }
 
 public extension HasButton {

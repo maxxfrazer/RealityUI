@@ -26,48 +26,48 @@ final class RUIButtonTests: XCTestCase {
     }
 
     func testTouchUpCompletedCallback() {
-        let expectation = self.expectation(description: "touchUpCompleted callback was called")
-        button.touchUpCompleted = { _ in
+        let expectation = self.expectation(description: "touchUpInside callback was called")
+        button.touchUpInside = { _ in
             expectation.fulfill()
         }
-        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
-        button.arTouchEnded(nil, nil)
+        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
+        button.arTouchEnded(at: nil, hasCollided: nil)
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 
     func testTouchUpCompletedNotCalled() {
-        let expectation = self.expectation(description: "touchUpCompleted callback was not called")
+        let expectation = self.expectation(description: "touchUpInside callback was not called")
         expectation.isInverted = true
-        button.touchUpCompleted = { _ in
+        button.touchUpInside = { _ in
             expectation.fulfill()
         }
-        button.arTouchEnded(nil, nil)
+        button.arTouchEnded(at: nil, hasCollided: nil)
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 
     func testTouchUpCompletedNotCalledTouchMoved() {
-        let expectation = self.expectation(description: "touchUpCompleted callback was not called")
+        let expectation = self.expectation(description: "touchUpInside callback was not called")
         expectation.isInverted = true
-        button.touchUpCompleted = { _ in
+        button.touchUpInside = { _ in
             expectation.fulfill()
         }
-        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
-        button.arTouchUpdated(SIMD3<Float>(5, 5, 0), hasCollided: false)
-        button.arTouchEnded(nil, nil)
+        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
+        button.arTouchUpdated(at: SIMD3<Float>(5, 5, 0), hasCollided: false)
+        button.arTouchEnded(at: nil, hasCollided: nil)
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 
     func testCompressButton() {
-        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
+        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
         XCTAssertTrue(button.button.isCompressed)
-        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
+        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
     }
 
     func testCancelReleaseButton() {
-        let expectation = self.expectation(description: "touchUpCompleted callback was not called")
+        let expectation = self.expectation(description: "touchUpInside callback was not called")
         expectation.isInverted = true
-        button.touchUpCompleted = { _ in expectation.fulfill() }
-        button.arTouchStarted(SIMD3<Float>(0, 0, 0), hasCollided: true)
+        button.touchUpInside = { _ in expectation.fulfill() }
+        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
         button.arTouchCancelled()
         waitForExpectations(timeout: 0.1, handler: nil)
     }

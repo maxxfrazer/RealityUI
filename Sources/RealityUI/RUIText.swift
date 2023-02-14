@@ -39,18 +39,28 @@ open class RUIText: Entity, HasText, HasClick {
     self.init(textComponent: textComponent)
   }
 
+    @available(*, deprecated, renamed: "init(textComponent:rui:tapAction:)")
+    public convenience init(
+      textComponent: TextComponent? = nil,
+      RUI: RUIComponent? = nil,
+      tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = nil
+    ) {
+        self.init(textComponent: textComponent, rui: RUI, tapAction: tapAction)
+    }
+
+
   /// Creates a RealityUI Text entity.
   /// - Parameters:
   ///   - textComponent: Details about the text object, including text, font, extrusion and more.
-  ///   - RUI: Details about the RealityUI Entity.
+  ///   - rui: Details about the RealityUI Entity.
   ///   - tapAction: callback function to receive updates touchUpInside the RealityUI Text.
   required public init(
-    textComponent: TextComponent? = nil, RUI: RUIComponent = RUIComponent(),
+    textComponent: TextComponent? = nil, rui: RUIComponent? = nil,
     tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = nil
   ) {
     self.tapAction = tapAction
     super.init()
-    self.RUI = RUI
+    self.rui = rui ?? RUIComponent()
     self.textComponent = textComponent ?? TextComponent()
     self.ruiOrientation()
     self.makeModels()

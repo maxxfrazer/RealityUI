@@ -25,17 +25,17 @@ public protocol HasARTouch: HasRUI, HasCollision {
   /// - Parameters:
   ///   - worldCoordinate: Collision of the object or collision plane
   ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
-  func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool)
+  func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool)
 
   /// Called when a touch is still on screen or a mouse is still down.
   /// - Parameters:
   ///   - worldCoordinate: Where is the touch currently hits in world space
   ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
-  func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool)
+  func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool)
 
   /// Touch has ended without issues.
   /// - Parameter worldCoordinate: Coordinate in world space where the released collision came from
-  func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool?)
+  func arTouchEnded(at worldCoordinate: SIMD3<Float>?, hasCollided: Bool?)
 
   /// Called when touch has been interrupted.
   func arTouchCancelled()
@@ -102,8 +102,8 @@ public protocol HasTouchUpInside: HasARTouch {}
     self.touchLocation = touchInView
     self.entity = hitEntity
     var worldTouch = touchInWorld
-    if let collisionPlane = hitEntity.collisionPlane {
-      self.collisionPlane = collisionPlane
+    self.collisionPlane = hitEntity.collisionPlane
+    if let collisionPlane {
       if let planeCollisionPoint = self.arView.unproject(
         touchInView, ontoPlane: collisionPlane
       ) {
@@ -118,7 +118,7 @@ public protocol HasTouchUpInside: HasARTouch {}
         return
       }
     }
-    hitEntity.arTouchStarted(worldTouch, hasCollided: true)
+      hitEntity.arTouchStarted(at: worldTouch, hasCollided: true)
     self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, updateRUILongTouch(_:))
   }
 
@@ -140,20 +140,20 @@ public protocol HasTouchUpInside: HasARTouch {}
     }
 
     func updateRUILongTouch(_ event: SceneEvents.Update?) {
-    guard let touchLocation = self.touchLocation,
-      let hitEntity = self.entity
-      else {
-        return
+        guard let touchLocation = self.touchLocation,
+              let hitEntity = self.entity
+        else {
+            return
+        }
+        let (newPos, hasCollided) = getCollisionPoints(touchLocation)
+#if os(iOS)
+        if let activeTouch = self.activeTouch, activeTouch.phase == .ended {
+            self.touchesEnded([activeTouch], with: UIEvent())
+            return
+        }
+#endif
+        hitEntity.arTouchUpdated(at: newPos ?? .zero, hasCollided: hasCollided)
     }
-    let (newPos, hasCollided) = getCollisionPoints(touchLocation)
-    #if os(iOS)
-    if let activeTouch = self.activeTouch, activeTouch.phase == .ended {
-      self.touchesEnded([activeTouch], with: UIEvent())
-      return
-    }
-    #endif
-    hitEntity.arTouchUpdated(newPos ?? .zero, hasCollided: hasCollided)
-  }
 }
 
 #if os(iOS)
@@ -240,7 +240,7 @@ internal extension RUILongTouchGestureRecognizer {
       super.touchesCancelled(touches, with: event)
     case .ended:
       let (newPos, hasCollided) = getCollisionPoints(touchLocation)
-      entity?.arTouchEnded(newPos, hasCollided)
+        entity?.arTouchEnded(at: newPos, hasCollided: hasCollided)
       super.touchesEnded(touches, with: event)
     default:
       break
@@ -285,7 +285,7 @@ extension RUILongTouchGestureRecognizer {
         return
       }
       self.touchLocation = nil
-      entity?.arTouchEnded(nil, nil)
+      entity?.arTouchEnded(at: nil, hasCollided: nil)
       self.entity = nil
       self.viewSubscriber?.cancel()
     }

@@ -34,12 +34,12 @@ final class RUIStepperTests: XCTestCase {
             downTriggered = true
         }
 
-        stepper.arTouchStarted(SIMD3<Float>(0.3, 0, 0), hasCollided: true)
-        stepper.arTouchEnded(nil, nil)
+        stepper.arTouchStarted(at: SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
+        stepper.arTouchEnded(at: nil, hasCollided: nil)
         XCTAssertTrue(upTriggered)
         XCTAssertFalse(downTriggered)
-        stepper.arTouchStarted(SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
-        stepper.arTouchEnded(nil, nil)
+        stepper.arTouchStarted(at: SIMD3<Float>(0.3, 0, 0), hasCollided: true)
+        stepper.arTouchEnded(at: nil, hasCollided: nil)
         XCTAssertTrue(upTriggered)
     }
 

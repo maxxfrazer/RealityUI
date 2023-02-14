@@ -22,7 +22,7 @@ public extension HasTurnTouch {
   /// - Parameters:
   ///   - worldCoordinate: Collision of the object or collision plane
   ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
-  func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+  func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
     self.lastGlobalPosition = worldCoordinate
   }
 
@@ -30,7 +30,7 @@ public extension HasTurnTouch {
   /// - Parameters:
   ///   - worldCoordinate: Where is the touch currently hits in world space
   ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
-  func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+  func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
     var localPos = self.convert(position: worldCoordinate, from: nil)
     localPos = self.pivotRotation.act(localPos)
     var lastLocalPos = self.convert(position: self.lastGlobalPosition, from: nil)
@@ -42,14 +42,14 @@ public extension HasTurnTouch {
     self.lastGlobalPosition = worldCoordinate
   }
   func arTouchCancelled() {
-    self.arTouchEnded(nil, nil)
+      self.arTouchEnded(at: nil, hasCollided: nil)
   }
-  func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool?) {
+  func arTouchEnded(at worldCoordinate: SIMD3<Float>?, hasCollided: Bool?) {
     self.lastGlobalPosition = .zero
   }
 }
 
-/// A collection of properties for the entities that conform to `HasTurnTouch`.
+/// A collection of properties for the entities that conform to ``HasTurnTouch``.
 public struct TurnComponent: Component {
   internal var lastTouchAngle: Float?
   internal var lastGlobalPosition: SIMD3<Float> = .zero
@@ -58,7 +58,7 @@ public struct TurnComponent: Component {
   /// Maximum distance from the Entity centre where touches will still be picked up
   /// Default: `nil` means infinite distance.
   public var maxDistance: Float?
-  /// Create a new `TurnComponent`
+  /// Create a new ``TurnComponent``
   /// - Parameters:
   ///   - axis: Axis upon which the object will rotate.
   ///   - maxDistance: Maximum distance from the Entity centre where touches will still be picked up.
@@ -101,7 +101,7 @@ public extension HasTurnTouch {
 @available(*, deprecated, renamed: "HasTurnTouch")
 public typealias HasPivotTouch = HasTurnTouch
 
-/// A collection of properties for the entities that conform to `HasPivotTouch`.
+/// A collection of properties for the entities that conform to ``HasTurnTouch``.
 @available(*, deprecated, renamed: "TurnComponent")
 public typealias PivotComponent = TurnComponent
 public extension HasTurnTouch {

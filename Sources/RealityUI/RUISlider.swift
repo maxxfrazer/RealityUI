@@ -19,20 +19,34 @@ public class RUISlider: Entity, HasSlider, HasModel {
   /// Called whenever the slider value updates.
   /// set isContinuous to `true` to get every change,
   /// `false` to just get start and end on each gesture.
-  public var sliderUpdated: ((HasSlider, SliderComponent.SlidingState) -> Void)?
+  public var sliderUpdateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)?
 
-  /// Creates a RealityUI Slider entity with optional `SliderComponent`, `RUIComponent` and `updateCallback`.
+    @available(*, deprecated, renamed: "sliderUpdateCallback")
+    public var sliderUpdated: ((HasSlider, SliderComponent.SlidingState) -> Void)? {
+        get { self.sliderUpdateCallback}
+        set { self.sliderUpdateCallback = newValue }
+    }
+
+    @available(*, deprecated, renamed: "init(slider:rui:sliderUpdateCallback:)")
+    public convenience init(
+        slider: SliderComponent? = nil, RUI: RUIComponent? = nil,
+        updateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? = nil
+    ) {
+        self.init(slider: slider, rui: RUI, sliderUpdateCallback: updateCallback)
+    }
+
+  /// Creates a RealityUI Slider entity with optional ``SliderComponent``, ``RUIComponent`` and ``sliderUpdated``.
   /// - Parameters:
   ///   - slider: Details about the slider to be set when initialized
-  ///   - RUI: Details about the RealityUI Entity
-  ///   - updateCallback: callback function to receive updates on slider value changes.
+  ///   - rui: Details about the RealityUI Entity
+  ///   - sliderUpdated: callback function to receive updates on slider value changes.
   required public init(
-    slider: SliderComponent? = nil, RUI: RUIComponent? = nil,
-    updateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? = nil
+    slider: SliderComponent? = nil, rui: RUIComponent? = nil,
+    sliderUpdateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? = nil
   ) {
-    self.sliderUpdated = updateCallback
+    self.sliderUpdateCallback = sliderUpdateCallback
     super.init()
-    self.RUI = RUI ?? RUIComponent()
+    self.rui = rui ?? RUIComponent()
     self.slider = slider ?? SliderComponent()
     self.ruiOrientation()
     self.makeModels()
@@ -44,34 +58,20 @@ public class RUISlider: Entity, HasSlider, HasModel {
   /// - Parameters:
   ///   - length: Length of the slider. The default for RUISlider is 10m.
   ///   - start: Starting value for the slider.
-  ///   - steps: An Integer value indicating how many steps the slider should have.
-  ///            0 is fluid, 1 has only lowest and highest steps
+  ///   - steps: An Integer value indicating how many periods the slider should have.
+  ///            0 is infinite, 1 has only lowest and highest steps.
+  ///          See ``SliderComponent/steps`` for more information.
   ///   - updateCallback: Callback function to receive updates on slider value changes.
   public convenience init(
-    length: Float, start: Float, steps: Int,
+    length: Float = 10, start: Float = 0, steps: Int = 0,
     updateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? = nil
   ) {
     self.init(
       slider: SliderComponent(length: length, startingValue: start, steps: steps),
-      updateCallback: updateCallback)
+      sliderUpdateCallback: updateCallback)
   }
 
-  /// Creates a RealityUI Slider entity with default visual appearance
-  /// - Parameters:
-  ///   - length: Length of the slider. The default for RUISlider is 10m.
-  ///   - start: Starting value for the slider.
-  ///   - updateCallback: Callback function to receive updates on slider value changes.
-  required public convenience init(
-    length: Float, start: Float = 0,
-    updateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? = nil
-  ) {
-    self.init(
-      slider: SliderComponent(length: length, startingValue: start),
-      updateCallback: updateCallback
-    )
-  }
-
-  /// Create an RUISlider with default configurations
+  /// Create an ``RUISlider`` with default configurations
   required public convenience init() {
     self.init(length: 10)
   }
@@ -80,16 +80,16 @@ public class RUISlider: Entity, HasSlider, HasModel {
   /// - Parameters:
   ///   - worldCoordinate: Collision of the object or collision plane
   ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
-  public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
+  public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
     let localPos = self.convert(position: worldCoordinate, from: nil)
     self.panGestureOffset = self.value - (0.5 - localPos.x / self.sliderLength)
-    self.sliderUpdated?(self, .started)
+    self.sliderUpdateCallback?(self, .started)
   }
   /// Called when a touch is still on screen or a mouse is still down.
   /// - Parameters:
   ///   - worldCoordinate: Where is the touch currently hits in world space
   ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
-  public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
+  public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
     let localPos = self.convert(position: worldCoordinate, from: nil)
     var newPercent = (0.5 - localPos.x / self.sliderLength) + self.panGestureOffset
     self.clampSlideValue(&newPercent)
@@ -98,22 +98,22 @@ public class RUISlider: Entity, HasSlider, HasModel {
     }
     self.setPercent(to: newPercent, animated: false)
     if self.isContinuous {
-      self.sliderUpdated?(self, .updated)
+      self.sliderUpdateCallback?(self, .updated)
     }
   }
 
   public func arTouchCancelled() {
-    self.arTouchEnded(nil)
+      self.arTouchEnded(at: nil)
   }
 
-    public func arTouchEnded(_ worldCoordinate: SIMD3<Float>? = nil, _ hasCollided: Bool? = nil) {
+    public func arTouchEnded(at worldCoordinate: SIMD3<Float>? = nil, hasCollided: Bool? = nil) {
     self.panGestureOffset = 0
     updateCollision()
-    self.sliderUpdated?(self, .ended)
+    self.sliderUpdateCallback?(self, .ended)
   }
 }
 
-/// A collection of resources that create the visual appearance a RealityUI Slider, `RUISlider`.
+/// A collection of resources that create the visual appearance a RealityUI Slider, ``RUISlider``.
 public struct SliderComponent: Component {
   /// Length of the slider. The default is 10m.
   public internal(set) var length: Float
@@ -193,7 +193,7 @@ public protocol HasSlider: HasPanTouch, HasRUIMaterials {
   /// Called whenever the slider value updates.
   /// set isContinuous to `true` to get every change,
   /// `false` to just get start and end on each gesture.
-  var sliderUpdated: ((HasSlider, SliderComponent.SlidingState) -> Void)? { get set }
+  var sliderUpdateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? { get set }
 }
 
 public extension HasSlider {

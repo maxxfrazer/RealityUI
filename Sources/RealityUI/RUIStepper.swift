@@ -32,15 +32,18 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
     func releaseButton() {
         self.isCompressed = false
     }
-    public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+    public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
       let localPos = self.convert(position: worldCoordinate, from: nil)
       self.buttonStarted = localPos.x > 0 ? .left : .right
+        print("====started world \(worldCoordinate)")
+        print("====started local \(localPos)")
       self.compressButton()
     }
 
-    public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+    public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
         let localPos = self.convert(position: worldCoordinate, from: nil)
         let touchingObj: StepperComponent.UIPart = localPos.x > 0 ? .left : .right
+        print("====updated \(localPos), \(self.isCompressed)")
         if self.isCompressed, (!hasCollided || touchingObj != buttonStarted) {
             self.compressButton(compress: false)
         } else if !self.isCompressed, hasCollided, touchingObj == buttonStarted {
@@ -54,15 +57,15 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
       }
     }
 
-    public func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool?) {
+    public func arTouchEnded(at worldCoordinate: SIMD3<Float>?, hasCollided: Bool?) {
       if self.isCompressed {
           if self.buttonStarted == .left {
-              self.upTrigger?(self)
-          } else if self.buttonStarted == .right {
               self.downTrigger?(self)
+          } else if self.buttonStarted == .right {
+              self.upTrigger?(self)
           }
       }
-        self.compressButton(compress: false)
+      self.compressButton(compress: false)
     }
 
     public var collisionPlane: float4x4?
@@ -72,21 +75,31 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
   /// Stepper's negative button has been pressed
   public var downTrigger: ((HasStepper) -> Void)?
 
-  /// Creates a RealityUI Stepper entity with optional `StepperComponent`, `RUIComponent`,
-  /// as well as `upTrigger` and `downTrigger` callbacks.
+    @available(*, deprecated, renamed: "init(stepper:rui:upTrigger:downTrigger:)")
+    public convenience init(
+      stepper: StepperComponent? = nil,
+      RUI: RUIComponent? = nil,
+      upTrigger: ((HasStepper) -> Void)? = nil,
+      downTrigger: ((HasStepper) -> Void)? = nil
+    ) {
+        self.init(stepper: stepper, rui: RUI, upTrigger: upTrigger, downTrigger: downTrigger)
+    }
+
+  /// Creates a RealityUI Stepper entity with optional ``StepperComponent``, ``RUIComponent``,
+  /// as well as ``RUIStepper/upTrigger`` and ``RUIStepper/downTrigger`` callbacks.
   /// - Parameters:
   ///   - stepper: Details about the stepper colours to be set when initialized.
-  ///   - RUI: Details about the RealityUI Entity.
+  ///   - rui: Details about the RealityUI Entity.
   ///   - upTrigger: Callback function to receive updates then the up button has been clicked.
   ///   - downTrigger: Callback function to receive updates then the down button has been clicked.
   required public init(
     stepper: StepperComponent? = nil,
-    RUI: RUIComponent? = nil,
+    rui: RUIComponent? = nil,
     upTrigger: ((HasStepper) -> Void)? = nil,
     downTrigger: ((HasStepper) -> Void)? = nil
   ) {
     super.init()
-    self.RUI = RUI ?? RUIComponent()
+    self.rui = rui ?? RUIComponent()
     self.stepper = stepper ?? StepperComponent()
     self.ruiOrientation()
     self.makeModels()

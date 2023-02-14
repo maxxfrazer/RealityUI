@@ -29,7 +29,7 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
     var startedOnThumb = false
     var distanceTravelled: Float = 0
 
-    public func arTouchStarted(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+    public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
       let localPos = self.convert(position: worldCoordinate, from: nil)
         self.startedOnThumb = pow(togglePos.x - localPos.x, 2) + pow(togglePos.y - localPos.y, 2) < 0.25
       self.panGestureOffset = localPos.x
@@ -41,7 +41,7 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
         thumbPos = min(max(thumbPos, -self.toggleXSpan), self.toggleXSpan)
     }
 
-    public func arTouchUpdated(_ worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+    public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
         if self.startedOnThumb, let thumb = self.getModel(part: .thumb) {
             let localPos = self.convert(position: worldCoordinate, from: nil)
             var newThumbPos = self.togglePos.x + localPos.x - self.panGestureOffset
@@ -75,7 +75,7 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
         return false
     }
 
-    public func arTouchEnded(_ worldCoordinate: SIMD3<Float>?, _ hasCollided: Bool? = nil) {
+    public func arTouchEnded(at worldCoordinate: SIMD3<Float>?, hasCollided: Bool? = nil) {
         if !self.startedOnThumb, self.thumbCompressed, hasCollided == true {
             // if didn't start on thumb, but thumb is still compressed
             self.setOn(!self.isOn)
@@ -93,24 +93,33 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
     }
 
   /// Switch's isOn property has changed
-  public var switchChanged: ((HasSwitch) -> Void)?
+  public var switchCallback: ((HasSwitch) -> Void)?
 
-  /// Creates a RealityUI Switch entity with optional `SwitchComponent`, `RUIComponent` and `changedCallback`.
+    @available(*, deprecated, renamed: "init(switchness:rui:switchCallback:)")
+    public convenience init(
+      switchness: SwitchComponent? = nil,
+      RUI: RUIComponent? = nil,
+      changedCallback: ((HasSwitch) -> Void)? = nil
+    ) {
+        self.init(switchness: switchness, rui: RUI, switchCallback: changedCallback)
+    }
+
+  /// Creates a RealityUI Switch entity with optional ``SwitchComponent``, ``RUIComponent`` and ``switchCallback``.
   /// - Parameters:
   ///   - switchness: Details about the switch to be set when initialized.
-  ///   - RUI: Details about the RealityUI Entity
+  ///   - rui: Details about the RealityUI Entity
   ///   - changedCallback: callback function to receive updates when the switch isOn property changes.
   public init(
     switchness: SwitchComponent? = nil,
-    RUI: RUIComponent? = nil,
-    changedCallback: ((HasSwitch) -> Void)? = nil
+    rui: RUIComponent? = nil,
+    switchCallback: ((HasSwitch) -> Void)? = nil
   ) {
     super.init()
-    self.RUI = RUI ?? RUIComponent()
+    self.rui = rui ?? RUIComponent()
     self.switchness = switchness ?? SwitchComponent()
     self.ruiOrientation()
     self.makeModels()
-    self.switchChanged = changedCallback
+    self.switchCallback = switchCallback
   }
 
   /// Create a RUISwitch entity with the default styling.
@@ -122,10 +131,10 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
 /// An interface used for all entities that have a toggling option
 public protocol HasSwitch: HasRUIMaterials {
   /// Switch's isOn property has changed
-  var switchChanged: ((HasSwitch) -> Void)? { get set }
+  var switchCallback: ((HasSwitch) -> Void)? { get set }
 }
 
-/// A collection of resources that create the visual appearance a RealityUI Switch, `RUISwitch`.
+/// A collection of resources that create the visual appearance a RealityUI Switch, ``RUISwitch``.
 public struct SwitchComponent: Component {
   /// A Boolean value that determines the off/on state of the switch. Default to `false`, meaning off.
   var isOn: Bool
@@ -217,7 +226,7 @@ public extension HasSwitch {
     } else {
       thumbEntity?.transform = thumbTransform
     }
-    if valueChanged { self.switchChanged?(self) }
+    if valueChanged { self.switchCallback?(self) }
   }
 
   /// Padding (in meters) between the thumb and the inner capsule of the switch.

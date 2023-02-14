@@ -33,11 +33,11 @@ final class RUISliderTests: XCTestCase {
         let slider = RUISlider()
         let worldCoordinate = SIMD3<Float>.zero
         let startValue = slider.value
-        slider.arTouchStarted(worldCoordinate)
+        slider.arTouchStarted(at: worldCoordinate)
         XCTAssertEqual(startValue, slider.value)
-        slider.arTouchUpdated([-5, 0, 0])
+        slider.arTouchUpdated(at: [-5, 0, 0])
         XCTAssertEqual(slider.value, 0.5, accuracy: 0.0001)
-        slider.arTouchUpdated([-5, 0, 0])
+        slider.arTouchUpdated(at: [-5, 0, 0])
         XCTAssertEqual(slider.value, 0.5, accuracy: 0.0001)
         slider.arTouchEnded()
         XCTAssertEqual(slider.value, 0.5, accuracy: 0.0001)
@@ -47,7 +47,7 @@ final class RUISliderTests: XCTestCase {
         let slider = RUISlider()
         let worldCoordinate = SIMD3<Float>.zero
         let startValue = slider.value
-        slider.arTouchStarted(worldCoordinate)
+        slider.arTouchStarted(at: worldCoordinate)
         XCTAssertEqual(startValue, slider.value)
         slider.arTouchCancelled()
         XCTAssertEqual(startValue, slider.value)

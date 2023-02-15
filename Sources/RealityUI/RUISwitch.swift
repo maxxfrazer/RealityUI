@@ -285,7 +285,7 @@ public extension HasSwitch {
         thumb.model = ModelComponent(mesh: .generateSphere(radius: (1 - padding) / 2), materials: [])
         thumb.position = togglePos
         (self as? HasCollision)?.collision = CollisionComponent(
-            shapes: [ShapeResource.generateCapsule(height: 2, radius: 0.5)
+            shapes: [ShapeResource.generateCapsule(height: togLen, radius: 0.5)
                 .offsetBy(rotation: simd_quatf(angle: .pi/2, axis: [0, 0, 1]))
             ]
         )

@@ -35,15 +35,12 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
     public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
         let localPos = self.convert(position: worldCoordinate, from: nil)
         self.buttonStarted = localPos.x > 0 ? .left : .right
-        print("====started world \(worldCoordinate)")
-        print("====started local \(localPos)")
         self.compressButton()
     }
 
     public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
         let localPos = self.convert(position: worldCoordinate, from: nil)
         let touchingObj: StepperComponent.UIPart = localPos.x > 0 ? .left : .right
-        print("====updated \(localPos), \(self.isCompressed)")
         if self.isCompressed, (!hasCollided || touchingObj != buttonStarted) {
             self.compressButton(compress: false)
         } else if !self.isCompressed, hasCollided, touchingObj == buttonStarted {

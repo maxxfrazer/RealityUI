@@ -22,7 +22,7 @@ final class RUISwitchTests: XCTestCase {
     func testSwitchChangedCallback() {
         let testSwitch = RUISwitch()
         var switchChangedCalled = false
-        testSwitch.switchChanged = { newVal in
+        testSwitch.switchCallback = { newVal in
             // newval should be true
             switchChangedCalled = newVal.isOn
         }
@@ -80,7 +80,70 @@ final class RUISwitchTests: XCTestCase {
         if #available(iOS 15.0, macOS 12.0, *) {
             XCTAssertEqual(bgMat.color.tint, offMat.color.tint)
         }
-        print("break")
     }
     #endif
+
+    func testTappingSwitch() {
+        let testSwitch = RUISwitch()
+
+        testSwitch.arTouchStarted(at: SIMD3<Float>(0.3, 0, 0), hasCollided: true)
+        testSwitch.arTouchEnded(at: nil, hasCollided: true)
+        XCTAssertTrue(testSwitch.isOn)
+        testSwitch.arTouchStarted(at: SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
+        testSwitch.arTouchEnded(at: nil, hasCollided: true)
+        XCTAssertFalse(testSwitch.isOn)
+        testSwitch.arTouchStarted(at: SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
+        testSwitch.arTouchEnded(at: nil, hasCollided: false)
+        XCTAssertFalse(testSwitch.isOn)
+        testSwitch.arTouchStarted(at: SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
+        testSwitch.arTouchEnded(at: nil, hasCollided: true)
+        XCTAssertTrue(testSwitch.isOn)
+    }
+
+    func testDragThumbAcross() {
+        let testSwitch = RUISwitch()
+        guard let thumbModel = testSwitch.getModel(part: "thumb") else {
+            XCTFail("Could not get thumb model")
+            return
+        }
+        testSwitch.arTouchStarted(at: SIMD3<Float>(0.3, 0, 0), hasCollided: true)
+        XCTAssertTrue(thumbModel.position.x > 0)
+        testSwitch.arTouchUpdated(at: SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
+        XCTAssertTrue(thumbModel.position.x < 0)
+        testSwitch.arTouchEnded(at: nil, hasCollided: true)
+        XCTAssertTrue(testSwitch.isOn)
+    }
+
+    func testDragThumbAcrossAndBack() {
+        let testSwitch = RUISwitch()
+        guard let thumbModel = testSwitch.getModel(part: "thumb") else {
+            return XCTFail("Could not get thumb model")
+        }
+        testSwitch.arTouchStarted(at: SIMD3<Float>(0.3, 0, 0), hasCollided: true)
+        XCTAssertTrue(thumbModel.position.x > 0)
+        testSwitch.arTouchUpdated(at: SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
+        XCTAssertTrue(thumbModel.position.x < 0)
+        testSwitch.arTouchUpdated(at: SIMD3<Float>(0.1, 0, 0), hasCollided: true)
+        XCTAssertTrue(thumbModel.position.x > 0)
+        testSwitch.arTouchEnded(at: nil, hasCollided: true)
+        XCTAssertFalse(testSwitch.isOn)
+    }
+
+    func testTouchBackgroundMoveOffBackOn() {
+        let testSwitch = RUISwitch()
+        guard let thumbModel = testSwitch.getModel(part: "thumb") else {
+            return XCTFail("Could not get thumb model")
+        }
+        testSwitch.arTouchStarted(at: SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
+        XCTAssertTrue(thumbModel.position.x > 0)
+        testSwitch.arTouchUpdated(at: SIMD3<Float>(-1.6, 0, 0), hasCollided: false)
+        XCTAssertTrue(thumbModel.position.x > 0)
+        XCTAssertFalse(testSwitch.thumbCompressed)
+        testSwitch.arTouchUpdated(at: SIMD3<Float>(0.3, 0, 0), hasCollided: true)
+        XCTAssertTrue(thumbModel.position.x > 0)
+        XCTAssertTrue(testSwitch.thumbCompressed)
+        testSwitch.arTouchEnded(at: nil, hasCollided: true)
+        XCTAssertTrue(testSwitch.isOn)
+    }
+
 }

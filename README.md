@@ -6,12 +6,16 @@ The classes included in RealityUI aim to offer familiar User Interface guideline
 The User Interface controls in this repository so far are made to be familiar to what people are used to with 2D interfaces, however the plan is to expand the tools on offer to new and unique controls, which are more appropriate for an Augmented Reality and Virtual Reality context.
 
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/maxxfrazer/RealityUI?color=orange&label=SwiftPM&logo=swift"/>
-  <img src="https://img.shields.io/badge/platform-iOS%20%7C%20macOS-lightgrey"/>
-  <img src="https://img.shields.io/badge/Swift-5.2-orange?logo=swift"/>
-  <!-- <a href="https://codecov.io/gh/maxxfrazer/RealityUI" > 
-    <img src="https://codecov.io/gh/maxxfrazer/RealityUI/branch/main/graph/badge.svg?token=3PCDBMSCLL"/> 
-  </a> -->
+  <a href="https://swiftpackageindex.com/maxxfrazer/RealityUI">
+    <img src="https://img.shields.io/github/v/release/maxxfrazer/RealityUI?color=F05138&label=Package%20Version&logo=Swift"/>
+  </a>
+  <a href="https://swiftpackageindex.com/maxxfrazer/RealityUI">
+    <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmaxxfrazer%2FRealityUI%2Fbadge%3Ftype%3Dplatforms"/>
+  </a>
+  <a href="https://swiftpackageindex.com/maxxfrazer/RealityUI">
+    <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmaxxfrazer%2FRealityUI%2Fbadge%3Ftype%3Dswift-versions"/>
+  </a>
+  <br/>
   <img src="https://img.shields.io/github/license/maxxfrazer/RealityUI"/>
   <img src="https://github.com/maxxfrazer/RealityUI/workflows/build/badge.svg?branch=main"/>
   <img src="https://github.com/maxxfrazer/RealityUI/workflows/Deploy%20DocC/badge.svg?branch=main"/>
@@ -22,8 +26,8 @@ The User Interface controls in this repository so far are made to be familiar to
 ## Requirements
 
 - iOS 13 or macOS 10.15
-- Swift 5.2
-- Xcode 11
+- Swift 5.4
+- Xcode 12
 
 ## Content
 
@@ -56,8 +60,10 @@ All components used in RealityUI must be registered before they are used, simply
 
 #### Activating Gestures
 
-If you plan on using RUISwitch or RUIStepper, then you should at least enable `.tap`
-RUISlider uses `.pan`, but I would just recommend using `.all` to avoid issues, as these will inevitably move around ad RealityUI develops, and will not interfere with the rest of your RealityKit scene.
+Enabling RealityUI gestures can be doen by calling `RealityUI.enableGestures(.all, on: ARView)`, with `ARView` being your instance of an [ARView](https://developer.apple.com/documentation/realitykit/arview) object.
+
+RUISlider, RUISwitch, RUIStepper and RUIButton all use `.longTouch`, and if you are adding elements that use the protocol `HasClick` you can use the gesture `.tap`.
+I would just recommend using `.all` when enabling gestures, as these will inevitably move around as RealityUI develops.
 
 `RealityUI.enableGestures(.all, on: arView)`
 

@@ -33,10 +33,13 @@ final class RUIStepperTests: XCTestCase {
         stepper.downTrigger = { _ in
             downTriggered = true
         }
-        stepper.stepperTap(clicker: stepper, worldTapPos: [0.5, 0, 0])
-        XCTAssertTrue(downTriggered)
-        XCTAssertFalse(upTriggered)
-        stepper.stepperTap(clicker: stepper, worldTapPos: [-0.5, 0, 0])
+
+        stepper.arTouchStarted(at: SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
+        stepper.arTouchEnded(at: nil, hasCollided: nil)
+        XCTAssertTrue(upTriggered)
+        XCTAssertFalse(downTriggered)
+        stepper.arTouchStarted(at: SIMD3<Float>(0.3, 0, 0), hasCollided: true)
+        stepper.arTouchEnded(at: nil, hasCollided: nil)
         XCTAssertTrue(upTriggered)
     }
 

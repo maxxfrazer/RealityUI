@@ -108,7 +108,7 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
     /// - Parameters:
     ///   - switchness: Details about the switch to be set when initialized.
     ///   - rui: Details about the RealityUI Entity
-    ///   - changedCallback: callback function to receive updates when the switch isOn property changes.
+    ///   - switchCallback: callback function to receive updates when the switch isOn property changes.
     public init(
         switchness: SwitchComponent? = nil,
         rui: RUIComponent? = nil,

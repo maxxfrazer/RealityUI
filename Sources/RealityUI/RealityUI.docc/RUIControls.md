@@ -4,7 +4,7 @@ RUIControls are all the elements such as ``RUISlider``, ``RUISwitch``, ``RUIStep
 
 ## Overview
 
-Look below to see how to add all the RUIControls to your RealityKit Scene. Make sure to check out ``<doc:Setup>`` before adding RUIControls; otherwise the touch gestures may not work.
+Look below to see how to add all the RUIControls to your RealityKit Scene. Make sure to check out <doc:Setup> before adding RUIControls; otherwise the touch gestures may not work.
 
 ## Control Types
 

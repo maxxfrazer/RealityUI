@@ -50,9 +50,21 @@ extension HasARTouch {
 
 /// An interface used for all entities that have long touches where movement
 /// is the main interest (vs HasTouchUpInside)
-public protocol HasPanTouch: HasARTouch {}
+public protocol HasPanTouch: HasARTouch {
+    /// A parameter that can be used by being set when the touch starts.
+    /// It can then be used to know how far a user has toggled since the start of the touch.
+    /// Do not set this value outside of the class using it.
+    var panGestureOffset: SIMD3<Float> {get set}
+}
 
-public extension HasPanTouch {}
+public extension HasPanTouch {
+    func panTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
+        self.panGestureOffset = self.convert(position: worldCoordinate, from: nil)
+    }
+    func panTouchEnded(at worldCoordinate: SIMD3<Float>?, hasCollided: Bool?) {
+        self.panGestureOffset = .zero
+    }
+}
 
 /// An interface used for all entities that have long touches where movement
 /// is is not the main interest (vs HasPanTouch)

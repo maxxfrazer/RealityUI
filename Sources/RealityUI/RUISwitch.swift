@@ -9,8 +9,11 @@
 import RealityKit
 
 /// A  RealityUI Switch to be added to a RealityKit scene.
+///
+/// RUISwitch can be used for a basic on/off toggle in your RealityKit scene.
+/// ![RUISwitch floating around with an orange background](ruiswitch-orange-example.gif)
 public class RUISwitch: Entity, HasSwitch, HasPanTouch {
-    public var panGestureOffset: Float = 0
+    public var panGestureOffset: SIMD3<Float> = .zero
 
     public var collisionPlane: float4x4? {
         return self.transformMatrix(relativeTo: nil)
@@ -30,9 +33,10 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
     var distanceTravelled: Float = 0
 
     public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
-        let localPos = self.convert(position: worldCoordinate, from: nil)
-        self.startedOnThumb = pow(togglePos.x - localPos.x, 2) + pow(togglePos.y - localPos.y, 2) < 0.25
-        self.panGestureOffset = localPos.x
+        self.panTouchStarted(at: worldCoordinate, hasCollided: hasCollided)
+        let moveDiff = self.togglePos - self.panGestureOffset
+        let xyLenSq = moveDiff.x * moveDiff.x + moveDiff.y * moveDiff.y
+        self.startedOnThumb = xyLenSq < 0.25
         self.distanceTravelled = 0
         self.compressThumb()
     }
@@ -44,7 +48,7 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
     public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
         if self.startedOnThumb, let thumb = self.getModel(part: .thumb) {
             let localPos = self.convert(position: worldCoordinate, from: nil)
-            var newThumbPos = self.togglePos.x + localPos.x - self.panGestureOffset
+            var newThumbPos = self.togglePos.x + localPos.x - self.panGestureOffset.x
             self.clampThumbValue(&newThumbPos)
             self.distanceTravelled += abs(thumb.position.x - newThumbPos)
             thumb.position.x = newThumbPos
@@ -84,12 +88,13 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
         } else {
             self.setOn(self.isOn)
         }
-
         self.thumbCompressed = false
+        self.panTouchEnded(at: worldCoordinate, hasCollided: hasCollided)
     }
 
     public func arTouchCancelled() {
         self.uncompressThumb()
+        self.panTouchEnded(at: nil, hasCollided: nil)
     }
 
     /// Switch's isOn property has changed

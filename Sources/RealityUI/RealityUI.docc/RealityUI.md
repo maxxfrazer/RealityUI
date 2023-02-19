@@ -16,7 +16,20 @@ The User Interface controls in this repository so far are made to be familiar to
 It's important to set up your RealityKit scene to work with RealityUI before moving on.
 
 - <doc:Setup>
+- <doc:RealityUI/RealityUI>
 
 ### RUIControl Elements
 
 - <doc:RUIControls>
+- ``RUISwitch``
+- ``RUISlider``
+- ``RUIButton``
+- ``RUIStepper``
+
+### Custom Touch Events
+
+- ``HasARTouch``
+- ``HasClick``
+- ``HasPanTouch``
+- ``HasTouchUpInside``
+- ``HasTurnTouch``

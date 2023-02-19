@@ -152,11 +152,11 @@ public struct StepperComponent: Component {
     }
     /// Stepper styles
     public enum Style {
-        /// Style of stepper with a + and - symbol
+        /// Style of stepper with a + and - symbols.
         case minusPlus
-        /// Style of stepper with a "〈" and "〉" symbol
+        /// Style of stepper with a "〈" and "〉" chevrons.
         case arrowLeftRight
-        /// Style of stepper with up and down pointing symbols
+        /// Style of stepper with up and down chevrons.
         case arrowDownUp
     }
     #if os(iOS)
@@ -208,7 +208,7 @@ public struct StepperComponent: Component {
 }
 
 /// An interface used for entities with mutliple click actions, like RUIStepper.
-public protocol HasStepper: HasPanTouch, HasRUIMaterials {}
+public protocol HasStepper: HasARTouch, HasRUIMaterials {}
 
 public extension HasStepper {
     func updateMaterials() {

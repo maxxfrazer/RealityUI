@@ -9,7 +9,7 @@
 import RealityKit
 
 /// An interface used for entities which are to be rotated via one finger drag gestures
-public protocol HasTurnTouch: HasPanTouch {}
+public protocol HasTurnTouch: HasARTouch {}
 
 public extension HasTurnTouch {
     /// Plane that we run the raycast against.

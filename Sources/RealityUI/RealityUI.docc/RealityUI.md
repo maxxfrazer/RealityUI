@@ -33,3 +33,14 @@ It's important to set up your RealityKit scene to work with RealityUI before mov
 - ``HasPanTouch``
 - ``HasTouchUpInside``
 - ``HasTurnTouch``
+- ``TurnComponent``
+
+### Visual Objects
+
+- ``RUIText``
+
+### RealityUI Object Settings
+
+- ``HasRUI``
+- ``HasRUIMaterials``
+- ``RUIComponent``

@@ -107,6 +107,7 @@ public protocol HasRUIMaterials: HasRUI {
     /// This method does not need to be called by outside of a RealityUI class.
     func updateMaterials()
 }
+
 extension HasRUIMaterials {
     fileprivate func materialsShouldChange() {
         self.updateMaterials()

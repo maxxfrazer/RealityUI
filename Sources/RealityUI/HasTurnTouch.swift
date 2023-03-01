@@ -9,7 +9,7 @@
 import RealityKit
 
 /// An interface used for entities which are to be rotated via one finger drag gestures
-public protocol HasTurnTouch: HasPanTouch {}
+public protocol HasTurnTouch: HasARTouch {}
 
 public extension HasTurnTouch {
     /// Plane that we run the raycast against.
@@ -104,6 +104,8 @@ public typealias HasPivotTouch = HasTurnTouch
 /// A collection of properties for the entities that conform to ``HasTurnTouch``.
 @available(*, deprecated, renamed: "TurnComponent")
 public typealias PivotComponent = TurnComponent
+
+/// An interface used for entities which are to be rotated via one finger drag gestures
 public extension HasTurnTouch {
     /// The axis to turn around for the entity.
     @available(*, deprecated, renamed: "turnAxis")

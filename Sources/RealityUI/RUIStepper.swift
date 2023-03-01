@@ -72,16 +72,6 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
     /// Stepper's negative button has been pressed
     public var downTrigger: ((HasStepper) -> Void)?
 
-    @available(*, deprecated, renamed: "init(stepper:rui:upTrigger:downTrigger:)")
-    public convenience init(
-        stepper: StepperComponent? = nil,
-        RUI: RUIComponent? = nil,
-        upTrigger: ((HasStepper) -> Void)? = nil,
-        downTrigger: ((HasStepper) -> Void)? = nil
-    ) {
-        self.init(stepper: stepper, rui: RUI, upTrigger: upTrigger, downTrigger: downTrigger)
-    }
-
     /// Creates a RealityUI Stepper entity with optional ``StepperComponent``, ``RUIComponent``,
     /// as well as ``RUIStepper/upTrigger`` and ``RUIStepper/downTrigger`` callbacks.
     /// - Parameters:
@@ -89,7 +79,7 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
     ///   - rui: Details about the RealityUI Entity.
     ///   - upTrigger: Callback function to receive updates then the up button has been clicked.
     ///   - downTrigger: Callback function to receive updates then the down button has been clicked.
-    required public init(
+    public init(
         stepper: StepperComponent? = nil,
         rui: RUIComponent? = nil,
         upTrigger: ((HasStepper) -> Void)? = nil,
@@ -152,11 +142,11 @@ public struct StepperComponent: Component {
     }
     /// Stepper styles
     public enum Style {
-        /// Style of stepper with a + and - symbol
+        /// Style of stepper with a + and - symbols.
         case minusPlus
-        /// Style of stepper with a "〈" and "〉" symbol
+        /// Style of stepper with a "〈" and "〉" chevrons.
         case arrowLeftRight
-        /// Style of stepper with up and down pointing symbols
+        /// Style of stepper with up and down chevrons.
         case arrowDownUp
     }
     #if os(iOS)
@@ -208,7 +198,7 @@ public struct StepperComponent: Component {
 }
 
 /// An interface used for entities with mutliple click actions, like RUIStepper.
-public protocol HasStepper: HasPanTouch, HasRUIMaterials {}
+public protocol HasStepper: HasARTouch, HasRUIMaterials {}
 
 public extension HasStepper {
     func updateMaterials() {

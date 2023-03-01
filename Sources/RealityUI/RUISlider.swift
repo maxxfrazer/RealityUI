@@ -81,8 +81,8 @@ public class RUISlider: Entity, HasSlider, HasModel {
     ///   - worldCoordinate: Collision of the object or collision plane
     ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
     public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
-        let localPos = self.convert(position: worldCoordinate, from: nil)
-        self.panGestureOffset = self.value - (0.5 - localPos.x / self.sliderLength)
+        self.panTouchStarted(at: worldCoordinate, hasCollided: hasCollided)
+        self.startValue = self.value
         self.sliderUpdateCallback?(self, .started)
     }
     /// Called when a touch is still on screen or a mouse is still down.
@@ -91,7 +91,7 @@ public class RUISlider: Entity, HasSlider, HasModel {
     ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
     public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
         let localPos = self.convert(position: worldCoordinate, from: nil)
-        var newPercent = (0.5 - localPos.x / self.sliderLength) + self.panGestureOffset
+        var newPercent = self.startValue + (self.panGestureOffset.x - localPos.x) / self.sliderLength
         self.clampSlideValue(&newPercent)
         if self.value == newPercent {
             return
@@ -107,9 +107,10 @@ public class RUISlider: Entity, HasSlider, HasModel {
     }
 
     public func arTouchEnded(at worldCoordinate: SIMD3<Float>? = nil, hasCollided: Bool? = nil) {
-        self.panGestureOffset = 0
         updateCollision()
         self.sliderUpdateCallback?(self, .ended)
+        self.panTouchEnded(at: worldCoordinate, hasCollided: hasCollided)
+        self.startValue = .zero
     }
 }
 
@@ -149,7 +150,8 @@ public struct SliderComponent: Component {
         case ended
     }
 
-    internal var arGestureOffset: Float = 0
+    internal var arGestureOffset: SIMD3<Float> = .zero
+    internal var startValue: Float = 0
     internal enum UIPart: String {
         case thumb
         case empty
@@ -194,6 +196,7 @@ public protocol HasSlider: HasPanTouch, HasRUIMaterials {
     /// set isContinuous to `true` to get every change,
     /// `false` to just get start and end on each gesture.
     var sliderUpdateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? { get set }
+    var startValue: Float { get set }
 }
 
 public extension HasSlider {
@@ -202,9 +205,13 @@ public extension HasSlider {
         get { self.components[SliderComponent.self] ?? SliderComponent() }
         set { self.components[SliderComponent.self] = newValue }
     }
-    var panGestureOffset: Float {
+    var panGestureOffset: SIMD3<Float> {
         get { self.slider.arGestureOffset }
         set { self.slider.arGestureOffset = newValue }
+    }
+    var startValue: Float {
+        get { self.slider.startValue }
+        set { self.slider.startValue = newValue }
     }
     /// Length of the slider. The default is 10m.
     var sliderLength: Float { self.slider.length }

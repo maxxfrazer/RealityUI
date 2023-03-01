@@ -11,7 +11,6 @@ RUIText adds a few features to make displaying text in RealityKit a little bit s
 - ``init(with:width:height:font:extrusion:color:)``
 - ``init(textComponent:rui:tapAction:)``
 - ``init()``
-- ``init(textComponent:RUI:tapAction:)``
 
 ### Modification
 

@@ -9,9 +9,6 @@
 import RealityKit
 
 /// A  RealityUI Switch to be added to a RealityKit scene.
-///
-/// RUISwitch can be used for a basic on/off toggle in your RealityKit scene.
-/// ![RUISwitch floating around with an orange background](ruiswitch-orange-example.gif)
 public class RUISwitch: Entity, HasSwitch, HasPanTouch {
     public var panGestureOffset: SIMD3<Float> = .zero
 

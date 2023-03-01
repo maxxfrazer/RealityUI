@@ -16,7 +16,6 @@ To activate the stepper, the user must press and release from the same side of t
 - ``init(upTrigger:downTrigger:)``
 - ``init(style:upTrigger:downTrigger:)``
 - ``init(stepper:rui:upTrigger:downTrigger:)``
-- ``init(stepper:RUI:upTrigger:downTrigger:)``
 
 ### Stepper Value Updates
 

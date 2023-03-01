@@ -1,6 +1,14 @@
 # ``RealityUI/RUISlider``
 
-RUISlider is perfect for interpolating a value. 
+RUISlider is perfect for interpolating a value.
+
+![RealityUI Slider](ruislider-orange-example)
+
+```swift
+RUISlider(length: 4, start: 2 / 4) {
+    print(slider.value)
+}
+```
 
 ## Topics
 

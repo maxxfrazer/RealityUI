@@ -15,6 +15,7 @@ public typealias UIImage = NSImage
 #endif
 
 @available(iOS 15.0, macOS 12, *)
+/// Class for creating `TextureResources`. For now the main use-case is creating SF Symbol images.
 public struct RUITexture {
     /// Erorr that can be thrown while generating a texture
     public enum TextureError: Error {

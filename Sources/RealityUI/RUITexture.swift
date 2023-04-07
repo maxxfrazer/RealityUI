@@ -69,12 +69,18 @@ public struct RUITexture {
     ) async throws -> TextureResource {
         let cgImage = try self.generateCGImage(systemName: systemName, config: config)
         #if canImport(AppKit)
-        return try await TextureResource.generate(from: cgImage, options: .init(semantic: nil, mipmapsMode: TextureResource.MipmapsMode.allocateAndGenerateAll))
+        return try await TextureResource.generate(
+            from: cgImage,
+            options: .init(semantic: nil, mipmapsMode: TextureResource.MipmapsMode.allocateAndGenerateAll)
+        )
         #else
         return try await withCheckedThrowingContinuation { continuation in
             let generateTexture: @Sendable () -> Void = {
                 do {
-                    let texture = try TextureResource.generate(from: cgImage, withName: nil, options: .init(semantic: nil, mipmapsMode: TextureResource.MipmapsMode.allocateAndGenerateAll))
+                    let texture = try TextureResource.generate(
+                        from: cgImage, withName: nil,
+                        options: .init(semantic: nil, mipmapsMode: TextureResource.MipmapsMode.allocateAndGenerateAll)
+                    )
                     continuation.resume(returning: texture)
                 } catch {
                     continuation.resume(throwing: error)
@@ -99,7 +105,10 @@ public struct RUITexture {
             let cgImage = try self.generateCGImage(systemName: systemName, config: config)
             let generateTexture: @Sendable () -> Void = {
                 do {
-                    let texture = try TextureResource.generate(from: cgImage, withName: nil, options: .init(semantic: nil, mipmapsMode: TextureResource.MipmapsMode.allocateAndGenerateAll))
+                    let texture = try TextureResource.generate(
+                        from: cgImage, withName: nil,
+                        options: .init(semantic: nil, mipmapsMode: TextureResource.MipmapsMode.allocateAndGenerateAll)
+                    )
                     completion(.success(texture))
                 } catch {
                     completion(.failure(error))

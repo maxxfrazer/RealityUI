@@ -7,6 +7,9 @@
 //
 
 import RealityKit
+#if canImport(AppKit)
+import AppKit
+#endif
 
 /// A  RealityUI Button to be added to a RealityKit scene.
 public class RUIButton: Entity, HasButton, HasModel, HasPhysics {

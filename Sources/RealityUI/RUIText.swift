@@ -8,6 +8,9 @@
 import CoreGraphics
 import RealityKit
 import CoreText
+#if canImport(AppKit)
+import AppKit
+#endif
 
 /// A RealityUI Text object to be added to a RealityKit scene.
 open class RUIText: Entity, HasText, HasClick {

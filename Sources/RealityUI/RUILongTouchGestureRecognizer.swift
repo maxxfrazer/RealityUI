@@ -296,8 +296,9 @@ extension RUILongTouchGestureRecognizer {
         guard self.touchLocation != nil else {
             return
         }
+        let (newPos, hasCollided) = getCollisionPoints(touchLocation!)
         self.touchLocation = nil
-        entity?.arTouchEnded(at: nil, hasCollided: nil)
+        entity?.arTouchEnded(at: newPos, hasCollided: hasCollided)
         self.entity = nil
         self.viewSubscriber?.cancel()
     }

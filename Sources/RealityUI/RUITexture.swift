@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  RUITexture.swift
 //  
 //
 //  Created by Max Cobb on 11/03/2023.
@@ -16,11 +16,19 @@ public typealias UIImage = NSImage
 
 @available(iOS 15.0, macOS 12, *)
 public struct RUITexture {
+    /// Erorr that can be thrown while generating a texture
     public enum TextureError: Error {
+        /// Could not convert UIImage/NSImage to CGImage
         case cgImageFailed
+        /// System image with this name does not exist
         case invalidSystemName
     }
-    public static func generatePaddedTexture(
+    /// Create a `TextureResource` with a system image name and point size.
+    /// - Parameters:
+    ///   - systemName: Name of the SF Symbol Image.
+    ///   - pointSize: Point size the symbol will be drawn with.
+    /// - Returns: A new `TextureResource`.
+    public static func generateTexture(
         systemName: String, pointSize: CGFloat
     ) async throws -> TextureResource {
         #if canImport(AppKit)
@@ -28,7 +36,7 @@ public struct RUITexture {
         #elseif canImport(UIKit)
         let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: .regular, scale: .default)
         #endif
-        return try await self.generatePaddedTexture(systemName: systemName, config: config)
+        return try await self.generateTexture(systemName: systemName, config: config)
     }
     fileprivate static func generateCGImage(
         systemName: String, config: UIImage.SymbolConfiguration
@@ -50,7 +58,12 @@ public struct RUITexture {
         #endif
         return cgImage
     }
-    public static func generatePaddedTexture(
+    /// Create a `TextureResource` with a system image name and point size.
+    /// - Parameters:
+    ///   - systemName: Name of the SF Symbol Image.
+    ///   - config: Image SymbolConfiguration for the SF Symbol Image.
+    /// - Returns: A new `TextureResource`.
+    public static func generateTexture(
         systemName: String, config: UIImage.SymbolConfiguration
     ) async throws -> TextureResource {
         let cgImage = try self.generateCGImage(systemName: systemName, config: config)
@@ -71,8 +84,13 @@ public struct RUITexture {
         #endif
     }
 
-    #if canImport(UIKit)
-    public static func generatePaddedTexture(
+#if canImport(UIKit)
+    /// Create a `TextureResource` with a system image name and point size.
+    /// - Parameters:
+    ///   - systemName: Name of the SF Symbol Image.
+    ///   - config: Image SymbolConfiguration for the SF Symbol Image.
+    ///   - completion: Completion result for creating the `TextureResource`.
+    public static func generateTexture(
         systemName: String, config: UIImage.SymbolConfiguration,
         completion: @escaping (Result<TextureResource, Error>) -> Void
     ) {

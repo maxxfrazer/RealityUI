@@ -7,6 +7,9 @@
 //
 
 import RealityKit
+#if canImport(AppKit)
+import AppKit
+#endif
 
 /// A  RealityUI Switch to be added to a RealityKit scene.
 public class RUISwitch: Entity, HasSwitch, HasPanTouch {

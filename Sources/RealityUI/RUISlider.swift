@@ -8,6 +8,9 @@
 
 import Foundation
 import RealityKit
+#if canImport(AppKit)
+import AppKit
+#endif
 
 /// A  RealityUI Slider to be added to a RealityKit scene.
 public class RUISlider: Entity, HasSlider, HasModel {

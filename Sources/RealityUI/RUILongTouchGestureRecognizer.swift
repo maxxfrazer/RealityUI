@@ -272,7 +272,7 @@ extension RUILongTouchGestureRecognizer {
         else {
             return
         }
-        let touchInView = self.arView.convert(event.locationInWindow, from: event.window?.contentView)
+        let touchInView = self.arView.convert(event.locationInWindow, from: nil)
         //    self.activeTouch = touches.first
         if !globalTouchBegan(touchInView: touchInView) {
             self.mouseUp(with: event)
@@ -285,7 +285,7 @@ extension RUILongTouchGestureRecognizer {
             return
         }
 
-        let touchInView = self.arView.convert(event.locationInWindow, from: event.window?.contentView)
+        let touchInView = self.arView.convert(event.locationInWindow, from: nil)
 
         if touchInView == self.touchLocation {
             return
@@ -296,8 +296,9 @@ extension RUILongTouchGestureRecognizer {
         guard self.touchLocation != nil else {
             return
         }
+        let (newPos, hasCollided) = getCollisionPoints(touchLocation!)
         self.touchLocation = nil
-        entity?.arTouchEnded(at: nil, hasCollided: nil)
+        entity?.arTouchEnded(at: newPos, hasCollided: hasCollided)
         self.entity = nil
         self.viewSubscriber?.cancel()
     }

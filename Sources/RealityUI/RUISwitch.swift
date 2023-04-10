@@ -9,6 +9,8 @@
 import RealityKit
 #if canImport(AppKit)
 import AppKit
+#elseif canImport(UIKit)
+import UIKit.UIColor
 #endif
 
 /// A  RealityUI Switch to be added to a RealityKit scene.

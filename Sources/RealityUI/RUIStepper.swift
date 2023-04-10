@@ -10,6 +10,8 @@ import RealityKit
 import Combine
 #if canImport(AppKit)
 import AppKit
+#elseif canImport(UIKit)
+import UIKit.UIColor
 #endif
 
 /// A new RealityUI Stepper to be added to your RealityKit scene.

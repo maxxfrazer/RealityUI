@@ -68,56 +68,9 @@ public struct RUITexture {
         systemName: String, config: UIImage.SymbolConfiguration
     ) async throws -> TextureResource {
         let cgImage = try self.generateCGImage(systemName: systemName, config: config)
-        #if canImport(AppKit)
         return try await TextureResource.generate(
-            from: cgImage,
+            from: cgImage, withName: nil,
             options: .init(semantic: nil, mipmapsMode: TextureResource.MipmapsMode.allocateAndGenerateAll)
         )
-        #else
-        return try await withCheckedThrowingContinuation { continuation in
-            let generateTexture: @Sendable () -> Void = {
-                do {
-                    let texture = try TextureResource.generate(
-                        from: cgImage, withName: nil,
-                        options: .init(semantic: nil, mipmapsMode: TextureResource.MipmapsMode.allocateAndGenerateAll)
-                    )
-                    continuation.resume(returning: texture)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-            DispatchQueue.main.async(execute: generateTexture)
-        }
-        #endif
     }
-
-#if canImport(UIKit)
-    /// Create a `TextureResource` with a system image name and point size.
-    /// - Parameters:
-    ///   - systemName: Name of the SF Symbol Image.
-    ///   - config: Image SymbolConfiguration for the SF Symbol Image.
-    ///   - completion: Completion result for creating the `TextureResource`.
-    public static func generateTexture(
-        systemName: String, config: UIImage.SymbolConfiguration,
-        completion: @escaping (Result<TextureResource, Error>) -> Void
-    ) {
-        do {
-            let cgImage = try self.generateCGImage(systemName: systemName, config: config)
-            let generateTexture: @Sendable () -> Void = {
-                do {
-                    let texture = try TextureResource.generate(
-                        from: cgImage, withName: nil,
-                        options: .init(semantic: nil, mipmapsMode: TextureResource.MipmapsMode.allocateAndGenerateAll)
-                    )
-                    completion(.success(texture))
-                } catch {
-                    completion(.failure(error))
-                }
-            }
-            DispatchQueue.main.async(execute: generateTexture)
-        } catch {
-            completion(.failure(error))
-        }
-    }
-    #endif
 }

@@ -9,7 +9,14 @@
 import RealityKit
 #if canImport(AppKit)
 import AppKit
+#elseif canImport(UIKit)
+import UIKit.UIColor
 #endif
+
+/// Testing this out as an alternative name for ``RUISwitch``
+///
+/// If you see this, please let me know if you prefer ``RUISwitch`` or ``RUIToggle``!
+public typealias RUIToggle = RUISwitch
 
 /// A  RealityUI Switch to be added to a RealityKit scene.
 public class RUISwitch: Entity, HasSwitch, HasPanTouch {

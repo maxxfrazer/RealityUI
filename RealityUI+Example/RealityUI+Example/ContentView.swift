@@ -13,6 +13,7 @@ public enum RealityObject: String, CaseIterable {
     case slider
     case stepper
     case button
+    case rotation
 }
 
 struct ContentView: View {

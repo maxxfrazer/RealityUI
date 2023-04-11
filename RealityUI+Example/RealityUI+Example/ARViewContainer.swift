@@ -65,11 +65,12 @@ struct ARViewContainer: UIViewRepresentable {
         case .slider:
             let scalingCube = ModelEntity(mesh: .generateBox(size: 3))
             scalingCube.position.z = 3
-            let slider = RUISlider(start: 1) { slider, state in
+            let slider = RUISlider(start: 0.5) { slider, state in
                 scalingCube.scale = .one * (slider.value + 0.2) / 1.2
             }
             slider.addChild(scalingCube)
             slider.scale = .init(repeating: 0.3)
+            scalingCube.scale = .one * (slider.value + 0.2) / 1.2
             slider.name = "ruiReplace"
             worldAnchor.addChild(slider)
         case .stepper:
@@ -90,6 +91,11 @@ struct ARViewContainer: UIViewRepresentable {
             button.look(at: [0, 1, -1], from: .zero, relativeTo: nil)
             button.name = "ruiReplace"
             worldAnchor.addChild(button)
+        case .rotation:
+            let plane = RotationPlane(turnAxis: [0, 0, 1])
+            plane.scale = .one * 2
+            plane.name = "ruiReplace"
+            worldAnchor.addChild(plane)
         }
         DispatchQueue.main.async {
             prevObjectType = objectType
@@ -98,6 +104,27 @@ struct ARViewContainer: UIViewRepresentable {
 
     func updateUIView(_ uiView: ARView, context: Context) {
         setModel(view: uiView)
+    }
+}
+
+class RotationPlane: Entity, HasModel, HasCollision, HasTurnTouch {
+
+    required init(turnAxis: SIMD3<Float>) {
+        super.init()
+        self.turnAxis = turnAxis
+        var rotateMat = SimpleMaterial()
+        rotateMat.color = SimpleMaterial.BaseColor(
+            tint: .white.withAlphaComponent(0.99), texture: MaterialParameters.Texture(
+                try! TextureResource.load(named: "rotato")
+            )
+        )
+        self.model = ModelComponent(mesh: .generatePlane(width: 1, height: 1), materials: [rotateMat])
+        self.orientation = .init(angle: .pi, axis: [0, 1, 0])
+        self.collision = CollisionComponent(shapes: [.generateBox(width: 1, height: 1, depth: 0.1)])
+    }
+
+    @MainActor required init() {
+        fatalError("init() has not been implemented")
     }
 }
 

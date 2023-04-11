@@ -26,6 +26,7 @@ struct ARViewContainer: UIViewRepresentable {
 
 
     @Binding var objectType: RealityObject
+    /// Stepper tally will be displayed at the top of the view when `RUIStepper` is visible.
     @Binding var stepperTally: Int
     @State fileprivate var prevObjectType: RealityObject? = nil
     func makeUIView(context: Context) -> ARView {
@@ -38,6 +39,8 @@ struct ARViewContainer: UIViewRepresentable {
         // Add the anchor to the scene
         let anchor = AnchorEntity(world: .zero)
         arView.scene.addAnchor(anchor)
+
+        // Setup RealityKit camera
         let cam = PerspectiveCamera()
         cam.look(at: .zero, from: [0, 0, -2.5], relativeTo: nil)
         anchor.addChild(cam)
@@ -47,56 +50,49 @@ struct ARViewContainer: UIViewRepresentable {
         return arView
     }
 
+    /// Update the model in the scene depending on ``objectType``
+    /// - Parameter view: The `ARView` being displayed.
     func setModel(view: ARView) {
         guard let worldAnchor = view.scene.anchors.first,
-            prevObjectType != objectType else
-        { return }
+            prevObjectType != objectType else { return }
         if let oldRui = view.scene.findEntity(named: "ruiReplace") {
             worldAnchor.removeChild(oldRui)
         }
         view.environment.background = .color(.gray)
+        let ruiModel: Entity
         switch objectType {
         case .toggle:
-            let mySwitch = RUISwitch(switchCallback: { hasSwitch in
+            ruiModel = RUISwitch(switchCallback: { hasSwitch in
                 view.environment.background = .color(hasSwitch.isOn ? .green : .gray)
             })
-            mySwitch.name = "ruiReplace"
-            worldAnchor.addChild(mySwitch)
         case .slider:
             let scalingCube = ModelEntity(mesh: .generateBox(size: 3))
             scalingCube.position.z = 3
-            let slider = RUISlider(start: 0.5) { slider, state in
+            ruiModel = RUISlider(start: 0.5) { slider, state in
                 scalingCube.scale = .one * (slider.value + 0.2) / 1.2
             }
-            slider.addChild(scalingCube)
-            slider.scale = .init(repeating: 0.3)
-            scalingCube.scale = .one * (slider.value + 0.2) / 1.2
-            slider.name = "ruiReplace"
-            worldAnchor.addChild(slider)
+            ruiModel.addChild(scalingCube)
+            ruiModel.scale = .init(repeating: 0.3)
+            scalingCube.scale = .one * ((ruiModel as! HasSlider).value + 0.2) / 1.2
         case .stepper:
-            let stepper = RUIStepper { _ in
+            ruiModel = RUIStepper { _ in
                 stepperTally += 1
             } downTrigger: { _ in
                 stepperTally -= 1
             }
-
-            stepper.name = "ruiReplace"
-            worldAnchor.addChild(stepper)
         case .button:
-            let button = RUIButton(
+            ruiModel = RUIButton(
                 rui: RUIComponent(respondsToLighting: true)
             ) { button in
                 button.ruiShake(by: .init(angle: .pi / 16, axis: [0, 0, 1]), period: 0.05, times: 3)
             }
-            button.look(at: [0, 1, -1], from: .zero, relativeTo: nil)
-            button.name = "ruiReplace"
-            worldAnchor.addChild(button)
+            ruiModel.look(at: [0, 1, -1], from: .zero, relativeTo: nil)
         case .rotation:
-            let plane = RotationPlane(turnAxis: [0, 0, 1])
-            plane.scale = .one * 2
-            plane.name = "ruiReplace"
-            worldAnchor.addChild(plane)
+            ruiModel = RotationPlane(turnAxis: [0, 0, 1])
+            ruiModel.scale = .one * 2
         }
+        ruiModel.name = "ruiReplace"
+        worldAnchor.addChild(ruiModel)
         DispatchQueue.main.async {
             prevObjectType = objectType
         }
@@ -107,8 +103,11 @@ struct ARViewContainer: UIViewRepresentable {
     }
 }
 
+/// Class for demonstrating the HasTurnTouch protocol.
 class RotationPlane: Entity, HasModel, HasCollision, HasTurnTouch {
 
+    /// Create a new ``RotationPlane``, which conforms to HasTurnTouch
+    /// - Parameter turnAxis: Axis that the object will be rotated around.
     required init(turnAxis: SIMD3<Float>) {
         super.init()
         self.turnAxis = turnAxis

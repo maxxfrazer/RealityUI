@@ -33,9 +33,7 @@ jobs:
         languages: ${{ matrix.language }}
 
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
-    # or
-    # - run: xcodebuild -scheme FooBar -sdk iphonesimulator build
+      run: xcodebuild -scheme RealityUI -destination 'generic/platform=iOS' build
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2

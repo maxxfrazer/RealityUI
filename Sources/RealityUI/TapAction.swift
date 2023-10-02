@@ -30,9 +30,9 @@ public protocol HasClick: HasRUI, HasCollision {
 /// Example usage:
 /// ```swift
 /// let entity: Entity = ...
-/// entity.components[TapActionComponent.self] = TapActionComponent { tappedEntity, worldPosition in
+/// entity.components.set(TapActionComponent { tappedEntity, worldPosition in
 ///     print("Entity \(tappedEntity) was tapped at \(worldPosition ?? .zero)!")
-/// }
+/// })
 /// ```
 public struct TapActionComponent: Component {
     /// The action to be triggered when the entity is tapped.

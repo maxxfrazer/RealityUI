@@ -15,10 +15,17 @@ import UIKit.UIColor
 #endif
 
 /// A RealityUI Text object to be added to a RealityKit scene.
-open class RUIText: Entity, HasText, HasClick {
+open class RUIText: Entity, HasText, HasCollision {
     /// Action to occus when the user taps on this Entity.
-    public var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? {
-        didSet {
+    public var tapAction: ((Entity, SIMD3<Float>?) -> Void)? {
+        get { (self.components[TapActionComponent.self] as? TapActionComponent)?.action }
+        set {
+            if var updateComponent = self.components[TapActionComponent.self] as? TapActionComponent {
+                updateComponent.action = newValue
+                self.components[TapActionComponent.self] = updateComponent
+            } else {
+                self.components[TapActionComponent.self] = TapActionComponent(action: newValue)
+            }
             self.updateCollision()
         }
     }
@@ -51,14 +58,15 @@ open class RUIText: Entity, HasText, HasClick {
     ///   - tapAction: callback function to receive updates touchUpInside the RealityUI Text.
     required public init(
         textComponent: TextComponent? = nil, rui: RUIComponent? = nil,
-        tapAction: ((HasClick, SIMD3<Float>?) -> Void)? = nil
+        tapAction: ((Entity, SIMD3<Float>?) -> Void)? = nil
     ) {
-        self.tapAction = tapAction
         super.init()
+        self.components[TapActionComponent.self] = .init(action: tapAction)
         self.rui = rui ?? RUIComponent()
         self.textComponent = textComponent ?? TextComponent()
         self.ruiOrientation()
         self.makeModels()
+        if tapAction != nil { self.updateCollision() }
     }
 
     internal func makeModels() {
@@ -222,11 +230,11 @@ public extension HasText {
         ]
         self.updateCollision()
     }
-    internal func updateCollision() {
-        guard let selfCol = (self as? HasClick) else {
-            return
-        }
-        if selfCol.tapAction == nil {
+    func updateCollision() {
+        guard let selfCol = self as? HasCollision,
+              let clickComponent = self.components[TapActionComponent.self] as? TapActionComponent
+        else { return }
+        if clickComponent.action == nil {
             selfCol.collision = nil
             return
         }

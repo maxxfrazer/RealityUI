@@ -97,7 +97,8 @@ import Combine
         StepperComponent.self,
         SliderComponent.self,
         TurnComponent.self,
-        TextComponent.self
+        TextComponent.self,
+        TapActionComponent.self
     ]
 
     internal static var shared = RealityUI()
@@ -145,22 +146,27 @@ import Combine
             return
         }
         let tapInView = sender.location(in: arView)
-        if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
-           let tappedEntity = ccHit.entity as? HasClick, tappedEntity.ruiEnabled {
-            tappedEntity.onTap(worldCollision: ccHit.position)
-        }
+        tapActionChecker(arView, tapInView)
     }
     #elseif os(iOS)
     @objc internal func tapReco(sender: UITapGestureRecognizer? = nil) {
         guard let arView = sender?.view as? ARView, let tapInView = sender?.location(in: arView) else {
             return
         }
-        if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
-           let tappedEntity = ccHit.entity as? HasClick, tappedEntity.ruiEnabled {
-            tappedEntity.onTap(worldCollision: ccHit.position)
-        }
+        tapActionChecker(arView, tapInView)
     }
     #endif
+
+    fileprivate func tapActionChecker(_ arView: ARView, _ tapInView: CGPoint) {
+        if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
+           let comp = ccHit.entity.components[TapActionComponent.self] as? TapActionComponent {
+            if let ruiComp = ccHit.entity.components[RUIComponent.self] as? RUIComponent,
+               !ruiComp.ruiEnabled {
+                return
+            }
+            comp.action?(ccHit.entity, ccHit.position)
+        }
+    }
 
     @objc internal func arTouchReco(sender: RUILongTouchGestureRecognizer) {}
 }

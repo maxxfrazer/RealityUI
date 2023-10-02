@@ -65,6 +65,19 @@ struct ARViewContainer: UIViewRepresentable {
             ruiModel = RUISwitch(switchCallback: { hasSwitch in
                 view.environment.background = .color(hasSwitch.isOn ? .green : .gray)
             })
+        case .text:
+            let textObj = RUIText(textComponent: TextComponent(
+                text: "hello", font: .systemFont(ofSize: 1),
+                alignment: .center, extrusion: 0.1
+            ))
+            textObj.components[TapActionComponent.self] = TapActionComponent { ent, _ in
+                ent.ruiSpin(
+                    by: [[1, 0, 0], [0, 1, 0], [0, 0, 1]].randomElement()!,
+                    period: 0.3, times: 1
+                )
+            }
+            textObj.updateCollision()
+            ruiModel = textObj
         case .slider:
             let scalingCube = ModelEntity(mesh: .generateBox(size: 3))
             scalingCube.position.z = 3

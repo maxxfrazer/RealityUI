@@ -22,7 +22,7 @@ All components used in RealityUI must be registered before they are used, simply
 
 Enabling RealityUI gestures can be doen by calling ``RealityUI/RealityUI/enableGestures(_:on:)``, with `ARView` being your instance of [ARView](https://developer.apple.com/documentation/realitykit/arview) object.
 
-``RUISlider``, ``RUISwitch``, ``RUIStepper`` and ``RUIButton`` all use ``RealityUI/RealityUI/RUIGesture/longTouch``, and if you are adding elements that use the protocol `HasClick` you can use the gesture ``RealityUI/RealityUI/RUIGesture/tap``.
+``RUISlider``, ``RUISwitch``, ``RUIStepper`` and ``RUIButton`` all use ``RealityUI/RealityUI/RUIGesture/longTouch``, and if you are adding elements that use the component `TapActionComponent` you can use the gesture ``RealityUI/RealityUI/RUIGesture/tap``.
 I would just recommend using ``RealityUI/RealityUI/RUIGesture/all`` when enabling gestures, as these will inevitably move around as RealityUI develops.
 
 ```

@@ -62,7 +62,7 @@ All components used in RealityUI must be registered before they are used, simply
 
 Enabling RealityUI gestures can be doen by calling `RealityUI.enableGestures(.all, on: ARView)`, with `ARView` being your instance of an [ARView](https://developer.apple.com/documentation/realitykit/arview) object.
 
-RUISlider, RUISwitch, RUIStepper and RUIButton all use `.longTouch`, and if you are adding elements that use the protocol `HasClick` you can use the gesture `.tap`.
+RUISlider, RUISwitch, RUIStepper and RUIButton all use `.longTouch`, and if you are adding elements that use the component `TapActionComponent` you can use the gesture `.tap`.
 I would just recommend using `.all` when enabling gestures, as these will inevitably move around as RealityUI develops.
 
 `RealityUI.enableGestures(.all, on: arView)`
@@ -126,7 +126,7 @@ Unlock the ability to rotate a RealityKit entity with just one finger.
 
 Create an object in your RealityKit scene with an action, and it will automatically be picked up whenever the user taps on it!
 
-No Gif for this one, but check out [RealityUI Gestures wiki](https://github.com/maxxfrazer/RealityUI/wiki/Gestures#tap) to see how to add [HasClick](https://maxxfrazer.github.io/RealityUI/documentation/realityui/HasClick.html) to an entity in your application.
+No Gif for this one, but check out [RealityUI Gestures wiki](https://github.com/maxxfrazer/RealityUI/wiki/Gestures#tap) to see how to add [TapActionComponent](https://maxxfrazer.github.io/RealityUI/documentation/realityui/TapActionComponent.html) to an entity in your application.
 
 ---
 ## Animations

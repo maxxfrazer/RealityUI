@@ -70,12 +70,12 @@ struct ARViewContainer: UIViewRepresentable {
                 text: "hello", font: .systemFont(ofSize: 1),
                 alignment: .center, extrusion: 0.1
             ))
-            textObj.components[TapActionComponent.self] = TapActionComponent { ent, _ in
+            textObj.components.set(TapActionComponent { ent, _ in
                 ent.ruiSpin(
                     by: [[1, 0, 0], [0, 1, 0], [0, 0, 1]].randomElement()!,
                     period: 0.3, times: 1
                 )
-            }
+            })
             textObj.updateCollision()
             ruiModel = textObj
         case .slider:

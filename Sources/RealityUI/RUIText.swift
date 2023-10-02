@@ -20,11 +20,10 @@ open class RUIText: Entity, HasText, HasCollision {
     public var tapAction: ((Entity, SIMD3<Float>?) -> Void)? {
         get { (self.components[TapActionComponent.self] as? TapActionComponent)?.action }
         set {
-            if var updateComponent = self.components[TapActionComponent.self] as? TapActionComponent {
-                updateComponent.action = newValue
-                self.components[TapActionComponent.self] = updateComponent
+            if let newValue {
+                self.components.set(TapActionComponent(action: newValue))
             } else {
-                self.components[TapActionComponent.self] = TapActionComponent(action: newValue)
+                self.components.remove(TapActionComponent.self)
             }
             self.updateCollision()
         }
@@ -61,7 +60,7 @@ open class RUIText: Entity, HasText, HasCollision {
         tapAction: ((Entity, SIMD3<Float>?) -> Void)? = nil
     ) {
         super.init()
-        self.components[TapActionComponent.self] = .init(action: tapAction)
+        self.components.set(TapActionComponent(action: tapAction))
         self.rui = rui ?? RUIComponent()
         self.textComponent = textComponent ?? TextComponent()
         self.ruiOrientation()
@@ -231,13 +230,10 @@ public extension HasText {
         self.updateCollision()
     }
     func updateCollision() {
-        guard let selfCol = self as? HasCollision,
-              let clickComponent = self.components[TapActionComponent.self] as? TapActionComponent
-        else { return }
-        if clickComponent.action == nil {
-            selfCol.collision = nil
-            return
-        }
+        guard let selfCol = self as? HasCollision else { return }
+        guard let clickComponent = self.components[TapActionComponent.self] as? TapActionComponent,
+              clickComponent.action != nil
+        else { selfCol.collision = nil; return }
         let visbounds = self.visualBounds(relativeTo: nil)
         selfCol.collision = CollisionComponent(
             shapes: [ShapeResource.generateBox(size: visbounds.extents).offsetBy(translation: visbounds.center)]

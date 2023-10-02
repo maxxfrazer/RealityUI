@@ -29,7 +29,7 @@ It's important to set up your RealityKit scene to work with RealityUI before mov
 ### Custom Touch Events
 
 - ``HasARTouch``
-- ``HasClick``
+- ``TapActionComponent``
 - ``HasPanTouch``
 - ``HasTouchUpInside``
 - ``HasTurnTouch``

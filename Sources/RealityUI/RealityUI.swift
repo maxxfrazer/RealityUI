@@ -160,11 +160,12 @@ import Combine
     fileprivate func tapActionChecker(_ arView: ARView, _ tapInView: CGPoint) {
         if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
            let comp = ccHit.entity.components[TapActionComponent.self] as? TapActionComponent {
+            // if the element has RUIComponent, and it has `ruiEnabled` set to false
             if let ruiComp = ccHit.entity.components[RUIComponent.self] as? RUIComponent,
                !ruiComp.ruiEnabled {
                 return
             }
-            comp.action?(ccHit.entity, ccHit.position)
+            comp.action(ccHit.entity, ccHit.position)
         }
     }
 

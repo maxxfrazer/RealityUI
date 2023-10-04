@@ -40,11 +40,11 @@ public struct TapActionComponent: Component {
     /// - Parameters:
     ///   - Entity: The entity that was tapped.
     ///   - SIMD3<Float>?: The world position where the entity was tapped, or `nil` if not available.
-    public var action: ((Entity, SIMD3<Float>?) -> Void)?
+    public var action: ((Entity, SIMD3<Float>?) -> Void)
 
     /// Create a new TapActionComponent object.
     /// - Parameter action: The action to be triggered when the entity is tapped.
-    public init(action: ((Entity, SIMD3<Float>?) -> Void)? = nil) {
+    public init(action: @escaping ((Entity, SIMD3<Float>?) -> Void)) {
         self.action = action
     }
 }

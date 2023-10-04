@@ -25,6 +25,7 @@ open class RUIText: Entity, HasText, HasCollision {
             } else {
                 self.components.remove(TapActionComponent.self)
             }
+            // This is so the text does not block any clicks when there's no tapAction.
             self.updateCollision()
         }
     }
@@ -60,12 +61,14 @@ open class RUIText: Entity, HasText, HasCollision {
         tapAction: ((Entity, SIMD3<Float>?) -> Void)? = nil
     ) {
         super.init()
-        self.components.set(TapActionComponent(action: tapAction))
+        if let tapAction {
+            self.components.set(TapActionComponent(action: tapAction))
+        }
         self.rui = rui ?? RUIComponent()
         self.textComponent = textComponent ?? TextComponent()
         self.ruiOrientation()
         self.makeModels()
-        if tapAction != nil { self.updateCollision() }
+        self.updateCollision()
     }
 
     internal func makeModels() {
@@ -231,12 +234,14 @@ public extension HasText {
     }
     func updateCollision() {
         guard let selfCol = self as? HasCollision else { return }
-        guard let clickComponent = self.components[TapActionComponent.self] as? TapActionComponent,
-              clickComponent.action != nil
-        else { selfCol.collision = nil; return }
+        guard self.components.has(TapActionComponent.self) else {
+            return selfCol.components.remove(CollisionComponent.self)
+        }
         let visbounds = self.visualBounds(relativeTo: nil)
         selfCol.collision = CollisionComponent(
-            shapes: [ShapeResource.generateBox(size: visbounds.extents).offsetBy(translation: visbounds.center)]
+            shapes: [ShapeResource.generateBox(size: visbounds.extents)
+                .offsetBy(translation: visbounds.center)
+            ]
         )
     }
 }

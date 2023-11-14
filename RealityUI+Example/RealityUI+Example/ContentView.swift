@@ -15,6 +15,7 @@ public enum RealityObject: String, CaseIterable {
     case button
     case rotation
     case text
+    case mover
 }
 
 struct ContentView: View {

@@ -42,7 +42,7 @@ struct ARViewContainer: UIViewRepresentable {
 
         // Setup RealityKit camera
         let cam = PerspectiveCamera()
-        cam.look(at: .zero, from: [0, 0, -2.5], relativeTo: nil)
+        cam.look(at: .zero, from: [0, 0, -3], relativeTo: nil)
         anchor.addChild(cam)
 
         self.setModel(view: arView)
@@ -60,7 +60,32 @@ struct ARViewContainer: UIViewRepresentable {
         }
         view.environment.background = .color(.gray)
         let ruiModel: Entity
+        let smallMove: Float = .random(in: 0.1...0.4)
         switch objectType {
+        case .mover:
+            let modelEnt = ModelEntity(mesh: .generateBox(size: 1))
+            modelEnt.generateCollisionShapes(recursive: false)
+            modelEnt.components.set(ARTouchComponent(type: .move))
+            ruiModel = Entity()
+            for idx in 0...5 {
+                let modEnt = ModelEntity(mesh: .generateBox(width: 0.5, height: 0.5, depth: 0.5, splitFaces: true), materials: [
+                    SimpleMaterial(color: .blue, isMetallic: false),
+                    SimpleMaterial(color: .yellow, isMetallic: false),
+                    SimpleMaterial(color: .orange, isMetallic: false),
+                    SimpleMaterial(color: .purple, isMetallic: false),
+                    SimpleMaterial(color: .green, isMetallic: false),
+                    SimpleMaterial(color: .red, isMetallic: false)
+                ].shuffled())
+                modEnt.generateCollisionShapes(recursive: false)
+                modEnt.components.set(ARTouchComponent(type: .move))
+                modEnt.position.x = 2 * sin(
+                    Float(idx) / 3 * .pi + smallMove
+                )
+                modEnt.position.y = cos(
+                    Float(idx) / 3 * .pi + smallMove
+                )
+                ruiModel.addChild(modEnt)
+            }
         case .toggle:
             ruiModel = RUISwitch(switchCallback: { hasSwitch in
                 view.environment.background = .color(hasSwitch.isOn ? .green : .gray)

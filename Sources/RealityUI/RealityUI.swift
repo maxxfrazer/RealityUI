@@ -98,7 +98,8 @@ import Combine
         SliderComponent.self,
         TurnComponent.self,
         TextComponent.self,
-        TapActionComponent.self
+        TapActionComponent.self,
+        ARTouchComponent.self
     ]
 
     internal static var shared = RealityUI()
@@ -179,5 +180,11 @@ public extension ARView {
     @available(*, deprecated, message: "Instead call RealityUI.enableGestures(:)")
     func enableRealityUIGestures(_ gestures: RealityUI.RUIGesture) {
         RealityUI.shared.enable(gestures: gestures, on: self)
+    }
+}
+
+extension Entity.ComponentSet {
+    func get<T>(_ component: T.Type) -> T? where T : Component {
+        self[T.self] as? T
     }
 }

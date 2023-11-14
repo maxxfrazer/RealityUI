@@ -298,7 +298,7 @@ internal extension HasButton {
         self.isCompressed = true
         innerModel.stopAllAnimations()
         innerModel.move(
-            to: Transform(scale: .one, rotation: .init(), translation: self.buttonInPos),
+            to: Transform(scale: .one, rotation: .init(angle: 0, axis: [0, 1, 0]), translation: self.buttonInPos),
             relativeTo: self, duration: 0.15
         )
     }
@@ -309,7 +309,7 @@ internal extension HasButton {
         self.isCompressed = false
         innerModel.stopAllAnimations()
         innerModel.move(
-            to: Transform(scale: .one, rotation: .init(), translation: self.buttonOutPos),
+            to: Transform(scale: .one, rotation: .init(angle: 0, axis: [0, 1, 0]), translation: self.buttonOutPos),
             relativeTo: self, duration: 0.15
         )
     }

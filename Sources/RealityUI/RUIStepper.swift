@@ -46,7 +46,7 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
     public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
         let localPos = self.convert(position: worldCoordinate, from: nil)
         let touchingObj: StepperComponent.UIPart = localPos.x > 0 ? .left : .right
-        if self.isCompressed, (!hasCollided || touchingObj != buttonStarted) {
+        if self.isCompressed, !hasCollided || touchingObj != buttonStarted {
             self.compressButton(compress: false)
         } else if !self.isCompressed, hasCollided, touchingObj == buttonStarted {
             self.compressButton()

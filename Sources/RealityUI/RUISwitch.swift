@@ -229,7 +229,7 @@ public extension HasSwitch {
 
         self.getModel(part: .background)?.model?.materials = self.getMaterials(for: .background)
         let thumbTransform = Transform(
-            scale: .one, rotation: .init(), translation: togglePos
+            scale: .one, rotation: .init(angle: 0, axis: [0, 1, 0]), translation: togglePos
         )
         let thumbEntity = self.getModel(part: .thumb)
         thumbEntity?.stopAllAnimations()

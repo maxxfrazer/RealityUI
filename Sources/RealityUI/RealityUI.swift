@@ -184,7 +184,7 @@ public extension ARView {
 }
 
 extension Entity.ComponentSet {
-    func get<T>(_ component: T.Type) -> T? where T : Component {
+    func get<T>(_ component: T.Type) -> T? where T: Component {
         self[T.self] as? T
     }
 }

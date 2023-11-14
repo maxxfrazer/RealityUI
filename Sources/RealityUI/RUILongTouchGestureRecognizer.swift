@@ -18,6 +18,16 @@ public typealias GestureBase = NSGestureRecognizer
 #endif
 import Combine
 
+extension BoundingBox {
+    func clamp(_ position: SIMD3<Float>) -> SIMD3<Float> {
+        [
+            Swift.max(self.min.x, Swift.min(self.max.x, position.x)),
+            Swift.max(self.min.y, Swift.min(self.max.y, position.y)),
+            Swift.max(self.min.z, Swift.min(self.max.z, position.z))
+        ]
+    }
+}
+
 /// An interface used for RealityUI entities which respond to gestures beyond just a tap.
 /// ie: panning gestures
 public protocol HasARTouch: HasRUI, HasCollision {
@@ -46,10 +56,14 @@ public protocol HasARTouch: HasRUI, HasCollision {
 }
 
 public struct ARTouchComponent: Component {
+    public enum MoveConstraint {
+        case box(BoundingBox)
+        case plane(simd_float4x4)
+        case sphere(position: simd_float3, radius: Float)
+    }
     public enum ARTouchType {
-        case move
-        case constraints(BoundingBox)
-        case turn(simd_float3)
+        case move(MoveConstraint?)
+        case turn(axis: simd_float3)
     }
 
     public init(type: ARTouchType) {
@@ -84,11 +98,20 @@ public struct ARTouchComponent: Component {
         case .move(let poi, _):
             let parentSpaceNTP = entity.convert(position: newTouchPos, to: entity.parent)
             let parentSpaceOTP = entity.convert(position: poi, to: entity.parent)
-            print(parentSpaceNTP - parentSpaceOTP)
-//            print("\(newTouchPos):\(poi)")
-            entity.position += parentSpaceNTP - parentSpaceOTP
-//        case .constraints(let boundingBox):
-//            <#code#>
+            guard let arTouchComp = entity.components.get(ARTouchComponent.self) else { return nil }
+            switch arTouchComp.type {
+            case .move(let moveConstr):
+                switch moveConstr {
+                case .box(let bbox):
+                    let endPos = entity.position + parentSpaceNTP - parentSpaceOTP
+                    entity.position = bbox.clamp(endPos)
+                case nil:
+                    entity.position += parentSpaceNTP - parentSpaceOTP
+                default: break
+                }
+            default: break
+            }
+
 //        case .turn(let simd_float3):
 //            <#code#>
         default: break
@@ -162,12 +185,17 @@ public protocol HasTouchUpInside: HasARTouch {}
         if let hitEntity = firstHit.entity as? HasARTouch {
             self.touchesBeganARTouch(hitEntity: hitEntity, touchInView: touchInView, touchInWorld: firstHit.position)
         } else if firstHit.entity.components.has(ARTouchComponent.self) {
-            self.touchesBeganARTouchComp(entity: firstHit.entity, touchInView: touchInView, touchInWorld: firstHit.position)
+            self.touchesBeganARTouchComp(
+                entity: firstHit.entity,
+                touchInView: touchInView, touchInWorld: firstHit.position
+            )
         } else { return false }
         return true
     }
-    
-    func touchesBeganARTouchComp(entity: Entity, touchInView: CGPoint, touchInWorld: SIMD3<Float>) {
+
+    func touchesBeganARTouchComp(
+        entity: Entity, touchInView: CGPoint, touchInWorld: SIMD3<Float>
+    ) {
         guard let arTouchComp = entity.components.get(ARTouchComponent.self) else {
             return
         }
@@ -224,7 +252,7 @@ public protocol HasTouchUpInside: HasARTouch {}
         self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, updateRUILongTouch(_:))
     }
 
-    fileprivate func getCollisionPoints(_ touchLocation: CGPoint) -> (SIMD3<Float>?, Bool) {
+    internal func getCollisionPoints(_ touchLocation: CGPoint) -> (SIMD3<Float>?, Bool) {
         var newPos: SIMD3<Float>?
         var hasCollided = false
         if let htResult = self.arView.hitTest(
@@ -266,9 +294,7 @@ public protocol HasTouchUpInside: HasARTouch {}
     func updateRUILongTouch(_ event: SceneEvents.Update?) {
         guard let touchLocation = self.touchLocation,
               let hitEntity = self.entity
-        else {
-            return
-        }
+        else { return }
         let (newPos, hasCollided) = getCollisionPoints(touchLocation)
         #if os(iOS)
         if let activeTouch = self.activeTouch, activeTouch.phase == .ended {
@@ -279,118 +305,6 @@ public protocol HasTouchUpInside: HasARTouch {}
         hitEntity.arTouchUpdated(at: newPos ?? .zero, hasCollided: hasCollided)
     }
 }
-
-#if os(iOS)
-internal extension RUILongTouchGestureRecognizer {
-    /// Sent to the gesture recognizer when one or more fingers touch down in the associated view.
-    /// - Parameters:
-    ///   - touches: A set of UITouch instances in the event represented by event that represent the touches in the UITouch.Phase.began phase.
-    ///   - event: A `UIEvent` object representing the event to which the touches belong.
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
-        guard activeTouch == nil,
-              let firstTouch = touches.first,
-              let touchInView = touches.first?.location(in: self.arView),
-              self.arView.frame.contains(touchInView)
-        else {
-            if let activeTouch = self.activeTouch {
-                self.touchesCancelled([activeTouch], with: event)
-            }
-            return
-        }
-        if touches.count > 1 {
-            self.touchesCancelled(touches, with: event)
-            return
-        }
-        self.activeTouch = firstTouch
-        if !globalTouchBegan(touchInView: touchInView) {
-            self.touchesCancelled(touches, with: event)
-            return
-        }
-        super.touchesBegan(touches, with: event)
-        self.state = .began
-    }
-    /// Sent to the gesture recognizer when one or more fingers move in the associated view.
-    /// - Parameters:
-    ///   - touches: A set of `UITouch` instances in the event represented by event that represent touches in the `UITouch.Phase.moved` phase.
-    ///   - event: A `UIEvent` object representing the event to which the touches belong.
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
-        guard let activeTouch = self.activeTouch else {
-            return
-        }
-        if entity == nil || !touches.contains(activeTouch) {
-            return
-        }
-
-        guard let touchInView = self.activeTouch?.location(in: self.arView),
-              self.arView.frame.contains(touchInView)
-        else {
-            return
-        }
-        if touchInView == self.touchLocation {
-            return
-        }
-        self.touchLocation = touchInView
-        super.touchesMoved(touches, with: event)
-        self.state = .changed
-    }
-
-    /// Sent to the gesture recognizer when a system event (such as an incoming phone call) cancels a touch event.
-    /// - Parameters:
-    ///   - touches: A set of `UITouch` instances in the event represented by event that represent the touches in the `UITouch.Phase.cancelled` phase.
-    ///   - event: A `UIEvent` object representing the event to which the touches belong.
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
-        self.clearTouch(touches, with: event, state: .cancelled)
-    }
-
-    /// Sent to the gesture recognizer when one or more fingers lift from the associated view.
-    /// - Parameters:
-    ///   - touches: A set of `UITouch` instances in the event represented by event that represent the touches in the `UITouch.Phase.ended` phase.
-    ///   - event: A `UIEvent` object representing the event to which the touches belong.
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
-        self.clearTouch(touches, with: event, state: .ended)
-    }
-
-    private func clearTouch(_ touches: Set<UITouch>, with event: UIEvent, state: UIGestureRecognizer.State) {
-        guard let activeTouch = self.activeTouch, touches.contains(activeTouch) else {
-            return
-        }
-        self.activeTouch = nil
-        guard let touchLocation = self.touchLocation else {
-            return
-        }
-        if let entity {
-            switch state {
-            case .cancelled:
-                entity.arTouchCancelled()
-                super.touchesCancelled(touches, with: event)
-            case .ended:
-                let (newPos, hasCollided) = getCollisionPoints(touchLocation)
-                entity.arTouchEnded(at: newPos, hasCollided: hasCollided)
-                super.touchesEnded(touches, with: event)
-            default:
-                break
-            }
-        } else if let entityComp, let touchComponent = entityComp.components.get(ARTouchComponent.self) {
-            switch state {
-            case .cancelled:
-                touchComponent.dragCancelled(entityComp)
-                super.touchesCancelled(touches, with: event)
-            case .ended:
-                let (newPos, hasCollided) = getCollisionPoints(touchLocation)
-                touchComponent.dragEnded(entityComp, worldPos: newPos)
-                super.touchesEnded(touches, with: event)
-            default:
-                break
-            }
-        }
-        self.touchLocation = nil
-        self.entity = nil
-        self.entityComp = nil
-        self.viewSubscriber?.cancel()
-        self.state = state
-    }
-}
-#endif
 
 #if os(macOS)
 extension RUILongTouchGestureRecognizer {
@@ -411,14 +325,14 @@ extension RUILongTouchGestureRecognizer {
         if (entity == nil && entityComp == nil) || self.touchLocation == nil {
             return
         }
-        print(event.locationInWindow)
+//        print(event.locationInWindow)
 
         let touchInView = self.arView.convert(event.locationInWindow, from: nil)
 
         if touchInView == self.touchLocation {
             return
         }
-        print("touchInView: \(touchInView)")
+//        print("touchInView: \(touchInView)")
         self.touchLocation = touchInView
     }
     override func mouseUp(with event: NSEvent) {

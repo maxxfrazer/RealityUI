@@ -55,74 +55,6 @@ public protocol HasARTouch: HasRUI, HasCollision {
     var collisionPlane: float4x4? { get }
 }
 
-public struct ARTouchComponent: Component {
-    public enum MoveConstraint {
-        case box(BoundingBox)
-        case plane(simd_float4x4)
-        case sphere(position: simd_float3, radius: Float)
-    }
-    public enum ARTouchType {
-        case move(MoveConstraint?)
-        case turn(axis: simd_float3)
-    }
-
-    public init(type: ARTouchType) {
-        self.type = type
-    }
-
-    public enum ARTouchState {
-        case move(poi: simd_float3, distance: Float)
-    }
-    var type: ARTouchType
-
-    public func dragStarted(
-        _ entity: Entity, worldPos: SIMD3<Float>, cameraTransform: Transform
-    ) -> ARTouchState? {
-        let localPos = entity.convert(position: worldPos, from: nil)
-        switch self.type {
-        case .move:
-            return .move(poi: localPos, distance: distance(cameraTransform.translation, worldPos))
-        default: break
-        }
-        return nil
-    }
-    @discardableResult
-    public func dragUpdated(
-        _ entity: Entity, worldPos: SIMD3<Float>,
-        hasCollided: Bool,
-        lastState: ARTouchState?
-    ) -> ARTouchState? {
-        let newTouchPos = entity.convert(position: worldPos, from: nil)
-
-        switch lastState {
-        case .move(let poi, _):
-            let parentSpaceNTP = entity.convert(position: newTouchPos, to: entity.parent)
-            let parentSpaceOTP = entity.convert(position: poi, to: entity.parent)
-            guard let arTouchComp = entity.components.get(ARTouchComponent.self) else { return nil }
-            switch arTouchComp.type {
-            case .move(let moveConstr):
-                switch moveConstr {
-                case .box(let bbox):
-                    let endPos = entity.position + parentSpaceNTP - parentSpaceOTP
-                    entity.position = bbox.clamp(endPos)
-                case nil:
-                    entity.position += parentSpaceNTP - parentSpaceOTP
-                default: break
-                }
-            default: break
-            }
-
-//        case .turn(let simd_float3):
-//            <#code#>
-        default: break
-        }
-        return nil
-
-    }
-    public func dragEnded(_ entity: Entity, worldPos: SIMD3<Float>?) {}
-    public func dragCancelled(_ entity: Entity) {}
-}
-
 extension HasARTouch {
 }
 
@@ -160,7 +92,7 @@ public protocol HasTouchUpInside: HasARTouch {}
     // Possible types: HasPanTouch, HasTouchUpInside
     var entity: HasARTouch?
     var entityComp: Entity?
-    var entityCompUpdate: ARTouchComponent.ARTouchState?
+    var entityCompUpdate: RUIDragComponent.ARTouchState?
 
     var touchLocation: CGPoint?
     var viewSubscriber: Cancellable?
@@ -184,7 +116,7 @@ public protocol HasTouchUpInside: HasARTouch {}
         }
         if let hitEntity = firstHit.entity as? HasARTouch {
             self.touchesBeganARTouch(hitEntity: hitEntity, touchInView: touchInView, touchInWorld: firstHit.position)
-        } else if firstHit.entity.components.has(ARTouchComponent.self) {
+        } else if firstHit.entity.components.has(RUIDragComponent.self) {
             self.touchesBeganARTouchComp(
                 entity: firstHit.entity,
                 touchInView: touchInView, touchInWorld: firstHit.position
@@ -193,36 +125,6 @@ public protocol HasTouchUpInside: HasARTouch {}
         return true
     }
 
-    func touchesBeganARTouchComp(
-        entity: Entity, touchInView: CGPoint, touchInWorld: SIMD3<Float>
-    ) {
-        guard let arTouchComp = entity.components.get(ARTouchComponent.self) else {
-            return
-        }
-        self.touchLocation = touchInView
-        self.entityComp = entity
-        var worldTouch = touchInWorld
-//        self.collisionPlane = arTouchComp.collisionPlane
-        if let collisionPlane {
-            if let planeCollisionPoint = self.arView.unproject(
-                touchInView, ontoPlane: collisionPlane
-            ) {
-//                if let maxDist = (hitEntity as? HasTurnTouch)?.maxDistance {
-//                    let convPoint = hitEntity.convert(position: planeCollisionPoint, from: nil)
-//                    if convPoint.magnitude > maxDist {
-//                        return
-//                    }
-//                }
-                worldTouch = planeCollisionPoint
-            } else {
-                return
-            }
-        }
-        entityCompUpdate = arTouchComp.dragStarted(
-            entity, worldPos: worldTouch, cameraTransform: self.arView.cameraTransform
-        )
-        self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, updateRUILongTouchComponent(_:))
-    }
     func touchesBeganARTouch(
         hitEntity: HasARTouch, touchInView: CGPoint, touchInWorld: SIMD3<Float>
     ) {
@@ -239,7 +141,7 @@ public protocol HasTouchUpInside: HasARTouch {}
             ) {
                 if let maxDist = (hitEntity as? HasTurnTouch)?.maxDistance {
                     let convPoint = hitEntity.convert(position: planeCollisionPoint, from: nil)
-                    if convPoint.magnitude > maxDist {
+                    if simd_length(convPoint) > maxDist {
                         return
                     }
                 }
@@ -263,34 +165,10 @@ public protocol HasTouchUpInside: HasARTouch {}
         }
         if let collisionPlane = self.collisionPlane {
             newPos = self.arView.unproject(touchLocation, ontoPlane: collisionPlane)
-        } else if let entityCompUpdate, let newRay = self.arView.ray(through: touchLocation) {
-            switch entityCompUpdate {
-            case .move(_, let distance):
-                newPos = newRay.origin + normalize(newRay.direction) * distance
-            }
         }
         return (newPos, hasCollided)
     }
 
-    func updateRUILongTouchComponent(_ event: SceneEvents.Update?) {
-        guard let touchLocation = self.touchLocation,
-              let hitEntity = self.entityComp,
-              let touchComp = self.entityComp?.components.get(ARTouchComponent.self)
-        else {
-            return
-        }
-        let (newPos, hasCollided) = getCollisionPoints(touchLocation)
-        #if os(iOS)
-        if let activeTouch = self.activeTouch, activeTouch.phase == .ended {
-            self.touchesEnded([activeTouch], with: UIEvent())
-            return
-        }
-        #endif
-        touchComp.dragUpdated(
-            hitEntity, worldPos: newPos ?? .zero, hasCollided: hasCollided,
-            lastState: self.entityCompUpdate
-        )
-    }
     func updateRUILongTouch(_ event: SceneEvents.Update?) {
         guard let touchLocation = self.touchLocation,
               let hitEntity = self.entity
@@ -303,58 +181,5 @@ public protocol HasTouchUpInside: HasARTouch {}
         }
         #endif
         hitEntity.arTouchUpdated(at: newPos ?? .zero, hasCollided: hasCollided)
-    }
-}
-
-#if os(macOS)
-extension RUILongTouchGestureRecognizer {
-    override func mouseDown(with event: NSEvent) {
-        guard self.touchLocation == nil
-        else {
-            return
-        }
-        let touchInView = self.arView.convert(event.locationInWindow, from: nil)
-        //    self.activeTouch = touches.first
-        if !globalTouchBegan(touchInView: touchInView) {
-            self.mouseUp(with: event)
-            return
-        }
-        super.mouseDown(with: event)
-    }
-    override func mouseDragged(with event: NSEvent) {
-        if (entity == nil && entityComp == nil) || self.touchLocation == nil {
-            return
-        }
-//        print(event.locationInWindow)
-
-        let touchInView = self.arView.convert(event.locationInWindow, from: nil)
-
-        if touchInView == self.touchLocation {
-            return
-        }
-//        print("touchInView: \(touchInView)")
-        self.touchLocation = touchInView
-    }
-    override func mouseUp(with event: NSEvent) {
-        guard self.touchLocation != nil else {
-            return
-        }
-        let (newPos, hasCollided) = getCollisionPoints(touchLocation!)
-        self.touchLocation = nil
-        entity?.arTouchEnded(at: newPos, hasCollided: hasCollided)
-        self.entity = nil
-        self.entityComp = nil
-        self.viewSubscriber?.cancel()
-    }
-}
-#endif
-
-fileprivate extension SIMD where Self.Scalar: FloatingPoint {
-    var magnitude: Self.Scalar {
-        var sqSum: Self.Scalar = 0
-        for indice in self.indices {
-            sqSum += self[indice] * self[indice]
-        }
-        return sqrt(sqSum)
     }
 }

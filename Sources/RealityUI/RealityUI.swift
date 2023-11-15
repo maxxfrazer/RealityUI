@@ -99,7 +99,7 @@ import Combine
         TurnComponent.self,
         TextComponent.self,
         TapActionComponent.self,
-        ARTouchComponent.self
+        RUIDragComponent.self
     ]
 
     internal static var shared = RealityUI()

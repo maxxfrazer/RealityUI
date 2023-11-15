@@ -41,21 +41,14 @@ internal extension RUILongTouchGestureRecognizer {
     ///   - touches: A set of `UITouch` instances in the event represented by event that represent touches in the `UITouch.Phase.moved` phase.
     ///   - event: A `UIEvent` object representing the event to which the touches belong.
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
-        guard let activeTouch = self.activeTouch else {
-            return
-        }
-        if (entity == nil && entityComp == nil) || !touches.contains(activeTouch) {
-            return
-        }
+        guard entity != nil || entityComp != nil,
+              let activeTouch,
+              touches.contains(activeTouch),
+              let touchInView = self.activeTouch?.location(in: self.arView),
+              self.arView.frame.contains(touchInView),
+              touchInView != self.touchLocation
+        else { return }
 
-        guard let touchInView = self.activeTouch?.location(in: self.arView),
-              self.arView.frame.contains(touchInView)
-        else {
-            return
-        }
-        if touchInView == self.touchLocation {
-            return
-        }
         self.touchLocation = touchInView
         super.touchesMoved(touches, with: event)
         self.state = .changed
@@ -97,15 +90,16 @@ internal extension RUILongTouchGestureRecognizer {
             default:
                 break
             }
-        } else if let entityComp, let touchComponent = entityComp.components.get(ARTouchComponent.self) {
+        } else if let entityComp, let touchComponent = entityComp.components.get(RUIDragComponent.self) {
             switch state {
             case .cancelled:
                 touchComponent.dragCancelled(entityComp)
                 super.touchesCancelled(touches, with: event)
             case .ended:
                 // _ = hasCollided
-                let (newPos, _) = getCollisionPoints(touchLocation)
-                touchComponent.dragEnded(entityComp, worldPos: newPos)
+                guard let ray = self.arView.ray(through: touchLocation)
+                else { return }
+                touchComponent.dragEnded(entityComp, ray: ray)
                 super.touchesEnded(touches, with: event)
             default:
                 break

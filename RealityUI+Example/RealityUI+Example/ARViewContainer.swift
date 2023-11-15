@@ -63,21 +63,25 @@ struct ARViewContainer: UIViewRepresentable {
         let smallMove: Float = .random(in: 0.1...0.4)
         switch objectType {
         case .mover:
-            let modelEnt = ModelEntity(mesh: .generateBox(size: 1))
-            modelEnt.generateCollisionShapes(recursive: false)
-            modelEnt.components.set(ARTouchComponent(type: .move))
             ruiModel = Entity()
             for idx in 0...5 {
-                let modEnt = ModelEntity(mesh: .generateBox(width: 0.5, height: 0.5, depth: 0.5, splitFaces: true), materials: [
-                    SimpleMaterial(color: .blue, isMetallic: false),
-                    SimpleMaterial(color: .yellow, isMetallic: false),
-                    SimpleMaterial(color: .orange, isMetallic: false),
-                    SimpleMaterial(color: .purple, isMetallic: false),
-                    SimpleMaterial(color: .green, isMetallic: false),
-                    SimpleMaterial(color: .red, isMetallic: false)
-                ].shuffled())
+                let modEnt = ModelEntity(
+                    mesh: .generateBox(width: 0.5, height: 0.5, depth: 0.5, splitFaces: true),
+                    materials: [
+                        SimpleMaterial(color: .blue, isMetallic: false),
+                        SimpleMaterial(color: .yellow, isMetallic: false),
+                        SimpleMaterial(color: .orange, isMetallic: false),
+                        SimpleMaterial(color: .purple, isMetallic: false),
+                        SimpleMaterial(color: .green, isMetallic: false),
+                        SimpleMaterial(color: .red, isMetallic: false)
+                    ].shuffled()
+                )
                 modEnt.generateCollisionShapes(recursive: false)
-                modEnt.components.set(ARTouchComponent(type: .move))
+                modEnt.components.set(RUIDragComponent(
+                    type: .move(.box(
+                        BoundingBox(min: [-2, -1, -1], max: [2, 1, 1])
+                    ))
+                ))
                 modEnt.position.x = 2 * sin(
                     Float(idx) / 3 * .pi + smallMove
                 )
@@ -86,6 +90,12 @@ struct ARViewContainer: UIViewRepresentable {
                 )
                 ruiModel.addChild(modEnt)
             }
+            let container = ModelEntity(
+                mesh: .generateBox(width: 4.5, height: 2.5, depth: 2.5),
+                materials: [SimpleMaterial(color: .white.withAlphaComponent(0.2), isMetallic: false)]
+            )
+            container.scale *= -1
+            ruiModel.addChild(container)
         case .toggle:
             ruiModel = RUISwitch(switchCallback: { hasSwitch in
                 view.environment.background = .color(hasSwitch.isOn ? .green : .gray)

@@ -70,6 +70,25 @@ internal extension RUILongTouchGestureRecognizer {
         self.clearTouch(touches, with: event, state: .ended)
     }
 
+    fileprivate func clearARTouchEntity(
+        _ state: UIGestureRecognizer.State,
+        _ entity: HasARTouch,
+        _ touches: Set<UITouch>,
+        _ event: UIEvent, _ touchLocation: CGPoint
+    ) {
+        switch state {
+        case .cancelled:
+            entity.arTouchCancelled()
+            super.touchesCancelled(touches, with: event)
+        case .ended:
+            let (newPos, hasCollided) = getCollisionPoints(touchLocation)
+            entity.arTouchEnded(at: newPos, hasCollided: hasCollided)
+            super.touchesEnded(touches, with: event)
+        default:
+            break
+        }
+    }
+
     private func clearTouch(_ touches: Set<UITouch>, with event: UIEvent, state: UIGestureRecognizer.State) {
         guard let activeTouch = self.activeTouch, touches.contains(activeTouch) else {
             return
@@ -79,17 +98,7 @@ internal extension RUILongTouchGestureRecognizer {
             return
         }
         if let entity {
-            switch state {
-            case .cancelled:
-                entity.arTouchCancelled()
-                super.touchesCancelled(touches, with: event)
-            case .ended:
-                let (newPos, hasCollided) = getCollisionPoints(touchLocation)
-                entity.arTouchEnded(at: newPos, hasCollided: hasCollided)
-                super.touchesEnded(touches, with: event)
-            default:
-                break
-            }
+            clearARTouchEntity(state, entity, touches, event, touchLocation)
         } else if let entityComp, let touchComponent = entityComp.components.get(RUIDragComponent.self) {
             switch state {
             case .cancelled:

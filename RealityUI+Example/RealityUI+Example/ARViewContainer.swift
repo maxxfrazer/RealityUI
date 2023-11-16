@@ -33,17 +33,24 @@ struct ARViewContainer: UIViewRepresentable {
         // Create an ARView
         let arView = ARView(frame: .zero)
         #if os(iOS)
-        arView.cameraMode = .nonAR
+        arView.cameraMode = .ar
         #endif
 
         // Add the anchor to the scene
+        #if os(iOS)
+        let anchor = AnchorEntity(world: [0, 0, -2])
+        anchor.scale *= 0.5
+        #else
         let anchor = AnchorEntity(world: .zero)
+        #endif
         arView.scene.addAnchor(anchor)
 
         // Setup RealityKit camera
+        #if os(macOS)
         let cam = PerspectiveCamera()
         cam.look(at: .zero, from: [0, 0, -3], relativeTo: nil)
         anchor.addChild(cam)
+        #endif
 
         self.setModel(view: arView)
         RealityUI.enableGestures(.all, on: arView)

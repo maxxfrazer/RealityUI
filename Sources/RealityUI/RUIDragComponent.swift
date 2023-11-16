@@ -7,6 +7,9 @@
 
 import Foundation
 import RealityKit
+#if os(iOS)
+import UIKit.UIEvent
+#endif
 
 public class RUIDragComponent: Component {
     public enum MoveConstraint {

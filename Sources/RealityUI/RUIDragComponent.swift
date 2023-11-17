@@ -49,13 +49,12 @@ public class RUIDragComponent: Component {
     }
 
     internal func getCollisionPoints(with ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) -> SIMD3<Float>? {
-        var newPos: SIMD3<Float>?
         switch self.touchState {
         case .move(_, let distance):
-            newPos = ray.origin + normalize(ray.direction) * distance
+            return ray.origin + normalize(ray.direction) * distance
         default: break
         }
-        return newPos
+        return nil
     }
 
     public func dragStarted(

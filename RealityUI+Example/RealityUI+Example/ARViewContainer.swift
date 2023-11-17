@@ -123,7 +123,7 @@ struct ARViewContainer: UIViewRepresentable {
         case .slider:
             let scalingCube = ModelEntity(mesh: .generateBox(size: 3))
             scalingCube.position.z = 3
-            ruiModel = RUISlider(start: 0.5) { slider, state in
+            ruiModel = RUISlider(length: 7, start: 0.5, steps: Bool.random() ? 4 : 0) { slider, state in
                 scalingCube.scale = .one * (slider.value + 0.2) / 1.2
             }
             ruiModel.addChild(scalingCube)

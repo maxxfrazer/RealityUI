@@ -92,12 +92,10 @@ public protocol HasTouchUpInside: HasARTouch {}
     // Possible types: HasPanTouch, HasTouchUpInside
     var entity: HasARTouch?
     var entityComp: Entity?
-    var entityCompUpdate: RUIDragComponent.ARTouchState?
 
     var touchLocation: CGPoint?
     var viewSubscriber: Cancellable?
     var collisionPlane: float4x4?
-    var collisionDistance: Float?
 
     public init(target: Any?, action: Selector?, view: ARView) {
         self.arView = view
@@ -114,13 +112,13 @@ public protocol HasTouchUpInside: HasARTouch {}
         ).first else {
             return false
         }
-        if let hitEntity = firstHit.entity as? HasARTouch {
-            self.touchesBeganARTouch(hitEntity: hitEntity, touchInView: touchInView, touchInWorld: firstHit.position)
-        } else if firstHit.entity.components.has(RUIDragComponent.self) {
-            self.touchesBeganARTouchComp(
+        if firstHit.entity.components.has(RUIDragComponent.self) {
+            self.dragBegan(
                 entity: firstHit.entity,
                 touchInView: touchInView, touchInWorld: firstHit.position
             )
+        } else if let hitEntity = firstHit.entity as? HasARTouch {
+            self.touchesBeganARTouch(hitEntity: hitEntity, touchInView: touchInView, touchInWorld: firstHit.position)
         } else { return false }
         return true
     }

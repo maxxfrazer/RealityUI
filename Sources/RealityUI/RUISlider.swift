@@ -17,10 +17,6 @@ import UIKit.UIColor
 /// A  RealityUI Slider to be added to a RealityKit scene.
 public class RUISlider: Entity, HasSlider, HasModel {
 
-    public var collisionPlane: float4x4? {
-        return self.transformMatrix(relativeTo: nil)
-        * float4x4(simd_quatf(angle: .pi / 2, axis: [1, 0, 0]))
-    }
     /// Called whenever the slider value updates.
     /// set isContinuous to `true` to get every change,
     /// `false` to just get start and end on each gesture.
@@ -28,7 +24,7 @@ public class RUISlider: Entity, HasSlider, HasModel {
 
     @available(*, deprecated, renamed: "sliderUpdateCallback")
     public var sliderUpdated: ((HasSlider, SliderComponent.SlidingState) -> Void)? {
-        get { self.sliderUpdateCallback}
+        get { self.sliderUpdateCallback }
         set { self.sliderUpdateCallback = newValue }
     }
 
@@ -55,8 +51,7 @@ public class RUISlider: Entity, HasSlider, HasModel {
         self.slider = slider ?? SliderComponent()
         self.ruiOrientation()
         self.makeModels()
-        self.setPercent(to: self.slider.value)
-        self.updateCollision()
+        self.setPercentInternal(to: self.slider.value, moveThumb: true)
     }
 
     /// Creates a RealityUI Slider entity with default visual appearance
@@ -81,41 +76,24 @@ public class RUISlider: Entity, HasSlider, HasModel {
         self.init(length: 10)
     }
 
-    /// Called when a new touch has begun on an Entity
-    /// - Parameters:
-    ///   - worldCoordinate: Collision of the object or collision plane
-    ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
-    public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
-        self.panTouchStarted(at: worldCoordinate, hasCollided: hasCollided)
-        self.startValue = self.value
+}
+
+extension RUISlider: RUIDragDelegate {
+    public func ruiDragStarted(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
         self.sliderUpdateCallback?(self, .started)
     }
-    /// Called when a touch is still on screen or a mouse is still down.
-    /// - Parameters:
-    ///   - worldCoordinate: Where is the touch currently hits in world space
-    ///   - hasCollided: Is the touch colliding with the `CollisionComponent` or not.
-    public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool = true) {
-        let localPos = self.convert(position: worldCoordinate, from: nil)
-        var newPercent = self.startValue + (self.panGestureOffset.x - localPos.x) / self.sliderLength
+    public func ruiDragUpdated(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
+        var newPercent = 0.5 - entity.position.x / sliderLength
         self.clampSlideValue(&newPercent)
-        if self.value == newPercent {
-            return
-        }
-        self.setPercent(to: newPercent, animated: false)
+        if self.value == newPercent { return }
+        print("value changed: \(self.value)")
+        self.setPercentInternal(to: newPercent, animated: false)
         if self.isContinuous {
             self.sliderUpdateCallback?(self, .updated)
         }
     }
-
-    public func arTouchCancelled() {
-        self.arTouchEnded(at: nil)
-    }
-
-    public func arTouchEnded(at worldCoordinate: SIMD3<Float>? = nil, hasCollided: Bool? = nil) {
-        updateCollision()
+    public func ruiDragEnded(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
         self.sliderUpdateCallback?(self, .ended)
-        self.panTouchEnded(at: worldCoordinate, hasCollided: hasCollided)
-        self.startValue = .zero
     }
 }
 
@@ -156,7 +134,7 @@ public struct SliderComponent: Component {
     }
 
     internal var arGestureOffset: SIMD3<Float> = .zero
-    internal var startValue: Float = 0
+
     internal enum UIPart: String {
         case thumb
         case empty
@@ -196,12 +174,12 @@ public struct SliderComponent: Component {
 }
 
 /// An interface used for an entity where a thumb is dragged along a fixed space.
-public protocol HasSlider: HasPanTouch, HasRUIMaterials {
+public protocol HasSlider: HasRUIMaterials {
     /// Called whenever the slider value updates.
     /// set isContinuous to `true` to get every change,
     /// `false` to just get start and end on each gesture.
     var sliderUpdateCallback: ((HasSlider, SliderComponent.SlidingState) -> Void)? { get set }
-    var startValue: Float { get set }
+
 }
 
 public extension HasSlider {
@@ -213,10 +191,6 @@ public extension HasSlider {
     var panGestureOffset: SIMD3<Float> {
         get { self.slider.arGestureOffset }
         set { self.slider.arGestureOffset = newValue }
-    }
-    var startValue: Float {
-        get { self.slider.startValue }
-        set { self.slider.startValue = newValue }
     }
     /// Length of the slider. The default is 10m.
     var sliderLength: Float { self.slider.length }
@@ -246,16 +220,20 @@ public extension HasSlider {
         self.slider.thickness
     }
 
+    internal func setPercentInternal(to percent: Float, animated: Bool = false, moveThumb: Bool = false) {
+        let percentClamped = min(max(percent, 0), 1)
+        self.value = percentClamped
+        if moveThumb { self.updateThumb(to: self.getSliderPosition(for: .thumb), animated: animated) }
+        self.updateFill(to: self.getSliderPosition(for: .fill), animated: animated)
+        self.updateEmpty(to: self.getSliderPosition(for: .empty), animated: animated)
+    }
+
     /// Set the sliders position
     /// - Parameters:
     ///   - percent: A Float value representing the slider progression from start to end.
     ///   - animated: A Boolean value of whether the change in percentage should animate.
     func setPercent(to percent: Float, animated: Bool = false) {
-        let percentClamped = min(max(percent, 0), 1)
-        self.value = percentClamped
-        self.updateThumb(to: self.getSliderPosition(for: .thumb), animated: animated)
-        self.updateFill(to: self.getSliderPosition(for: .fill), animated: animated)
-        self.updateEmpty(to: self.getSliderPosition(for: .empty), animated: animated)
+        self.setPercentInternal(to: percent, animated: animated, moveThumb: true)
     }
 
     private func getSliderPosition(for part: SliderComponent.UIPart) -> SIMD3<Float> {
@@ -282,13 +260,6 @@ public extension HasSlider {
         }
     }
 
-    internal func updateCollision() {
-        guard let thumb = self.getModel(part: .thumb)
-        else { return }
-        let collisionShape = ShapeResource.generateSphere(radius: 0.5)
-            .offsetBy(translation: thumb.position)
-        self.collision = CollisionComponent(shapes: [collisionShape])
-    }
     internal func clampSlideValue(_ newPercent: inout Float) {
         if self.steps <= 0 {
             return
@@ -315,11 +286,44 @@ public extension HasSlider {
             materials: []
         )
 
-        self.addModel(part: .thumb).model = ModelComponent(
+        let thumb = self.addModel(part: .thumb)
+
+        thumb.model = ModelComponent(
             mesh: .generateSphere(radius: 0.5), materials: []
         )
+        thumb.generateCollisionShapes(recursive: false)
+        thumb.components.set(RUIDragComponent(
+            type: .move(.clamp(self.clampThumb)),
+            delegate: self as? RUIDragDelegate
+        ))
 
         self.updateMaterials()
+    }
+
+    private func clampFloat(_ value: Float, minVal: Float, maxVal: Float) -> Float {
+        min(max(value, minVal), maxVal)
+    }
+
+    private func clampThumb(input: SIMD3<Float>) -> SIMD3<Float> {
+        let halfLen = self.sliderLength / 2
+        var output: SIMD3<Float> = [min(max(input.x, -halfLen), halfLen), 0, 0]
+        if self.steps == 0 {
+            return output
+        }
+        let stepsFloat = Float(self.steps)
+
+        // Calculate the step size
+        let stepSize = self.sliderLength / stepsFloat
+
+        // Find the closest step
+        let closestStep = clampFloat(
+            round((input.x + halfLen) / stepSize), minVal: 0, maxVal: stepsFloat
+        )
+
+        // Calculate and return the x-coordinate of the closest step
+        output.x = -halfLen + stepSize * closestStep
+
+        return output
     }
 
     func updateMaterials() {

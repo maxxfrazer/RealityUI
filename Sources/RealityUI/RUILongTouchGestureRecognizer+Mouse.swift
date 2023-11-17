@@ -28,14 +28,12 @@ extension RUILongTouchGestureRecognizer {
         if (entity == nil && entityComp == nil) || self.touchLocation == nil {
             return
         }
-//        print(event.locationInWindow)
 
         let touchInView = self.arView.convert(event.locationInWindow, from: nil)
 
         if touchInView == self.touchLocation {
             return
         }
-//        print("touchInView: \(touchInView)")
         self.touchLocation = touchInView
     }
     override func mouseUp(with event: NSEvent) {

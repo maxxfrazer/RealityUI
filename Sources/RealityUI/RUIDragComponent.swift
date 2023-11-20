@@ -94,6 +94,13 @@ public class RUIDragComponent: Component {
         }
     }
 
+    internal var moveContraint: MoveConstraint? {
+        switch self.type {
+        case .move(let moveConstraint): moveConstraint
+        default: nil
+        }
+    }
+
     /// Plane that we run the raycast against.
     internal func turnCollisionPlane(for axis: SIMD3<Float>) -> float4x4 {
         // Find two perpendicular vectors
@@ -138,17 +145,12 @@ public class RUIDragComponent: Component {
         let parentSpaceOTP = entity.convert(position: poi, to: entity.parent)
         guard let arTouchComp = entity.components.get(RUIDragComponent.self) else { return }
         let endPos = entity.position + parentSpaceNTP - parentSpaceOTP
-        entity.position = switch arTouchComp.type {
-        case .move(let moveConstr):
-            switch moveConstr {
-            case .box(let bbox): bbox.clamp(endPos)
-            case .points(let points): RUIDragComponent.closestPoint(from: endPos, points: points)
-            case .clamp(let clampFoo): clampFoo(endPos)
-            case .none: endPos
-            }
-        default: fatalError("Not implemented")
+        entity.position = switch arTouchComp.moveContraint {
+        case .box(let bbox): bbox.clamp(endPos)
+        case .points(let points): RUIDragComponent.closestPoint(from: endPos, points: points)
+        case .clamp(let clampFoo): clampFoo(endPos)
+        case .none: endPos
         }
-
     }
 
     internal func handleTurnState(

@@ -96,9 +96,8 @@ import Combine
         SwitchComponent.self,
         StepperComponent.self,
         SliderComponent.self,
-        TurnComponent.self,
         TextComponent.self,
-        TapActionComponent.self,
+        RUITapComponent.self,
         RUIDragComponent.self
     ]
 
@@ -160,7 +159,7 @@ import Combine
 
     fileprivate func tapActionChecker(_ arView: ARView, _ tapInView: CGPoint) {
         if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
-           let comp = ccHit.entity.components[TapActionComponent.self] as? TapActionComponent {
+           let comp = ccHit.entity.components[RUITapComponent.self] as? RUITapComponent {
             // if the element has RUIComponent, and it has `ruiEnabled` set to false
             if let ruiComp = ccHit.entity.components[RUIComponent.self] as? RUIComponent,
                !ruiComp.ruiEnabled {

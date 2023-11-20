@@ -54,11 +54,11 @@ final class RUITextTests: XCTestCase {
     func testTapText() {
         let textComponent = TextComponent(text: "test text")
         let text = RUIText(textComponent: textComponent)
-        XCTAssertFalse(text.components.has(TapActionComponent.self))
+        XCTAssertFalse(text.components.has(RUITapComponent.self))
         text.tapAction = { ent, loc in
             print("entity: \(ent), loc: \(loc ?? .zero)")
         }
-        XCTAssertTrue(text.components.has(TapActionComponent.self))
+        XCTAssertTrue(text.components.has(RUITapComponent.self))
         XCTAssertTrue(text.components.has(CollisionComponent.self))
     }
 }

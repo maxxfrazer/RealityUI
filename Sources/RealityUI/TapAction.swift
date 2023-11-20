@@ -34,7 +34,7 @@ public protocol HasClick: HasRUI, HasCollision {
 ///     print("Entity \(tappedEntity) was tapped at \(worldPosition ?? .zero)!")
 /// })
 /// ```
-public struct TapActionComponent: Component {
+public struct RUITapComponent: Component {
     /// The action to be triggered when the entity is tapped.
     ///
     /// - Parameters:

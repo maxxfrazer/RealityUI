@@ -88,7 +88,7 @@ final class RUILongTouchButtonTests: XCTestCase {
             modifierFlags: [], timestamp: 0, windowNumber: 0,
             context: nil, eventNumber: 0, clickCount: 1, pressure: 1)
         gestureRecognizer.mouseDown(with: event)
-        XCTAssertEqual(gestureRecognizer.entity, entity)
+        XCTAssertEqual(gestureRecognizer.entityComp, entity)
         XCTAssertTrue(entity.isCompressed)
 
         let expectation = self.expectation(description: "touchUpInside callback was called")

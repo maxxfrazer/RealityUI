@@ -38,7 +38,7 @@ final class RUISliderTests: XCTestCase {
               let dragComp = sliderThumb.components.get(RUIDragComponent.self)
         else { fatalError() }
         let rayForward: SIMD3<Float> = [0, 0, 1]
-        dragComp.dragStarted(sliderThumb, worldPos: [2.5, 0, 0], origin: [2.5, 0, -1])
+        dragComp.dragStarted(sliderThumb, ray: ([2.5, 0, -1], [0, 0, 1]))
         XCTAssertEqual(startValue, slider.value)
 
         dragComp.dragUpdated(sliderThumb, ray: (
@@ -69,7 +69,7 @@ final class RUISliderTests: XCTestCase {
         guard let sliderThumb = slider.getModel(part: "thumb"),
               let dragComp = sliderThumb.components.get(RUIDragComponent.self)
         else { fatalError() }
-        dragComp.dragStarted(sliderThumb, worldPos: .zero, origin: [0, 1, -1])
+        dragComp.dragStarted(sliderThumb, ray: ([0, 1, -1], [0, -1, 1]))
         XCTAssertEqual(sliderState, .started)
         dragComp.dragUpdated(sliderThumb, ray: (origin: [0, 1, -1], direction: [1, 0, 0]), hasCollided: true)
         // default is to continually get updates, so should still be .updated
@@ -87,7 +87,7 @@ final class RUISliderTests: XCTestCase {
         guard let sliderThumb = slider.getModel(part: "thumb"),
               let dragComp = sliderThumb.components.get(RUIDragComponent.self)
         else { fatalError() }
-        dragComp.dragStarted(sliderThumb, worldPos: .zero, origin: [0, 1, -1])
+        dragComp.dragStarted(sliderThumb, ray: ([0, 1, -1], [0, -1, 1]))
         XCTAssertEqual(sliderState, .started)
         dragComp.dragUpdated(sliderThumb, ray: (origin: [0, 1, -1], direction: [1, 0, 0]), hasCollided: true)
         // not continually getting updates, so should still be .started
@@ -110,7 +110,7 @@ final class RUISliderTests: XCTestCase {
         else { fatalError() }
         XCTAssertEqual(slider.value, 0)
         XCTAssertEqual(sliderThumb.position.x, 5)
-        dragComp.dragStarted(sliderThumb, worldPos: [5, 0, 0], origin: [5, 0, -1])
+        dragComp.dragStarted(sliderThumb, ray: ([5, 0, -1], [0, 0, 1]))
         dragComp.dragUpdated(sliderThumb, ray: (origin: [0.2, 0, -1], direction: [0, 0, 1]), hasCollided: true)
         XCTAssertEqual(slider.value, 0)
         // not continually getting updates, so should still be .started
@@ -122,7 +122,7 @@ final class RUISliderTests: XCTestCase {
 
     func testARTouchCancelled() {
         let startValue = slider.value
-        slider.components.get(RUIDragComponent.self)?.dragStarted(slider, worldPos: .zero, origin: [0, 0, -1])
+        slider.components.get(RUIDragComponent.self)?.dragStarted(slider, ray: ([0, 0, -1], [0, 0, 1]))
         XCTAssertEqual(startValue, slider.value)
         slider.components.get(RUIDragComponent.self)?.dragCancelled(slider)
         XCTAssertEqual(startValue, slider.value)

@@ -55,9 +55,6 @@ public protocol HasARTouch: HasRUI, HasCollision {
     var collisionPlane: float4x4? { get }
 }
 
-extension HasARTouch {
-}
-
 /// An interface used for all entities that have long touches where movement
 /// is the main interest (vs HasTouchUpInside)
 public protocol HasPanTouch: HasARTouch {
@@ -113,7 +110,7 @@ public protocol HasTouchUpInside: HasARTouch {}
             return false
         }
         if firstHit.entity.components.has(RUIDragComponent.self) {
-            self.dragBegan(
+            return self.dragBegan(
                 entity: firstHit.entity,
                 touchInView: touchInView, touchInWorld: firstHit.position
             )
@@ -136,17 +133,8 @@ public protocol HasTouchUpInside: HasARTouch {}
         if let collisionPlane {
             if let planeCollisionPoint = self.arView.unproject(
                 touchInView, ontoPlane: collisionPlane
-            ) {
-                if let maxDist = (hitEntity as? HasTurnTouch)?.maxDistance {
-                    let convPoint = hitEntity.convert(position: planeCollisionPoint, from: nil)
-                    if simd_length(convPoint) > maxDist {
-                        return
-                    }
-                }
-                worldTouch = planeCollisionPoint
-            } else {
-                return
-            }
+            ) { worldTouch = planeCollisionPoint
+            } else { return }
         }
         hitEntity.arTouchStarted(at: worldTouch, hasCollided: true)
         self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, updateRUILongTouch(_:))

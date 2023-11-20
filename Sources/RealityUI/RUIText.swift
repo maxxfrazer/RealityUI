@@ -18,12 +18,12 @@ import UIKit.UIColor
 open class RUIText: Entity, HasText, HasCollision {
     /// Action to occus when the user taps on this Entity.
     public var tapAction: ((Entity, SIMD3<Float>?) -> Void)? {
-        get { (self.components[TapActionComponent.self] as? TapActionComponent)?.action }
+        get { (self.components[RUITapComponent.self] as? RUITapComponent)?.action }
         set {
             if let newValue {
-                self.components.set(TapActionComponent(action: newValue))
+                self.components.set(RUITapComponent(action: newValue))
             } else {
-                self.components.remove(TapActionComponent.self)
+                self.components.remove(RUITapComponent.self)
             }
             // This is so the text does not block any clicks when there's no tapAction.
             self.updateCollision()
@@ -62,7 +62,7 @@ open class RUIText: Entity, HasText, HasCollision {
     ) {
         super.init()
         if let tapAction {
-            self.components.set(TapActionComponent(action: tapAction))
+            self.components.set(RUITapComponent(action: tapAction))
         }
         self.rui = rui ?? RUIComponent()
         self.textComponent = textComponent ?? TextComponent()
@@ -234,7 +234,7 @@ public extension HasText {
     }
     func updateCollision() {
         guard let selfCol = self as? HasCollision else { return }
-        guard self.components.has(TapActionComponent.self) else {
+        guard self.components.has(RUITapComponent.self) else {
             return selfCol.components.remove(CollisionComponent.self)
         }
         let visbounds = self.visualBounds(relativeTo: nil)

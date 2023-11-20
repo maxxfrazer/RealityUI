@@ -79,20 +79,18 @@ public class RUISlider: Entity, HasSlider, HasModel {
 }
 
 extension RUISlider: RUIDragDelegate {
-    public func ruiDragStarted(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
+    public func ruiDrag(_ entity: Entity, dragDidStart ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
         self.sliderUpdateCallback?(self, .started)
     }
-    public func ruiDragUpdated(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
+    public func ruiDrag(_ entity: Entity, dragDidUpdate ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
         var newPercent = 0.5 - entity.position.x / sliderLength
         self.clampSlideValue(&newPercent)
         if self.value == newPercent { return }
-        print("value changed: \(self.value)")
+
         self.setPercentInternal(to: newPercent, animated: false)
-        if self.isContinuous {
-            self.sliderUpdateCallback?(self, .updated)
-        }
+        if self.isContinuous { self.sliderUpdateCallback?(self, .updated) }
     }
-    public func ruiDragEnded(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
+    public func ruiDrag(_ entity: Entity, dragDidEnd ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
         self.sliderUpdateCallback?(self, .ended)
     }
 }

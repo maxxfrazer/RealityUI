@@ -30,8 +30,8 @@ final class RUIButtonTests: XCTestCase {
         button.touchUpInside = { _ in
             expectation.fulfill()
         }
-        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
-        button.arTouchEnded(at: nil, hasCollided: nil)
+        button.components.get(RUIDragComponent.self)?.dragStarted(button, ray: ([0, 0, 1], [0, 0, -1]))
+        button.components.get(RUIDragComponent.self)?.dragEnded(button, ray: ([0, 0, 1], [0, 0, -1]))
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 
@@ -41,7 +41,7 @@ final class RUIButtonTests: XCTestCase {
         button.touchUpInside = { _ in
             expectation.fulfill()
         }
-        button.arTouchEnded(at: nil, hasCollided: nil)
+        button.components.get(RUIDragComponent.self)?.dragEnded(button, ray: ([0, 0, 1], [0, 0, -1]))
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 
@@ -51,24 +51,33 @@ final class RUIButtonTests: XCTestCase {
         button.touchUpInside = { _ in
             expectation.fulfill()
         }
-        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
-        button.arTouchUpdated(at: SIMD3<Float>(5, 5, 0), hasCollided: false)
-        button.arTouchEnded(at: nil, hasCollided: nil)
+        guard let dragComp = button.components.get(RUIDragComponent.self) else {
+            return XCTFail("Could not find drag component")
+        }
+        dragComp.dragStarted(button, ray: ([0, 0, 1], [0, 0, -1]))
+        dragComp.dragUpdated(button, ray: ([5, 5, 1], [0, 0, -1]), hasCollided: false)
+        dragComp.dragEnded(button, ray: ([5, 5, 1], [0, 0, -1]))
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 
     func testCompressButton() {
-        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
+        guard let dragComp = button.components.get(RUIDragComponent.self) else {
+            return XCTFail("Could not find drag component")
+        }
+        dragComp.dragStarted(button, ray: ([0, 0, 1], [0, 0, -1]))
         XCTAssertTrue(button.button.isCompressed)
-        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
+        dragComp.dragEnded(button, ray: ([0, 0, 1], [0, 0, -1]))
     }
 
     func testCancelReleaseButton() {
         let expectation = self.expectation(description: "touchUpInside callback was not called")
         expectation.isInverted = true
         button.touchUpInside = { _ in expectation.fulfill() }
-        button.arTouchStarted(at: SIMD3<Float>(0, 0, 0), hasCollided: true)
-        button.arTouchCancelled()
+        guard let dragComp = button.components.get(RUIDragComponent.self) else {
+            return XCTFail("Could not find drag component")
+        }
+        dragComp.dragStarted(button, ray: ([0, 0, 1], [0, 0, -1]))
+        dragComp.dragCancelled(button)
         waitForExpectations(timeout: 0.1, handler: nil)
     }
 

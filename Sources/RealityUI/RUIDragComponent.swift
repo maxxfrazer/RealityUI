@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  RUIDragComponent.swift
 //  
 //
 //  Created by Max Cobb on 15/11/2023.
@@ -27,15 +27,16 @@ public class RUIDragComponent: Component {
 //        case sphere(position: simd_float3, radius: Float)
     }
     /// `ARTouchType` represents the type of touch interaction in an AR environment.
-    public enum ARTouchType {
+    public enum DragComponentType {
         /// Represents a movement interaction with an optional constraint.
         case move(MoveConstraint?)
         /// Represents a rotational interaction around a specified axis.
         case turn(axis: SIMD3<Float>)
+        case click
     }
 
     /// The type of touch interaction.
-    var type: ARTouchType
+    var type: DragComponentType
 
     /// An optional delegate to handle drag events.
     weak var delegate: RUIDragDelegate?
@@ -45,18 +46,18 @@ public class RUIDragComponent: Component {
     /// - Parameters:
     ///   - type: The type of AR touch interaction.
     ///   - delegate: An optional delegate to handle drag events.
-    public init(type: ARTouchType, delegate: RUIDragDelegate? = nil) {
+    public init(type: DragComponentType, delegate: RUIDragDelegate? = nil) {
         self.type = type
         self.delegate = delegate
     }
 
     /// The current touch state of the drag component.
-    public internal(set) var touchState: ARTouchState?
+    public internal(set) var touchState: DragState?
 
-    /// `ARTouchState` represents the state of the current in-progress touch in an AR/VR context.
+    /// `DragState` represents the state of the current in-progress touch in an AR/VR context.
     ///
     /// This enum is used to track the touch state, including the position and distance of the touch in relation to the AR object.
-    public enum ARTouchState {
+    public enum DragState {
 
         /// Represents a move touch state in an AR environment.
         ///
@@ -69,6 +70,8 @@ public class RUIDragComponent: Component {
         ///   - distance: A `Float` value indicating the distance from the POV (Point of View) to the first touch point.
         ///               This helps in understanding how far the touch point is from the user's perspective.
         case move(poi: SIMD3<Float>, distance: Float)
+        case turn(plane: float4x4, start: SIMD3<Float>)
+        case click(Bool)
     }
 
     /// Calculates the collision points based on the provided ray.
@@ -77,79 +80,56 @@ public class RUIDragComponent: Component {
     /// - Returns: The collision point as `SIMD3<Float>` if a collision occurs, otherwise `nil`.
     internal func getCollisionPoints(with ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) -> SIMD3<Float>? {
         switch self.touchState {
-        case .move(_, let distance):
-            return ray.origin + normalize(ray.direction) * distance
-        default: break
+        case .move(_, let distance): ray.origin + normalize(ray.direction) * distance
+        case .turn(let plane, _): self.findPointOnPlane(ray: ray, plane: plane)
+        case .click: ray.origin + ray.direction
+        case .none: nil
         }
-        return nil
     }
 
-    /// Called when a drag interaction starts.
-    ///
-    /// - Parameters:
-    ///   - entity: The entity involved in the drag interaction.
-    ///   - worldPos: The world position where the drag started.
-    ///   - origin: The original position of the entity.
-    public func dragStarted(
-        _ entity: Entity, worldPos: SIMD3<Float>, origin: SIMD3<Float>
-    ) {
-        let localPos = entity.convert(position: worldPos, from: nil)
-        let dist = distance(origin, worldPos)
+    internal var rotateVector: SIMD3<Float>? {
         switch self.type {
-        case .move:
-            self.touchState = .move(poi: localPos, distance: dist)
-        default: break
+        case .turn(let axis): normalize(axis)
+        default: nil
         }
-        self.delegate?.ruiDragStarted(entity, ray: (origin: origin, direction: normalize(worldPos - origin)))
     }
 
-    /// Called when a drag interaction is updated.
-    ///
-    /// - Parameters:
-    ///   - entity: The entity involved in the drag interaction.
-    ///   - ray: A tuple containing the origin and direction of the ray used in the drag interaction.
-    ///   - hasCollided: A boolean indicating whether there has been a collision.
-    public func dragUpdated(
-        _ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>), hasCollided: Bool
-    ) {
-        let worldPos = self.getCollisionPoints(with: ray)
-        var newTouchPos: SIMD3<Float>?
-        if let worldPos {
-            newTouchPos = entity.convert(position: worldPos, from: nil)
-        }
-        var outputRay = ray
+    /// Plane that we run the raycast against.
+    internal func turnCollisionPlane(for axis: SIMD3<Float>) -> float4x4 {
+        // Find two perpendicular vectors
+        let arbitraryVector = axis.y == 0 && axis.z == 0
+            ? SIMD3<Float>(x: 0, y: 1, z: 0)
+            : SIMD3<Float>(x: 0, y: 0, z: 1)
+        let normAxis = normalize(axis)
+        let perpVector1 = normalize(cross(normAxis, arbitraryVector))
+        let perpVector2 = normalize(cross(normAxis, perpVector1))
 
-        switch self.touchState {
-        case .move(let poi, let len):
-            handleMoveState(entity, newTouchPos, poi)
-            outputRay.direction = simd_normalize(ray.direction) * len
-        default: break
-        }
-        self.delegate?.ruiDragUpdated(entity, ray: outputRay)
+        return float4x4(columns: (
+            SIMD4<Float>(perpVector1, 0),
+            SIMD4<Float>(perpVector2, 0),
+            SIMD4<Float>(normAxis, 0),
+            SIMD4<Float>(0, 0, 0, 1)
+        ))
     }
 
-    /// Called when a drag interaction ends.
-    ///
-    /// - Parameters:
-    ///   - entity: The entity involved in the drag interaction.
-    ///   - ray: A tuple containing the origin and direction of the ray used in the drag interaction.
-    public func dragEnded(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
-        var outputRay = ray
-        switch self.touchState {
-        case .move(_, let len):
-            outputRay.direction = simd_normalize(ray.direction) * len
-        default: break
-        }
-        touchState = nil
-        self.delegate?.ruiDragEnded(entity, ray: outputRay)
-    }
+    internal func findPointOnPlane(
+        ray: (origin: SIMD3<Float>, direction: SIMD3<Float>), plane: float4x4
+    ) -> SIMD3<Float>? {
+        // Extract plane normal and a point on the plane from the matrix
+        let planeNormal = SIMD3<Float>(plane.columns.2.x, plane.columns.2.y, plane.columns.2.z)
+        let pointOnPlane = SIMD3<Float>(plane.columns.3.x, plane.columns.3.y, plane.columns.3.z)
 
-    /// Called when a drag interaction is cancelled.
-    ///
-    /// - Parameter entity: The entity involved in the drag interaction.
-    public func dragCancelled(_ entity: Entity) {
-        touchState = nil
-        self.delegate?.ruiDragCancelled(entity)
+        let normRayD = normalize(ray.direction)
+        // calculate intersection
+        let denominator = dot(normRayD, planeNormal)
+        if abs(denominator) > 1e-6 { // Ensure not parallel
+            let t = dot(pointOnPlane - ray.origin, planeNormal) / denominator
+            // return the point of intersection
+            return ray.origin + t * normRayD
+        } else {
+            // The ray is parallel to the plane, no intersection
+            return nil
+        }
     }
 
     internal func handleMoveState(_ entity: Entity, _ newTouchPos: SIMD3<Float>?, _ poi: SIMD3<Float>) {
@@ -166,9 +146,35 @@ public class RUIDragComponent: Component {
             case .clamp(let clampFoo): clampFoo(endPos)
             case .none: endPos
             }
-        case .turn: fatalError("Not implemented")
+        default: fatalError("Not implemented")
         }
 
+    }
+
+    internal func handleTurnState(
+        _ entity: Entity, _ plane: float4x4, _ lastPoint: SIMD3<Float>,
+        _ ray: inout (origin: SIMD3<Float>, direction: SIMD3<Float>)
+    ) {
+        guard let rotateVector,
+              let newPoint = self.findPointOnPlane(ray: ray, plane: plane)
+        else { return }
+
+        // calculate the unsigned angle
+        let dotProduct = dot(normalize(lastPoint), normalize(newPoint))
+        let angle = acos(min(max(dotProduct, -1.0), 1.0)) // Clamp the value to avoid NaN
+
+        // determine the sign, apply to the angle
+        let crossProd = cross(lastPoint, newPoint)
+        let signedAngle = dot(crossProd, rotateVector) < 0 ? angle : -angle
+
+        // check if there is a significant angle change
+        if angle > 1e-7 {
+            // calculate the rotation quaternion, and apply
+            entity.orientation *= simd_quatf(angle: signedAngle, axis: rotateVector)
+            // update the turn state, so we only check the difference with the new angle
+            self.touchState = .turn(plane: plane, start: newPoint)
+        }
+        ray.direction = normalize(ray.direction) * simd_distance(ray.origin, newPoint)
     }
 
     internal static func closestPoint(from start: SIMD3<Float>, points: [SIMD3<Float>]) -> SIMD3<Float> {
@@ -186,59 +192,12 @@ public class RUIDragComponent: Component {
     }
 }
 
-/// `RUIDragDelegate` is a protocol for handling drag events within an AR/VR context.
-///
-/// `RUIDragDelegate` provides methods to manage the lifecycle of a drag interaction with entities.
-public protocol RUIDragDelegate: AnyObject {
-    /// Called when a drag interaction begins on an AR entity.
-    ///
-    /// Implement this method to handle the initial interaction when the user starts dragging an entity.
-    /// This method is triggered at the start of the drag gesture.
-    ///
-    /// - Parameters:
-    ///   - entity: The `Entity` that the user starts dragging.
-    ///   - ray: A ray showing the origin and direction of the ray used to move the entity. The direction is not normalised.
-    func ruiDragStarted(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>))
-    /// Called when there is an update to a drag interaction on an AR entity.
-    ///
-    /// Implement this method to handle updates that occur during a drag interaction.
-    /// This is typically called in response to movement or changes in the drag gesture.
-    ///
-    /// - Parameters:
-    ///   - entity: The `Entity` whose position or state is being updated due to the drag interaction.
-    ///   - ray: A ray showing the origin and direction of the ray used to move the entity. The direction is not normalised.
-    func ruiDragUpdated(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>))
-    /// Called when a drag interaction on an AR entity ends.
-    ///
-    /// Implement this method to handle the conclusion of a drag interaction.
-    /// This method is triggered when the user releases the entity or completes the drag gesture.
-    ///
-    /// - Parameters:
-    ///   - entity: The `Entity` that was being dragged and is now released.
-    ///   - ray: A ray showing the origin and direction of the ray used to move the entity. The direction is not normalised.
-    func ruiDragEnded(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>))
-    /// Called when a drag interaction on an AR entity is cancelled.
-    ///
-    /// Implement this method to handle scenarios where a drag interaction is interrupted or cancelled.
-    /// This could be due to various reasons, such as an interruption in the user's gesture or application state changes.
-    ///
-    /// - Parameter entity: The `Entity` that was being dragged before the interaction was cancelled.
-    func ruiDragCancelled(_ entity: Entity)
-}
-
-public extension RUIDragDelegate {
-    func ruiDragStarted(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {}
-    func ruiDragUpdated(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {}
-    func ruiDragEnded(_ entity: Entity, ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {}
-    func ruiDragCancelled(_ entity: Entity) {}
-}
-
 internal extension RUILongTouchGestureRecognizer {
     func dragBegan(
         entity: Entity, touchInView: CGPoint, touchInWorld: SIMD3<Float>
-    ) {
+    ) -> Bool {
         guard let arTouchComp = entity.components.get(RUIDragComponent.self)
-        else { return }
+        else { return false }
         self.touchLocation = touchInView
         self.entityComp = entity
         var worldTouch = touchInWorld
@@ -247,13 +206,15 @@ internal extension RUILongTouchGestureRecognizer {
                 touchInView, ontoPlane: collisionPlane
             ) {
                 worldTouch = planeCollisionPoint
-            } else { return }
+            } else { return false }
         }
-        arTouchComp.dragStarted(
-            entity, worldPos: worldTouch,
-            origin: self.arView.cameraTransform.translation
-        )
+        let origin = self.arView.cameraTransform.translation
+        let direction = worldTouch - origin
+        if !arTouchComp.dragStarted(
+            entity, ray: (origin, direction)
+        ) { return false }
         self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, dragUpdatedSceneEvent(_:))
+        return true
     }
 
     func dragUpdatedSceneEvent(_ event: SceneEvents.Update) {

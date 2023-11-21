@@ -26,12 +26,30 @@ public class RUIDragComponent: Component {
 //        /// Constrains movement to a sphere.
 //        case sphere(position: simd_float3, radius: Float)
     }
-    /// `ARTouchType` represents the type of touch interaction in an AR environment.
+    /// ``DragComponentType`` represents the type of touch interaction in a 3D environment.
+    ///
+    /// This enumeration defines the different ways that touch interactions can be interpreted and handled within a 3D space.
+    /// Each case of this enum specifies a unique type of drag interaction, allowing for customizable behavior
+    /// depending on the user's input and the application's requirements.
+    ///
+    /// - `move`: This case represents a movement interaction where an entity can be moved within the 3D environment.
+    ///   The movement can be restricted or guided by an optional `MoveConstraint` that defines how the movement behaves.
+    ///   Use this for interactions where entities need to be repositioned dynamically.
+    ///
+    /// - `turn`: This case represents a rotational interaction where an entity can be rotated around a specified axis.
+    ///   The axis is defined by a `SIMD3<Float>` representing the axis of rotation.
+    ///   This is useful for scenarios where an entity needs to be oriented or turned to face different directions.
+    ///
+    /// - `click`: This case represents a click-type interaction, typically used for selecting or interacting with an entity without moving or rotating it.
+    ///   It's often used for simple interactions like selecting, activating, or focusing on an entity within the 3D space.
+    ///   In contrast to ``RUITapComponent``, click interacts in a similar way to `touchUpInside`, where it will only execute
+    ///   if your touch in the 3D scene starts and ends on the model with this component.
     public enum DragComponentType {
         /// Represents a movement interaction with an optional constraint.
         case move(MoveConstraint?)
         /// Represents a rotational interaction around a specified axis.
         case turn(axis: SIMD3<Float>)
+        /// Represents a click-type interaction, similar to `touchUpInside`.
         case click
     }
 
@@ -71,7 +89,7 @@ public class RUIDragComponent: Component {
         ///               This helps in understanding how far the touch point is from the user's perspective.
         case move(poi: SIMD3<Float>, distance: Float)
         case turn(plane: float4x4, start: SIMD3<Float>)
-        case click(Bool)
+        case click(isSelected: Bool)
     }
 
     /// Calculates the collision points based on the provided ray.
@@ -201,7 +219,7 @@ internal extension RUILongTouchGestureRecognizer {
         guard let arTouchComp = entity.components.get(RUIDragComponent.self)
         else { return false }
         self.touchLocation = touchInView
-        self.entityComp = entity
+        self.entity = entity
         var worldTouch = touchInWorld
         if let collisionPlane {
             if let planeCollisionPoint = self.arView.unproject(
@@ -215,14 +233,14 @@ internal extension RUILongTouchGestureRecognizer {
         if !arTouchComp.dragStarted(
             entity, ray: (origin, direction)
         ) { return false }
-        self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, dragUpdatedSceneEvent(_:))
+        self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, on: entity, dragUpdatedSceneEvent(_:))
         return true
     }
 
-    func dragUpdatedSceneEvent(_ event: SceneEvents.Update) {
+    func dragUpdatedSceneEvent(_ event: SceneEvents.Update?) {
         guard let touchLocation = self.touchLocation,
-              let hitEntity = self.entityComp,
-              let touchComp = self.entityComp?.components.get(RUIDragComponent.self),
+              let hitEntity = self.entity,
+              let touchComp = self.entity?.components.get(RUIDragComponent.self),
               let ray = self.arView.ray(through: touchLocation)
         else { return }
 
@@ -230,7 +248,7 @@ internal extension RUILongTouchGestureRecognizer {
         if let htResult = self.arView.hitTest(
             touchLocation, query: .nearest, mask: RealityUI.longGestureMask
         ).first {
-            hasCollided = htResult.entity == self.entityComp
+            hasCollided = htResult.entity == self.entity
         }
         #if os(iOS)
         if let activeTouch = self.activeTouch, activeTouch.phase == .ended {

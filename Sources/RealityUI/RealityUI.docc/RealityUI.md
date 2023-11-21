@@ -28,12 +28,8 @@ It's important to set up your RealityKit scene to work with RealityUI before mov
 
 ### Custom Touch Events
 
-- ``HasARTouch``
-- ``TapActionComponent``
-- ``HasPanTouch``
-- ``HasTouchUpInside``
-- ``HasTurnTouch``
-- ``TurnComponent``
+- ``RUIDragComponent``
+- ``RUITapComponent``
 
 ### Visual Objects
 

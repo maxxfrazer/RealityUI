@@ -53,8 +53,8 @@ public protocol RUIDragDelegate: AnyObject {
     ///
     /// - Parameters:
     ///   - entity: The `Entity` involved in the collision state change.
-    ///   - hasCollided: A Boolean value indicating the new collision state of the entity.
-    func ruiDrag(_ entity: Entity, collisionDidUpdate hasCollided: Bool)
+    ///   - isSelected: A Boolean value indicating the 3D interaction is currently on the entity.
+    func ruiDrag(_ entity: Entity, selectedDidUpdate isSelected: Bool)
 
     /// Called when a touch-up event is completed on entities with a ``RUIDragComponent`` of type ``RUIDragComponent/DragComponentType/click``.
     ///
@@ -66,6 +66,19 @@ public protocol RUIDragDelegate: AnyObject {
     ///   - ray: A ray representing the origin and direction of the touch-up interaction. The direction vector is not normalized.
     func ruiDrag(_ entity: Entity, touchUpInsideDidComplete ray: (origin: SIMD3<Float>, direction: SIMD3<Float>))
 
+    /// Called when a touch-up event fails on entities with a ``RUIDragComponent``
+    /// of type ``RUIDragComponent/DragComponentType/click``.
+    ///
+    /// Implement this method to handle scenarios where the touch-up gesture does not
+    /// successfully complete on draggable entities. This can be crucial for handling cases where
+    /// an expected interaction is interrupted or fails, allowing for appropriate fallback actions or error handling.
+    ///
+    /// This method provides a way to react to failed touch-up events, ensuring that your scene
+    /// can gracefully handle such scenarios and maintain a robust user experience.
+    ///
+    /// - Parameters:
+    ///   - entity: The `Entity` on which the touch-up gesture failed.
+    ///   - ray: A ray representing the origin and direction of the failed touch-up interaction. The direction vector is not normalized.
     func ruiDrag(_ entity: Entity, touchUpInsideDidFail ray: (origin: SIMD3<Float>, direction: SIMD3<Float>))
 }
 
@@ -74,7 +87,7 @@ public extension RUIDragDelegate {
     func ruiDrag(_ entity: Entity, dragDidUpdate ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {}
     func ruiDrag(_ entity: Entity, dragDidEnd ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {}
     func ruiDragCancelled(_ entity: Entity) {}
-    func ruiDrag(_ entity: Entity, collisionDidUpdate hasCollided: Bool) {}
+    func ruiDrag(_ entity: Entity, selectedDidUpdate isSelected: Bool) {}
     func ruiDrag(_ entity: Entity, touchUpInsideDidComplete ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {}
     func ruiDrag(_ entity: Entity, touchUpInsideDidFail ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {}
 }

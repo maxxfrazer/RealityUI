@@ -61,7 +61,7 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 extension RUIButton: RUIDragDelegate {
     public func ruiDrag(
         _ entity: Entity,
-        collisionDidUpdate hasCollided: Bool
+        selectedDidUpdate hasCollided: Bool
     ) {
         if hasCollided { compressButton() } else { releaseButton() }
     }

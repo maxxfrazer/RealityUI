@@ -71,12 +71,12 @@ final class RUILongTouchButtonTests: XCTestCase {
 
         mytouch.updateLocation(to: .zero)
         gestureRecognizer.touchesMoved([mytouch], with: UIEvent())
-        gestureRecognizer.updateRUILongTouch(nil)
+        gestureRecognizer.dragUpdatedSceneEvent(nil)
         XCTAssertFalse(entity.isCompressed)
 
         mytouch.updateLocation(to: CGPoint(x: 128, y: 128))
         gestureRecognizer.touchesMoved([mytouch], with: UIEvent())
-        gestureRecognizer.updateRUILongTouch(nil)
+        gestureRecognizer.dragUpdatedSceneEvent(nil)
         XCTAssertTrue(entity.isCompressed)
 
         gestureRecognizer.touchesEnded([mytouch], with: UIEvent())
@@ -88,7 +88,7 @@ final class RUILongTouchButtonTests: XCTestCase {
             modifierFlags: [], timestamp: 0, windowNumber: 0,
             context: nil, eventNumber: 0, clickCount: 1, pressure: 1)
         gestureRecognizer.mouseDown(with: event)
-        XCTAssertEqual(gestureRecognizer.entityComp, entity)
+        XCTAssertEqual(gestureRecognizer.entity, entity)
         XCTAssertTrue(entity.isCompressed)
 
         let expectation = self.expectation(description: "touchUpInside callback was called")

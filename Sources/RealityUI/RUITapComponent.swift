@@ -9,7 +9,7 @@
 import RealityKit
 
 /// An interface used for entities which have actions upon being clicked
-@available(*, deprecated, message: "Please use TapActionComponent instead.")
+@available(*, deprecated, message: "Please use RUITapComponent instead.")
 public protocol HasClick: HasRUI, HasCollision {
     /// Action to be applied on successfully tapping an Entity.
     var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? {get set}
@@ -30,7 +30,7 @@ public protocol HasClick: HasRUI, HasCollision {
 /// Example usage:
 /// ```swift
 /// let entity: Entity = ...
-/// entity.components.set(TapActionComponent { tappedEntity, worldPosition in
+/// entity.components.set(RUITapComponent { tappedEntity, worldPosition in
 ///     print("Entity \(tappedEntity) was tapped at \(worldPosition ?? .zero)!")
 /// })
 /// ```

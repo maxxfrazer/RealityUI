@@ -25,7 +25,7 @@ extension RUILongTouchGestureRecognizer {
         super.mouseDown(with: event)
     }
     override func mouseDragged(with event: NSEvent) {
-        if (entity == nil && entityComp == nil) || self.touchLocation == nil { return }
+        if entity == nil || self.touchLocation == nil { return }
 
         let touchInView = self.arView.convert(event.locationInWindow, from: nil)
         if touchInView == self.touchLocation { return }
@@ -33,15 +33,11 @@ extension RUILongTouchGestureRecognizer {
     }
     override func mouseUp(with event: NSEvent) {
         guard let touchLocation else { return }
-        if let entity {
-            let (newPos, hasCollided) = getCollisionPoints(touchLocation)
-            entity.arTouchEnded(at: newPos, hasCollided: hasCollided)
-        } else if let entityComp, let ray = self.arView.ray(through: touchLocation) {
-            entityComp.components.get(RUIDragComponent.self)?.dragEnded(entityComp, ray: ray)
+        if let entity, let ray = self.arView.ray(through: touchLocation) {
+            entity.components.get(RUIDragComponent.self)?.dragEnded(entity, ray: ray)
         }
         self.touchLocation = nil
         self.entity = nil
-        self.entityComp = nil
         self.viewSubscriber?.cancel()
     }
 }

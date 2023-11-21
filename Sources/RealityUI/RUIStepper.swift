@@ -77,8 +77,8 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
 }
 
 extension RUIStepper: RUIDragDelegate {
-    public func ruiDrag(_ entity: Entity, collisionDidUpdate hasCollided: Bool) {
-        entity.scale = hasCollided ? .init(repeating: 0.95) : .one
+    public func ruiDrag(_ entity: Entity, selectedDidUpdate isSelected: Bool) {
+        entity.scale = isSelected ? .init(repeating: 0.95) : .one
     }
     public func ruiDrag(
         _ entity: Entity,

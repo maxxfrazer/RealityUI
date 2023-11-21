@@ -29,8 +29,8 @@ extension RUIDragComponent {
             guard let pointOnPlane = self.findPointOnPlane(ray: ray, plane: plane) else { return false }
             self.touchState = .turn(plane: plane, start: pointOnPlane)
         case .click:
-            self.touchState = .click(true)
-            self.delegate?.ruiDrag(entity, collisionDidUpdate: true)
+            self.touchState = .click(isSelected: true)
+            self.delegate?.ruiDrag(entity, selectedDidUpdate: true)
         }
         self.delegate?.ruiDrag(entity, dragDidStart: ray)
         return true
@@ -58,10 +58,10 @@ extension RUIDragComponent {
             handleMoveState(entity, newTouchPos, poi)
             outputRay.direction = simd_normalize(ray.direction) * len
         case .turn(let plane, let lastPoint): handleTurnState(entity, plane, lastPoint, &outputRay)
-        case .click(let collided):
-            if collided != hasCollided {
-                self.touchState = .click(hasCollided)
-                self.delegate?.ruiDrag(entity, collisionDidUpdate: hasCollided)
+        case .click(let selected):
+            if selected != hasCollided {
+                self.touchState = .click(isSelected: hasCollided)
+                self.delegate?.ruiDrag(entity, selectedDidUpdate: hasCollided)
             }
         }
         // The output ray is slightly modified, so the direction also has a specific magnitude.
@@ -78,13 +78,13 @@ extension RUIDragComponent {
         switch self.touchState {
         case .move(_, let len):
             outputRay.direction = simd_normalize(ray.direction) * len
-        case .click(let collided):
-            if collided {
+        case .click(let selected):
+            if selected {
                 self.delegate?.ruiDrag(entity, touchUpInsideDidComplete: ray)
             } else {
                 self.delegate?.ruiDrag(entity, touchUpInsideDidFail: ray)
             }
-            self.delegate?.ruiDrag(entity, collisionDidUpdate: false)
+            self.delegate?.ruiDrag(entity, selectedDidUpdate: false)
         default: break
         }
         touchState = nil

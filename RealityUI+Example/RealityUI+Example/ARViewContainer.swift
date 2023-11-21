@@ -45,6 +45,7 @@ struct ARViewContainer: UIViewRepresentable {
         #endif
         arView.scene.addAnchor(anchor)
 
+        arView.debugOptions.insert(.showPhysics)
         // Setup RealityKit camera
         #if os(macOS)
         let cam = PerspectiveCamera()
@@ -112,7 +113,7 @@ struct ARViewContainer: UIViewRepresentable {
                 text: "hello", font: .systemFont(ofSize: 1),
                 alignment: .center, extrusion: 0.1
             ))
-            textObj.components.set(TapActionComponent { ent, _ in
+            textObj.components.set(RUITapComponent { ent, _ in
                 ent.ruiSpin(
                     by: [[1, 0, 0], [0, 1, 0], [0, 0, 1]].randomElement()!,
                     period: 0.3, times: 1
@@ -143,8 +144,12 @@ struct ARViewContainer: UIViewRepresentable {
             }
             ruiModel.look(at: [0, 1, -1], from: .zero, relativeTo: nil)
         case .rotation:
-            ruiModel = RotationPlane(turnAxis: [0, 0, 1])
-            ruiModel.scale = .one * 2
+            ruiModel = RotationPlane()
+            // stand up the model, so it's facing the camera
+            ruiModel.orientation = simd_quatf(angle: .pi, axis: [0, 1, 0])
+
+            // set the turn/rotation component
+            ruiModel.components.set(RUIDragComponent(type: .turn(axis: [0, 0, 1])))
         }
         ruiModel.name = "ruiReplace"
         worldAnchor.addChild(ruiModel)
@@ -159,26 +164,22 @@ struct ARViewContainer: UIViewRepresentable {
 }
 
 /// Class for demonstrating the HasTurnTouch protocol.
-class RotationPlane: Entity, HasModel, HasCollision, HasTurnTouch {
+class RotationPlane: Entity, HasModel, HasCollision {
 
     /// Create a new ``RotationPlane``, which conforms to HasTurnTouch
     /// - Parameter turnAxis: Axis that the object will be rotated around.
-    required init(turnAxis: SIMD3<Float>) {
+    required init() {
         super.init()
-        self.turnAxis = turnAxis
         var rotateMat = SimpleMaterial()
         rotateMat.color = SimpleMaterial.BaseColor(
             tint: .white.withAlphaComponent(0.99), texture: MaterialParameters.Texture(
                 try! TextureResource.load(named: "rotato")
             )
         )
-        self.model = ModelComponent(mesh: .generatePlane(width: 1, height: 1), materials: [rotateMat])
-        self.orientation = .init(angle: .pi, axis: [0, 1, 0])
-        self.collision = CollisionComponent(shapes: [.generateBox(width: 1, height: 1, depth: 0.1)])
-    }
+        self.scale = .one * 2
 
-    @MainActor required init() {
-        fatalError("init() has not been implemented")
+        self.model = ModelComponent(mesh: .generatePlane(width: 1, height: 1), materials: [rotateMat])
+        self.collision = CollisionComponent(shapes: [.generateBox(width: 1, height: 1, depth: 0.1)])
     }
 }
 

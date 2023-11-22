@@ -181,8 +181,7 @@ public class RUIDragComponent: Component {
             let t = dot(pointOnPlane - ray.origin, planeNormal) / denominator
             // return the point of intersection
             return ray.origin + t * normRayD
-        } else {
-            // The ray is parallel to the plane, no intersection
+        } else { // The ray is parallel to the plane, no intersection
             return nil
         }
     }
@@ -241,7 +240,7 @@ public class RUIDragComponent: Component {
         return bestPoint
     }
 }
-
+#if os(iOS) || os(macOS)
 internal extension RUIDragGestureRecognizer {
     func dragBegan(
         entity: Entity, touchInView: CGPoint, touchInWorld: SIMD3<Float>
@@ -278,8 +277,7 @@ internal extension RUIDragGestureRecognizer {
         }
         #if os(iOS)
         if let activeTouch = self.activeTouch, activeTouch.phase == .ended {
-            self.touchesEnded([activeTouch], with: UIEvent())
-            return
+            return self.touchesEnded([activeTouch], with: UIEvent())
         }
         #endif
         touchComp.dragUpdated(
@@ -287,6 +285,7 @@ internal extension RUIDragGestureRecognizer {
         )
     }
 }
+#endif
 
 fileprivate extension BoundingBox {
     func clamp(_ position: SIMD3<Float>) -> SIMD3<Float> {

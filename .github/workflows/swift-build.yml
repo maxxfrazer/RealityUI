@@ -20,6 +20,13 @@ jobs:
     - name: Swift Lint
       run: swiftlint --strict
     - name: Test iOS
-      run: xcodebuild build -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 15"
+      run: xcodebuild test -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 15"
+    - name: Fetch Coverage
+      uses: sersoft-gmbh/swift-coverage-action@v4
+      id: coverage-files
+    - name: Publish Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ${{ join(fromJSON(steps.coverage-files.outputs.files), ',') }}
     - name: Test macOS
-      run: xcodebuild build -scheme RealityUI -destination "platform=macOS"
+      run: xcodebuild test -scheme RealityUI -destination "platform=macOS"

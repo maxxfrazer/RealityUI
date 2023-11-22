@@ -32,8 +32,7 @@ public extension Entity {
     ///                 This will not execute if the animation is interrupted.
     func ruiShake(by quat: simd_quatf, period: TimeInterval, times: Int, completion: (() -> Void)? = nil) {
         let rockBit = matrix_multiply(
-            self.transform.matrix,
-            Transform(scale: .one, rotation: quat, translation: .zero).matrix
+            self.transform.matrix, Transform(scale: .one, rotation: quat, translation: .zero).matrix
         )
         self.move(to: rockBit, relativeTo: self.parent, duration: period / 2, timingFunction: .easeIn)
         let shakeCancellable = self.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self, { _ in
@@ -46,9 +45,7 @@ public extension Entity {
                 completion: completion
             )
         })
-        if RealityUI.anims[self] == nil {
-            RealityUI.anims[self] = [:]
-        }
+        if RealityUI.anims[self] == nil { RealityUI.anims[self] = [:] }
         RealityUI.anims[self]?["shake"] = shakeCancellable
     }
 
@@ -123,5 +120,4 @@ public extension Entity {
         })
         RealityUI.anims[self]?["shake"] = shakeCancellable
     }
-
 }

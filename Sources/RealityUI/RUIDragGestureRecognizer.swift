@@ -18,6 +18,7 @@ public typealias GestureBase = NSGestureRecognizer
 #endif
 import Combine
 
+#if os(iOS) || os(macOS)
 /// This Gesture is currently used for any gesture other than simple taps.
 @objc internal class RUIDragGestureRecognizer: GestureBase {
     let arView: ARView
@@ -53,3 +54,4 @@ import Combine
         )
     }
 }
+#endif

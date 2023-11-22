@@ -119,7 +119,7 @@ public struct StepperComponent: Component {
         /// Style of stepper with up and down chevrons.
         case arrowDownUp
     }
-    #if os(iOS)
+    #if os(iOS) || os(xrOS)
     /// Create a StepperComponent for an RUIStepper object to add to your scene
     /// - Parameters:
     ///   - style: Style of the stepper.

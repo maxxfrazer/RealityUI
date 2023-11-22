@@ -65,6 +65,7 @@ final class RUITextTests: XCTestCase {
         text.components.get(RUITapComponent.self)?.action(text, nil)
         waitForExpectations(timeout: 0.1, handler: nil)
         XCTAssertTrue(text.components.has(RUITapComponent.self))
-        XCTAssertFalse(text.components.has(CollisionComponent.self))
+        text.addCollision()
+        XCTAssertTrue(text.components.has(CollisionComponent.self))
     }
 }

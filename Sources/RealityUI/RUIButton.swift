@@ -18,22 +18,8 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
 
     public internal(set) var collisionPlane: float4x4?
 
-    @available(*, deprecated, renamed: "touchUpInside")
-    public var touchUpCompleted: ((HasButton) -> Void)? {
-        get { self.touchUpInside}
-        set { self.touchUpInside = newValue }
-    }
-
     /// Function that will be called when button is successfully tapped.
     public var touchUpInside: ((HasButton) -> Void)?
-
-    @available(*, deprecated, renamed: "init(button:rui:touchUpInside:)")
-    public convenience init(
-        button: ButtonComponent? = nil, RUI: RUIComponent? = nil,
-        updateCallback: ((HasButton) -> Void)? = nil
-    ) {
-        self.init(button: button, rui: RUI, touchUpInside: updateCallback)
-    }
 
     /// Creates a RealityUI Button entity with optional ``ButtonComponent``, ``RUIComponent`` and ``touchUpInside``.
     /// - Parameters:

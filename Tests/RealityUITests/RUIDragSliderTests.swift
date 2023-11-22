@@ -9,6 +9,7 @@ import XCTest
 import RealityKit
 @testable import RealityUI
 
+#if os(iOS) || os(macOS)
 final class RUIDragSliderTests: XCTestCase {
 
     var gestureRecognizer: RUIDragGestureRecognizer!
@@ -75,5 +76,6 @@ final class RUIDragSliderTests: XCTestCase {
         gestureRecognizer.touchesBegan(mytouches, with: UIEvent())
         XCTAssertNil(gestureRecognizer.activeTouch)
     }
-#endif
+    #endif
 }
+#endif

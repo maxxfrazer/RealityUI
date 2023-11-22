@@ -12,6 +12,7 @@ import UIKit.UITouch
 #endif
 @testable import RealityUI
 
+#if os(iOS) || os(macOS)
 final class RUIDragButtonTests: XCTestCase {
 
     var gestureRecognizer: RUIDragGestureRecognizer!
@@ -105,6 +106,7 @@ final class RUIDragButtonTests: XCTestCase {
     }
     #endif
 }
+#endif
 
 #if os(iOS)
 internal class TestTouch: UITouch {

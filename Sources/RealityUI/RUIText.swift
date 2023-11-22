@@ -80,13 +80,13 @@ public struct TextComponent: Component {
     /// The maximum height, in meters, of the text frame in the local coordinate system.
     /// Set to `0` (default) for unbounded.
     public var height: CGFloat = 0
-#if os(iOS)
+    #if os(iOS) || os(xrOS)
     /// The color of the text material. `.label` by default (iOS)
     public var color: Material.Color = .label
-#elseif os(macOS)
+    #elseif os(macOS)
     /// The color of the text material. `.labelColor` by default (macOS)
     public var color: Material.Color = .labelColor
-#endif
+    #endif
     /// How the text should be aligned in the text frame
     public var alignment: CTTextAlignment = .center
     /// The extent, in meters, of the extruded text in the z-axis direction.
@@ -172,8 +172,7 @@ public extension HasText {
         for part: TextComponent.UIPart
     ) -> [Material] {
         switch part {
-        case .textEntity:
-            return [self.getMaterial(with: self.textComponent.color)]
+        case .textEntity: [self.getMaterial(with: self.textComponent.color)]
         }
     }
 
@@ -227,7 +226,7 @@ public extension HasText {
 }
 
 extension RUIText {
-#if os(iOS)
+    #if os(iOS) || os(xrOS)
     /// Used as default larger text to be displayed in the scene
     static public var largeFont = MeshResource.Font(
         descriptor: .init(

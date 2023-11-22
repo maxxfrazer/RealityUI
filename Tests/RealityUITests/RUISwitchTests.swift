@@ -12,6 +12,7 @@ import RealityKit
 final class RUISwitchTests: XCTestCase {
 
     var testSwitch: RUISwitch!
+    let forward: SIMD3<Float> = [0, 0, -1]
 
     override func setUpWithError() throws {
         testSwitch = RUISwitch()
@@ -86,15 +87,15 @@ final class RUISwitchTests: XCTestCase {
               let switchComponent = thumbModel.components.get(RUIDragComponent.self)
         else { return }
         XCTAssertFalse(testSwitch.isOn) // start off
-        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], [0, 0, -1]))
-        switchComponent.dragUpdated(thumbModel, ray: ([0.1, 0, 1], [0, 0, -1]), hasCollided: true)
-        switchComponent.dragUpdated(thumbModel, ray: ([0.3, 0, 1], [0, 0, -1]), hasCollided: true)
-        switchComponent.dragEnded(thumbModel, ray: ([0.3, 0, 1], [0, 0, -1]))
+        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], forward))
+        switchComponent.dragUpdated(thumbModel, ray: ([0.1, 0, 1], forward), hasCollided: true)
+        switchComponent.dragUpdated(thumbModel, ray: ([0.3, 0, 1], forward), hasCollided: true)
+        switchComponent.dragEnded(thumbModel, ray: ([0.3, 0, 1], forward))
         XCTAssertFalse(testSwitch.isOn) // no change in value
-        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], [0, 0, -1]))
-        switchComponent.dragUpdated(thumbModel, ray: ([-0.3, 0, 1], [0, 0, -1]), hasCollided: true)
-        switchComponent.dragUpdated(thumbModel, ray: ([-0.2, 0, 1], [0, 0, -1]), hasCollided: true)
-        switchComponent.dragEnded(thumbModel, ray: ([-0.2, 0, 1], [0, 0, -1]))
+        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], forward))
+        switchComponent.dragUpdated(thumbModel, ray: ([-0.3, 0, 1], forward), hasCollided: true)
+        switchComponent.dragUpdated(thumbModel, ray: ([-0.2, 0, 1], forward), hasCollided: true)
+        switchComponent.dragEnded(thumbModel, ray: ([-0.2, 0, 1], forward))
         XCTAssertTrue(testSwitch.isOn) // changed
     }
 
@@ -102,11 +103,11 @@ final class RUISwitchTests: XCTestCase {
         guard let thumbModel = testSwitch.getModel(part: "thumb"),
               let switchComponent = thumbModel.components.get(RUIDragComponent.self)
         else { return XCTFail("Could not get thumb model") }
-        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], [0, 0, -1]))
+        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], forward))
         XCTAssertTrue(thumbModel.position.x > 0)
-        switchComponent.dragUpdated(thumbModel, ray: ([-0.3, 0, 1], [0, 0, -1]), hasCollided: true)
+        switchComponent.dragUpdated(thumbModel, ray: ([-0.3, 0, 1], forward), hasCollided: true)
         XCTAssertTrue(thumbModel.position.x < 0)
-        switchComponent.dragEnded(thumbModel, ray: ([-0.3, 0, 1], [0, 0, -1]))
+        switchComponent.dragEnded(thumbModel, ray: ([-0.3, 0, 1], forward))
         XCTAssertTrue(testSwitch.isOn)
     }
 
@@ -114,13 +115,13 @@ final class RUISwitchTests: XCTestCase {
         guard let thumbModel = testSwitch.getModel(part: "thumb"),
               let switchComponent = thumbModel.components.get(RUIDragComponent.self)
         else { return XCTFail("Could not get thumb model") }
-        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], [0, 0, -1]))
+        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], forward))
         XCTAssertTrue(thumbModel.position.x > 0)
-        switchComponent.dragUpdated(thumbModel, ray: ([-0.3, 0, 1], [0, 0, -1]), hasCollided: true)
+        switchComponent.dragUpdated(thumbModel, ray: ([-0.3, 0, 1], forward), hasCollided: true)
         XCTAssertTrue(thumbModel.position.x < 0)
-        switchComponent.dragUpdated(thumbModel, ray: ([0.1, 0, 1], [0, 0, -1]), hasCollided: true)
+        switchComponent.dragUpdated(thumbModel, ray: ([0.1, 0, 1], forward), hasCollided: true)
         XCTAssertTrue(thumbModel.position.x > 0)
-        switchComponent.dragEnded(thumbModel, ray: ([0.1, 0, 1], [0, 0, -1]))
+        switchComponent.dragEnded(thumbModel, ray: ([0.1, 0, 1], forward))
         XCTAssertFalse(testSwitch.isOn)
     }
 
@@ -129,13 +130,13 @@ final class RUISwitchTests: XCTestCase {
               let switchComponent = thumbModel.components.get(RUIDragComponent.self)
         else { return XCTFail("Could not get thumb model") }
 
-        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], [0, 0, -1]))
+        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], forward))
         XCTAssertTrue(thumbModel.position.x > 0)
-        switchComponent.dragUpdated(thumbModel, ray: ([1.6, 0, 1], [0, 0, -1]), hasCollided: true)
+        switchComponent.dragUpdated(thumbModel, ray: ([1.6, 0, 1], forward), hasCollided: true)
         XCTAssertTrue(thumbModel.position.x > 0)
-        switchComponent.dragUpdated(thumbModel, ray: ([-0.3, 0, 1], [0, 0, -1]), hasCollided: true)
+        switchComponent.dragUpdated(thumbModel, ray: ([-0.3, 0, 1], forward), hasCollided: true)
         XCTAssertTrue(thumbModel.position.x < 0)
-        switchComponent.dragEnded(thumbModel, ray: ([-0.3, 0, 1], [0, 0, -1]))
+        switchComponent.dragEnded(thumbModel, ray: ([-0.3, 0, 1], forward))
         XCTAssertTrue(testSwitch.isOn)
     }
 }

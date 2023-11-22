@@ -57,24 +57,17 @@ public extension HasRUI {
         (self as? HasRUIMaterials)?.materialsShouldChange()
     }
 
-    @available(*, deprecated, renamed: "rui")
-    internal(set) var RUI: RUIComponent {
-        get { self.rui }
-        set { self.rui = newValue }
-    }
     /// RealityUI Component for the entity.
     internal(set) var rui: RUIComponent {
         get {
-            if let ruiComp = self.components[RUIComponent.self] as? RUIComponent {
+            if let ruiComp = self.components.get(RUIComponent.self) {
                 return ruiComp
             } else {
-                self.components[RUIComponent.self] = RUIComponent()
+                self.components.set(RUIComponent())
                 return self.components[RUIComponent.self]!
             }
         }
-        set {
-            self.components[RUIComponent.self] = newValue
-        }
+        set { self.components.set(newValue) }
     }
 
 }

@@ -290,10 +290,8 @@ internal extension RUIDragGestureRecognizer {
 
 fileprivate extension BoundingBox {
     func clamp(_ position: SIMD3<Float>) -> SIMD3<Float> {
-        [
-            Swift.max(self.min.x, Swift.min(self.max.x, position.x)),
-            Swift.max(self.min.y, Swift.min(self.max.y, position.y)),
-            Swift.max(self.min.z, Swift.min(self.max.z, position.z))
-        ]
+        [Swift.min(max.x, Swift.max(min.x, position.x)),
+         Swift.min(max.y, Swift.max(min.y, position.y)),
+         Swift.min(max.z, Swift.max(min.z, position.z))]
     }
 }

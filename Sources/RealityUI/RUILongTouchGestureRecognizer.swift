@@ -41,7 +41,6 @@ extension BoundingBox {
 
     var touchLocation: CGPoint?
     var viewSubscriber: Cancellable?
-    var collisionPlane: float4x4?
 
     public init(target: Any?, action: Selector?, view: ARView) {
         self.arView = view

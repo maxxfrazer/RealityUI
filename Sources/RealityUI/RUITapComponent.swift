@@ -15,10 +15,10 @@ public protocol HasClick: HasRUI, HasCollision {
     var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? {get set}
 }
 
-/// ``TapActionComponent`` is a component that allows entities to respond
+/// ``RUITapComponent`` is a component that allows entities to respond
 /// to tap actions in the RealityKit environment.
 ///
-/// When an entity is associated with a ``TapActionComponent``, it indicates
+/// When an entity is associated with a ``RUITapComponent``, it indicates
 /// that the entity should trigger an action when tapped.
 /// There is also requirement for the entity to have a `CollisionComponent`.
 ///

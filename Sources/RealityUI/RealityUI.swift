@@ -76,7 +76,7 @@ import Combine
         /// OptionSet value for tap gestures.
         public static let tap = RUIGesture(rawValue: 1 << 0)
 
-        /// OptionSet value for long touch gestures. This will catch all ``HasARTouch`` entities with a collision body.
+        /// OptionSet value for long touch gestures. This will catch all entities with ``RUIDragComponent`` and a collision body.
         public static let longTouch = RUIGesture(rawValue: 1 << 1)
 
         /// Encapsulates all the possible values of this OptionSet

@@ -14,36 +14,66 @@ import UIKit.UIEvent
 /// `RUIDragComponent` is a component for managing drag interactions in an AR or VR context.
 /// It provides various constraints for dragging movements with constraints such as boxes, points and clamps.
 public class RUIDragComponent: Component {
+    /// `MoveConstraint` defines the constraints that can be applied to the movement of entities in a 3D environment.
+    ///
+    /// This enumeration is used in conjunction with ``RUIDragComponent`` to specify how entities respond to drag interactions in AR or VR contexts.
+    /// It offers various constraint options, each tailored to different interaction requirements, allowing for more controlled and precise entity movement.
+    /// Depending on the chosen constraint, entities can be restricted to move within a bounding box,
+    /// limited to predefined points, or constrained by a custom clamping function.
+    ///
+    /// Examples of where `MoveConstraint` can be beneficial include scenarios like guiding an entity along a specific path,
+    /// confining movement within a certain area, or applying complex, custom movement rules.
     public enum MoveConstraint {
         /// Constrains movement within a bounding box.
+        ///
+        /// Use this constraint when you want to limit the movement of an entity within a predefined three-dimensional area.
+        /// The `BoundingBox` parameter specifies the dimensions and position of the box within which the entity can move.
+        ///
+        /// Example usage:
+        /// ```swift
+        /// let constraint = MoveConstraint.box(
+        ///     BoundingBox(min: [-1, -1, -1], max: [1, 1, 1])
+        /// )
+        /// ```
         case box(BoundingBox)
         /// Constrains movement to a set of points.
+        ///
+        /// This constraint limits the movement of an entity to specific locations in space, defined by an array of `SIMD3<Float>` points.
+        /// It's useful for scenarios where movement should be restricted to discrete positions, like on a grid or along a path.
+        ///
+        /// Example usage:
+        /// ```swift
+        /// let constraint = MoveConstraint.points([
+        ///     [0, 0, 0],
+        ///     [5, 0, 0],
+        ///     [10, 0, 0]
+        /// ])
+        /// ```
         case points([SIMD3<Float>])
         /// Applies a custom clamping function to the movement.
+        ///
+        /// This constraint allows for the most flexibility by enabling the use of a custom function to determine movement constraints.
+        /// The function takes a `SIMD3<Float>` as input, representing the proposed new position,
+        /// and returns a `SIMD3<Float>` that represents the allowed position.
+        ///
+        /// Example usage:
+        /// ```swift
+        /// let constraint = MoveConstraint.clamp { proposedPosition in
+        ///     // Define custom logic to modify and return the proposed position
+        ///     return modifiedPosition
+        /// }
+        /// ```
         case clamp((SIMD3<Float>) -> SIMD3<Float>)
 //        /// Constrains movement to a plane.
 //        case plane(simd_float4x4)
 //        /// Constrains movement to a sphere.
 //        case sphere(position: simd_float3, radius: Float)
     }
-    /// ``DragComponentType`` represents the type of touch interaction in a 3D environment.
+    /// ``DragComponentType`` represents the type of drag interaction in a 3D environment.
     ///
-    /// This enumeration defines the different ways that touch interactions can be interpreted and handled within a 3D space.
+    /// This enumeration defines the different ways that drag interactions can be interpreted and handled within a 3D space.
     /// Each case of this enum specifies a unique type of drag interaction, allowing for customizable behavior
     /// depending on the user's input and the application's requirements.
-    ///
-    /// - `move`: This case represents a movement interaction where an entity can be moved within the 3D environment.
-    ///   The movement can be restricted or guided by an optional `MoveConstraint` that defines how the movement behaves.
-    ///   Use this for interactions where entities need to be repositioned dynamically.
-    ///
-    /// - `turn`: This case represents a rotational interaction where an entity can be rotated around a specified axis.
-    ///   The axis is defined by a `SIMD3<Float>` representing the axis of rotation.
-    ///   This is useful for scenarios where an entity needs to be oriented or turned to face different directions.
-    ///
-    /// - `click`: This case represents a click-type interaction, typically used for selecting or interacting with an entity without moving or rotating it.
-    ///   It's often used for simple interactions like selecting, activating, or focusing on an entity within the 3D space.
-    ///   In contrast to ``RUITapComponent``, click interacts in a similar way to `touchUpInside`, where it will only execute
-    ///   if your touch in the 3D scene starts and ends on the model with this component.
     public enum DragComponentType {
         /// Represents a movement interaction with an optional constraint.
         case move(MoveConstraint?)
@@ -53,16 +83,16 @@ public class RUIDragComponent: Component {
         case click
     }
 
-    /// The type of touch interaction.
-    var type: DragComponentType
+    /// The type of drag interaction.
+    public internal(set) var type: DragComponentType
 
     /// An optional delegate to handle drag events.
-    weak var delegate: RUIDragDelegate?
+    public weak var delegate: RUIDragDelegate?
 
-    /// Initializes a new `RUIDragComponent` with a specific touch interaction type and an optional delegate.
+    /// Initializes a new `RUIDragComponent` with a specific drag interaction type and an optional delegate.
     ///
     /// - Parameters:
-    ///   - type: The type of AR touch interaction.
+    ///   - type: The type of 3D drag interaction.
     ///   - delegate: An optional delegate to handle drag events.
     public init(type: DragComponentType, delegate: RUIDragDelegate? = nil) {
         self.type = type
@@ -220,20 +250,17 @@ internal extension RUILongTouchGestureRecognizer {
         else { return false }
         self.touchLocation = touchInView
         self.entity = entity
-        var worldTouch = touchInWorld
-        if let collisionPlane {
-            if let planeCollisionPoint = self.arView.unproject(
-                touchInView, ontoPlane: collisionPlane
-            ) {
-                worldTouch = planeCollisionPoint
-            } else { return false }
-        }
+
         let origin = self.arView.cameraTransform.translation
-        let direction = worldTouch - origin
+        let direction = touchInWorld - origin
         if !arTouchComp.dragStarted(
             entity, ray: (origin, direction)
         ) { return false }
-        self.viewSubscriber = self.arView.scene.subscribe(to: SceneEvents.Update.self, on: entity, dragUpdatedSceneEvent(_:))
+        self.viewSubscriber = self.arView.scene.subscribe(
+            to: SceneEvents.Update.self,
+            on: entity,
+            dragUpdatedSceneEvent(_:)
+        )
         return true
     }
 

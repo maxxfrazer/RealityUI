@@ -20,7 +20,7 @@ jobs:
     - name: Swift Lint
       run: swiftlint --strict
     - name: Test iOS
-      run: xcodebuild test -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 15"
+      run: xcodebuild test -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 15" -enableCodeCoverage YES
     - name: Fetch Coverage
       uses: sersoft-gmbh/swift-coverage-action@v4
       id: coverage-files
@@ -29,4 +29,4 @@ jobs:
       with:
         files: ${{ join(fromJSON(steps.coverage-files.outputs.files), ',') }}
     - name: Test macOS
-      run: xcodebuild test -scheme RealityUI -destination "platform=macOS"
+      run: xcodebuild test -scheme RealityUI -destination "platform=macOS" -enableCodeCoverage YES

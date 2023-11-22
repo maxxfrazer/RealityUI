@@ -15,7 +15,7 @@ entity.components.set(freeMoveComponent)
 
 This entity will now be able to be moved with 3 degrees of freedom, anywhere in your 3D scene.
 
-These gestures will automatically be picked up on iOS and macOS if ``RealityUI/RealityUI/enableGestures(_:on:)`` has been called with ``RealityUI/RealityUI/RUIGesture/all`` or ``RealityUI/RealityUI/RUIGesture/longTouch`` applied in the parameters. 
+These gestures will automatically be picked up on iOS and macOS if ``RealityUI/RealityUI/enableGestures(_:on:)`` has been called with ``RealityUI/RealityUI/RUIGesture/all`` or ``RealityUI/RealityUI/RUIGesture/ruiDrag`` applied in the parameters. 
 
 For other platforms you may need to add a custom gesture recogniser to send through to your RealityKit scene.
 

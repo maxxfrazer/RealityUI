@@ -15,21 +15,7 @@ import UIKit.UIColor
 #endif
 
 /// A RealityUI Text object to be added to a RealityKit scene.
-open class RUIText: Entity, HasText, HasCollision {
-    /// Action to occus when the user taps on this Entity.
-    public var tapAction: ((Entity, SIMD3<Float>?) -> Void)? {
-        get { (self.components[RUITapComponent.self] as? RUITapComponent)?.action }
-        set {
-            if let newValue {
-                self.components.set(RUITapComponent(action: newValue))
-            } else {
-                self.components.remove(RUITapComponent.self)
-            }
-            // This is so the text does not block any clicks when there's no tapAction.
-            self.updateCollision()
-        }
-    }
-
+open class RUIText: Entity, HasText {
     /// Create a new RUIText object, adding text to your RealityKit scene.
     /// - Parameters:
     ///   - text: The text to render.
@@ -68,7 +54,6 @@ open class RUIText: Entity, HasText, HasCollision {
         self.textComponent = textComponent ?? TextComponent()
         self.ruiOrientation()
         self.makeModels()
-        self.updateCollision()
     }
 
     internal func makeModels() {
@@ -230,19 +215,14 @@ public extension HasText {
              textOffset.y,
              0 // textSize.z / 2
         ]
-        self.updateCollision()
     }
-    func updateCollision() {
-        guard let selfCol = self as? HasCollision else { return }
-        guard self.components.has(RUITapComponent.self) else {
-            return selfCol.components.remove(CollisionComponent.self)
-        }
+    func addCollision() {
         let visbounds = self.visualBounds(relativeTo: nil)
-        selfCol.collision = CollisionComponent(
+        self.components.set(CollisionComponent(
             shapes: [ShapeResource.generateBox(size: visbounds.extents)
                 .offsetBy(translation: visbounds.center)
             ]
-        )
+        ))
     }
 }
 

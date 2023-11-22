@@ -1,6 +1,6 @@
 //
-//  RUILongTouchSliderTests.swift
-//  
+//  RUIDragSliderTests.swift
+//
 //
 //  Created by Max Cobb on 29/01/2023.
 //
@@ -9,16 +9,16 @@ import XCTest
 import RealityKit
 @testable import RealityUI
 
-final class RUILongTouchSliderTests: XCTestCase {
+final class RUIDragSliderTests: XCTestCase {
 
-    var gestureRecognizer: RUILongTouchGestureRecognizer!
+    var gestureRecognizer: RUIDragGestureRecognizer!
     var arView: ARView!
     var entity: RUISlider!
 
     override func setUpWithError() throws {
         arView = ARView(frame: .init(origin: .zero, size: CGSize(width: 256, height: 256)))
-        gestureRecognizer = RUILongTouchGestureRecognizer(target: nil, action: nil, view: arView)
-        RealityUI.enableGestures(.longTouch, on: arView)
+        gestureRecognizer = RUIDragGestureRecognizer(target: nil, action: nil, view: arView)
+        RealityUI.enableGestures(.ruiDrag, on: arView)
         entity = RUISlider(length: 10, start: 0.5)
         let anchor = AnchorEntity()
         let cam = PerspectiveCamera()

@@ -1,5 +1,5 @@
 //
-//  HasClick.swift
+//  RUITapComponent.swift
 //
 //
 //  Created by Max Cobb on 5/16/20.

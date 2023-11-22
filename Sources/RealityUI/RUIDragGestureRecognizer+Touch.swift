@@ -1,5 +1,5 @@
 //
-//  RUILongTouchGestureRecognizer+Touch.swift
+//  RUIDragGestureRecognizer+Touch.swift
 //  
 //
 //  Created by Max Cobb on 14/11/2023.
@@ -8,7 +8,7 @@
 #if os(iOS)
 import UIKit
 
-internal extension RUILongTouchGestureRecognizer {
+internal extension RUIDragGestureRecognizer {
     /// Sent to the gesture recognizer when one or more fingers touch down in the associated view.
     /// - Parameters:
     ///   - touches: A set of UITouch instances in the event represented by event that represent the touches in the UITouch.Phase.began phase.

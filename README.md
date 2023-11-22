@@ -62,7 +62,7 @@ All components used in RealityUI must be registered before they are used, simply
 
 Enabling RealityUI gestures can be doen by calling `RealityUI.enableGestures(.all, on: ARView)`, with `ARView` being your instance of an [ARView](https://developer.apple.com/documentation/realitykit/arview) object.
 
-RUISlider, RUISwitch, RUIStepper and RUIButton all use ``RUIDragComponent``, which requires `.longTouch`. If you are adding elements that use the component `RUITapComponent` you can use the gesture `.tap`.
+RUISlider, RUISwitch, RUIStepper and RUIButton all use ``RUIDragComponent``, which requires `.ruiDrag`. If you are adding elements that use the component `RUITapComponent` you can use the gesture `.tap`.
 I would just recommend using `.all` when enabling gestures, as these will inevitably move around as RealityUI develops.
 
 `RealityUI.enableGestures(.all, on: arView)`
@@ -120,7 +120,7 @@ Unlock the ability to rotate a RealityKit entity with just one finger.
 
 ![Turning key](https://github.com/maxxfrazer/RealityUI/raw/e3cb908fa9051512671e01dd3fe01f59c45f0936/media/RealityUI_pivot_key.gif?raw=true)
 
-[More details](https://github.com/maxxfrazer/RealityUI/wiki/Gestures#turn)
+[More details](https://maxxfrazer.github.io/RealityUI/documentation/realityui/RUIDragComponent/DragComponentType/turn(axis:))
 
 ### Tap
 
@@ -161,6 +161,6 @@ With RUIText you can easily create an Entity with the specified text placed with
 ---
 ## More
 
-More information on everything provided in this Swift Package in the [GitHub Wiki](https://github.com/maxxfrazer/RealityUI/wiki), and also the [documentation](https://maxxfrazer.github.io/RealityUI/documentation/realityui/).
+More information on everything provided in this Swift Package in the [documentation](https://maxxfrazer.github.io/RealityUI/documentation/realityui/).
 
 Also see the [Example Project](https://github.com/maxxfrazer/RealityUI/tree/main/RealityUI%2BExamples) for iOS in this repository.

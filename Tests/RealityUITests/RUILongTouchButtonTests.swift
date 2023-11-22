@@ -1,5 +1,5 @@
 //
-//  RUILongTouchButtonTests.swift
+//  RUIDragButtonTests.swift
 //  
 //
 //  Created by Max Cobb on 25/01/2023.
@@ -12,16 +12,16 @@ import UIKit.UITouch
 #endif
 @testable import RealityUI
 
-final class RUILongTouchButtonTests: XCTestCase {
+final class RUIDragButtonTests: XCTestCase {
 
-    var gestureRecognizer: RUILongTouchGestureRecognizer!
+    var gestureRecognizer: RUIDragGestureRecognizer!
     var arView: ARView!
     var entity: RUIButton!
 
     override func setUpWithError() throws {
         arView = ARView(frame: .init(origin: .zero, size: CGSize(width: 256, height: 256)))
-        gestureRecognizer = RUILongTouchGestureRecognizer(target: nil, action: nil, view: arView)
-        RealityUI.enableGestures(.longTouch, on: arView)
+        gestureRecognizer = RUIDragGestureRecognizer(target: nil, action: nil, view: arView)
+        RealityUI.enableGestures(.ruiDrag, on: arView)
         entity = RUIButton()
         let anchor = AnchorEntity()
         let cam = PerspectiveCamera()

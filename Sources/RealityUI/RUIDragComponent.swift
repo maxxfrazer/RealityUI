@@ -242,7 +242,7 @@ public class RUIDragComponent: Component {
     }
 }
 
-internal extension RUILongTouchGestureRecognizer {
+internal extension RUIDragGestureRecognizer {
     func dragBegan(
         entity: Entity, touchInView: CGPoint, touchInWorld: SIMD3<Float>
     ) -> Bool {
@@ -285,5 +285,15 @@ internal extension RUILongTouchGestureRecognizer {
         touchComp.dragUpdated(
             hitEntity, ray: ray, hasCollided: hasCollided
         )
+    }
+}
+
+fileprivate extension BoundingBox {
+    func clamp(_ position: SIMD3<Float>) -> SIMD3<Float> {
+        [
+            Swift.max(self.min.x, Swift.min(self.max.x, position.x)),
+            Swift.max(self.min.y, Swift.min(self.max.y, position.y)),
+            Swift.max(self.min.z, Swift.min(self.max.z, position.z))
+        ]
     }
 }

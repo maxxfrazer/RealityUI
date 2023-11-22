@@ -119,7 +119,7 @@ struct ARViewContainer: UIViewRepresentable {
                     period: 0.3, times: 1
                 )
             })
-            textObj.updateCollision()
+            textObj.addCollision()
             ruiModel = textObj
         case .slider:
             let scalingCube = ModelEntity(mesh: .generateBox(size: 3))

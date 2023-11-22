@@ -1,5 +1,5 @@
 //
-//  RUILongTouchGestureRecognizer+Mouse.swift
+//  RUIDragGestureRecognizer+Mouse.swift
 //  
 //
 //  Created by Max Cobb on 15/11/2023.
@@ -10,7 +10,7 @@ import Foundation
 #if os(macOS)
 import AppKit
 
-extension RUILongTouchGestureRecognizer {
+extension RUIDragGestureRecognizer {
     override func mouseDown(with event: NSEvent) {
         guard self.touchLocation == nil
         else {

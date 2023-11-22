@@ -1,5 +1,5 @@
 //
-//  RUILongTouchGestureRecognizer.swift
+//  RUIDragGestureRecognizer.swift
 //
 //
 //  Created by Max Cobb on 5/16/20.
@@ -18,18 +18,8 @@ public typealias GestureBase = NSGestureRecognizer
 #endif
 import Combine
 
-extension BoundingBox {
-    func clamp(_ position: SIMD3<Float>) -> SIMD3<Float> {
-        [
-            Swift.max(self.min.x, Swift.min(self.max.x, position.x)),
-            Swift.max(self.min.y, Swift.min(self.max.y, position.y)),
-            Swift.max(self.min.z, Swift.min(self.max.z, position.z))
-        ]
-    }
-}
-
 /// This Gesture is currently used for any gesture other than simple taps.
-@objc internal class RUILongTouchGestureRecognizer: GestureBase {
+@objc internal class RUIDragGestureRecognizer: GestureBase {
     let arView: ARView
 
     #if os(iOS)

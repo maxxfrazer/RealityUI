@@ -258,7 +258,6 @@ internal extension RUILongTouchGestureRecognizer {
         ) { return false }
         self.viewSubscriber = self.arView.scene.subscribe(
             to: SceneEvents.Update.self,
-            on: entity,
             dragUpdatedSceneEvent(_:)
         )
         return true

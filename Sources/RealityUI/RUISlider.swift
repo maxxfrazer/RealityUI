@@ -289,7 +289,7 @@ public extension HasSlider {
         thumb.model = ModelComponent(
             mesh: .generateSphere(radius: 0.5), materials: []
         )
-        thumb.generateCollisionShapes(recursive: false)
+        thumb.collision = CollisionComponent(shapes: [.generateSphere(radius: 0.5)])
         thumb.components.set(RUIDragComponent(
             type: .move(.clamp(self.clampThumb)),
             delegate: self as? RUIDragDelegate

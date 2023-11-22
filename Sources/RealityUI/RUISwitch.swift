@@ -259,7 +259,7 @@ public extension HasSwitch {
 
         let thumb = self.addModel(part: .thumb)
         thumb.model = ModelComponent(mesh: .generateSphere(radius: (1 - padding) / 2), materials: [])
-        thumb.generateCollisionShapes(recursive: false)
+        thumb.collision = CollisionComponent(shapes: [.generateSphere(radius: (1 - padding) / 2)])
         thumb.components.set(RUIDragComponent(type: .move(.box(
             BoundingBox(min: [-toggleXSpan, 0, 0], max: [toggleXSpan, 0, 0]))
         ), delegate: self as? RUIDragDelegate))

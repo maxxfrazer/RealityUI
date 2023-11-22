@@ -40,7 +40,7 @@ import Combine
     /// Use this to add GestureRecognisers for different RealityUI elements in your scene.
     /// You do not need multiple GestureRecognisers for multiple elements in the scene.
     /// - Parameters:
-    ///   - gestures: A list of gestures to be installed, such as ``RUIGesture/longTouch`` and ``RUIGesture/tap``
+    ///   - gestures: A list of gestures to be installed, such as ``RUIGesture/ruiDrag`` and ``RUIGesture/tap``
     ///   - arView: ARView the gestures will be enabled on
     public static func enableGestures(_ gestures: RealityUI.RUIGesture, on arView: ARView) {
         RealityUI.shared.enable(gestures: gestures, on: arView)
@@ -62,7 +62,7 @@ import Combine
         self.componentsRegistered = true
     }
 
-    /// Different type of gestures used by RealityUI and set to an ARView object.
+    /// Different type of gestures used by RealityUI.
     public struct RUIGesture: OptionSet {
         /// Integer raw value used by the OptionSet
         public let rawValue: Int
@@ -76,18 +76,23 @@ import Combine
         /// OptionSet value for tap gestures.
         public static let tap = RUIGesture(rawValue: 1 << 0)
 
-        /// OptionSet value for long touch gestures. This will catch all ``HasARTouch`` entities with a collision body.
-        public static let longTouch = RUIGesture(rawValue: 1 << 1)
+        /// OptionSet value for long touch gestures. This will catch all entities with ``RUIDragComponent`` and a collision body.
+        public static let ruiDrag = RUIGesture(rawValue: 1 << 1)
+
+        @available(*, deprecated, renamed: "ruiDrag")
+        public static let longTouch = RUIGesture.ruiDrag
 
         /// Encapsulates all the possible values of this OptionSet
-        public static let all: RUIGesture = [.tap, .longTouch]
+        public static let all: RUIGesture = [.tap, .ruiDrag]
     }
 
-    /// Gestures that have been enabled, ``RUIGesture/tap``, ``RUIGesture/longTouch`` etc
+    #if os(iOS) || os(macOS)
+    /// Gestures that have been enabled, ``RUIGesture/tap``, ``RUIGesture/ruiDrag`` etc
     public internal(set) var enabledGestures: [ARView: RUIGesture] = [:]
 
     /// Gestures that have been installed. Plan to expose this property later.
     private var installedGestures: [ARView: [GestureBase]] = [:]
+    #endif
 
     /// All the components used by RealityUI
     public static var RUIComponents: [Component.Type] = [
@@ -96,9 +101,9 @@ import Combine
         SwitchComponent.self,
         StepperComponent.self,
         SliderComponent.self,
-        TurnComponent.self,
         TextComponent.self,
-        TapActionComponent.self
+        RUITapComponent.self,
+        RUIDragComponent.self
     ]
 
     internal static var shared = RealityUI()
@@ -108,6 +113,7 @@ import Combine
         self.registerComponents()
     }
 
+    #if os(iOS) || os(macOS)
     fileprivate func enable(gestures: RealityUI.RUIGesture, on arView: ARView) {
         if !self.enabledGestures.contains(where: { $0.key == arView}) {
             self.enabledGestures[arView] = []
@@ -117,8 +123,8 @@ import Combine
         if newGestures.contains(.tap) {
             self.addTap(to: arView)
         }
-        if newGestures.contains(.longTouch) {
-            self.addLongTouch(to: arView)
+        if newGestures.contains(.ruiDrag) {
+            self.addDragGesture(to: arView)
         }
         self.enabledGestures[arView]?.formUnion(newGestures)
     }
@@ -131,14 +137,28 @@ import Combine
         arView.addGestureRecognizer(addUITapGesture)
         self.installedGestures[arView]?.append(addUITapGesture)
     }
-    private func addLongTouch(to arView: ARView) {
-        let longTouchGesture = RUILongTouchGestureRecognizer(
+    private func addDragGesture(to arView: ARView) {
+        let dragGesture = RUIDragGestureRecognizer(
             target: self, action: #selector(self.arTouchReco),
             view: arView
         )
-        arView.addGestureRecognizer(longTouchGesture)
-        self.installedGestures[arView]?.append(longTouchGesture)
+        arView.addGestureRecognizer(dragGesture)
+        self.installedGestures[arView]?.append(dragGesture)
     }
+
+    fileprivate func tapActionChecker(_ arView: ARView, _ tapInView: CGPoint) {
+        if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
+           let comp = ccHit.entity.components.get(RUITapComponent.self) {
+            // if the element has RUIComponent, and it has `ruiEnabled` set to false
+            if let ruiComp = ccHit.entity.components.get(RUIComponent.self), !ruiComp.ruiEnabled {
+                return
+            }
+            comp.action(ccHit.entity, ccHit.position)
+        }
+    }
+
+    @objc internal func arTouchReco(sender: RUIDragGestureRecognizer) {}
+    #endif
 
     #if os(macOS)
     @objc internal func clickReco(sender: NSGestureRecognizer) {
@@ -150,34 +170,15 @@ import Combine
     }
     #elseif os(iOS)
     @objc internal func tapReco(sender: UITapGestureRecognizer? = nil) {
-        guard let arView = sender?.view as? ARView, let tapInView = sender?.location(in: arView) else {
-            return
-        }
+        guard let arView = sender?.view as? ARView, let tapInView = sender?.location(in: arView)
+        else { return }
         tapActionChecker(arView, tapInView)
     }
     #endif
-
-    fileprivate func tapActionChecker(_ arView: ARView, _ tapInView: CGPoint) {
-        if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
-           let comp = ccHit.entity.components[TapActionComponent.self] as? TapActionComponent {
-            // if the element has RUIComponent, and it has `ruiEnabled` set to false
-            if let ruiComp = ccHit.entity.components[RUIComponent.self] as? RUIComponent,
-               !ruiComp.ruiEnabled {
-                return
-            }
-            comp.action(ccHit.entity, ccHit.position)
-        }
-    }
-
-    @objc internal func arTouchReco(sender: RUILongTouchGestureRecognizer) {}
 }
 
-public extension ARView {
-    /// Use this method on your ARView to add GestureRecognisers for different RealityKit elements in your scene.
-    /// You do not need multiple GestureRecognisers for multiple elements in the scene.
-    /// - Parameter gestures: A list of gestures to be installed, such as .longTouch and .tap
-    @available(*, deprecated, message: "Instead call RealityUI.enableGestures(:)")
-    func enableRealityUIGestures(_ gestures: RealityUI.RUIGesture) {
-        RealityUI.shared.enable(gestures: gestures, on: self)
+extension Entity.ComponentSet {
+    func get<T>(_ component: T.Type) -> T? where T: Component {
+        self[T.self] as? T
     }
 }

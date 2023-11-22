@@ -1,5 +1,5 @@
 //
-//  RUILongTouchButtonTests.swift
+//  RUIDragButtonTests.swift
 //  
 //
 //  Created by Max Cobb on 25/01/2023.
@@ -12,16 +12,17 @@ import UIKit.UITouch
 #endif
 @testable import RealityUI
 
-final class RUILongTouchButtonTests: XCTestCase {
+#if os(iOS) || os(macOS)
+final class RUIDragButtonTests: XCTestCase {
 
-    var gestureRecognizer: RUILongTouchGestureRecognizer!
+    var gestureRecognizer: RUIDragGestureRecognizer!
     var arView: ARView!
     var entity: RUIButton!
 
     override func setUpWithError() throws {
         arView = ARView(frame: .init(origin: .zero, size: CGSize(width: 256, height: 256)))
-        gestureRecognizer = RUILongTouchGestureRecognizer(target: nil, action: nil, view: arView)
-        RealityUI.enableGestures(.longTouch, on: arView)
+        gestureRecognizer = RUIDragGestureRecognizer(target: nil, action: nil, view: arView)
+        RealityUI.enableGestures(.ruiDrag, on: arView)
         entity = RUIButton()
         let anchor = AnchorEntity()
         let cam = PerspectiveCamera()
@@ -71,12 +72,12 @@ final class RUILongTouchButtonTests: XCTestCase {
 
         mytouch.updateLocation(to: .zero)
         gestureRecognizer.touchesMoved([mytouch], with: UIEvent())
-        gestureRecognizer.updateRUILongTouch(nil)
+        gestureRecognizer.dragUpdatedSceneEvent(nil)
         XCTAssertFalse(entity.isCompressed)
 
         mytouch.updateLocation(to: CGPoint(x: 128, y: 128))
         gestureRecognizer.touchesMoved([mytouch], with: UIEvent())
-        gestureRecognizer.updateRUILongTouch(nil)
+        gestureRecognizer.dragUpdatedSceneEvent(nil)
         XCTAssertTrue(entity.isCompressed)
 
         gestureRecognizer.touchesEnded([mytouch], with: UIEvent())
@@ -105,6 +106,7 @@ final class RUILongTouchButtonTests: XCTestCase {
     }
     #endif
 }
+#endif
 
 #if os(iOS)
 internal class TestTouch: UITouch {

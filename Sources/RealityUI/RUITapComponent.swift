@@ -1,5 +1,5 @@
 //
-//  HasClick.swift
+//  RUITapComponent.swift
 //
 //
 //  Created by Max Cobb on 5/16/20.
@@ -9,16 +9,16 @@
 import RealityKit
 
 /// An interface used for entities which have actions upon being clicked
-@available(*, deprecated, message: "Please use TapActionComponent instead.")
+@available(*, deprecated, message: "Please use RUITapComponent instead.")
 public protocol HasClick: HasRUI, HasCollision {
     /// Action to be applied on successfully tapping an Entity.
     var tapAction: ((HasClick, SIMD3<Float>?) -> Void)? {get set}
 }
 
-/// ``TapActionComponent`` is a component that allows entities to respond
+/// ``RUITapComponent`` is a component that allows entities to respond
 /// to tap actions in the RealityKit environment.
 ///
-/// When an entity is associated with a ``TapActionComponent``, it indicates
+/// When an entity is associated with a ``RUITapComponent``, it indicates
 /// that the entity should trigger an action when tapped.
 /// There is also requirement for the entity to have a `CollisionComponent`.
 ///
@@ -30,11 +30,11 @@ public protocol HasClick: HasRUI, HasCollision {
 /// Example usage:
 /// ```swift
 /// let entity: Entity = ...
-/// entity.components.set(TapActionComponent { tappedEntity, worldPosition in
+/// entity.components.set(RUITapComponent { tappedEntity, worldPosition in
 ///     print("Entity \(tappedEntity) was tapped at \(worldPosition ?? .zero)!")
 /// })
 /// ```
-public struct TapActionComponent: Component {
+public struct RUITapComponent: Component {
     /// The action to be triggered when the entity is tapped.
     ///
     /// - Parameters:

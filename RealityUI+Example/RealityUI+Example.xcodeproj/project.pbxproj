@@ -141,6 +141,8 @@
 				Base,
 			);
 			mainGroup = F31E9ACF29E47B060084306F;
+			packageReferences = (
+			);
 			productRefGroup = F31E9AD929E47B060084306F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -299,6 +301,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "RealityUI-Example-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = ar;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -338,6 +341,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "RealityUI-Example-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = ar;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

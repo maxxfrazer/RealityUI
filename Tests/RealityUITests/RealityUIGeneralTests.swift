@@ -25,6 +25,7 @@ final class RealityUIGeneralTests: XCTestCase {
         XCTAssertTrue(RealityUI.shared.componentsRegistered)
     }
 
+    #if os(iOS) || os(macOS)
     func testAddGestures() throws {
         let arView = ARView()
         RealityUI.enableGestures(.tap, on: arView)
@@ -46,7 +47,7 @@ final class RealityUIGeneralTests: XCTestCase {
         XCTAssertEqual(viewGestures.count, 1)
         XCTAssertTrue(viewGestures[0] is NSClickGestureRecognizer)
         #endif
-
     }
+    #endif
 
 }

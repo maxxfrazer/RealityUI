@@ -1,4 +1,7 @@
 line_length: 
   ignores_comments: true
+identifier_name:
+  excluded:
+    - t
 excluded:
   - RealityUI+Example

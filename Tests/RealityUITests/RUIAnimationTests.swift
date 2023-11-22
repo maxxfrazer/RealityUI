@@ -13,7 +13,7 @@ import RealityKit
 #if os(iOS)
 final class RUIAnimationTests: XCTestCase {
 
-    var gestureRecognizer: RUILongTouchGestureRecognizer!
+    var gestureRecognizer: RUIDragGestureRecognizer!
     var arView: ARView!
     var entity: Entity!
 

@@ -1,6 +1,6 @@
 # RUIControls
 
-RUIControls are all the elements such as ``RUISlider``, ``RUISwitch``, ``RUIStepper`` and ``RUIButton``.
+RUIControls are elements such as sliders and switches, used to determine a state within your scene.
 
 ## Overview
 
@@ -10,7 +10,7 @@ Look below to see how to add all the RUIControls to your RealityKit Scene. Make 
 
 ### RUISwitch
 
-``RUISwitch`` is a 3D toggle switch with an on and off state.
+<doc:RUISwitch> is a 3D toggle switch with an on and off state.
 Default bounding box is approximately 1.6x1x1m
 
 #### Basic Implementation

@@ -16,66 +16,11 @@ import UIKit.UIColor
 
 /// A new RealityUI Stepper to be added to your RealityKit scene.
 public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
-    fileprivate var _startedOnButton: StepperComponent.UIPart?
-    /// The button that the touch started on
-    var buttonStarted: StepperComponent.UIPart? {
-        get { _startedOnButton }
-        set {
-            if [StepperComponent.UIPart.left, StepperComponent.UIPart.right].contains(newValue) {
-                self._startedOnButton = newValue
-            }
-        }
-    }
-    var isCompressed: Bool = false
-    func compressButton(compress: Bool = true) {
-        guard let buttonStarted else { return }
-        self.isCompressed = compress
-        self.getModel(part: buttonStarted)?.scale = (
-            compress ? .init(repeating: 0.95) : .one
-        )
-    }
-    func releaseButton() {
-        self.isCompressed = false
-    }
-    public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
-        let localPos = self.convert(position: worldCoordinate, from: nil)
-        self.buttonStarted = localPos.x > 0 ? .left : .right
-        self.compressButton()
-    }
-
-    public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
-        let localPos = self.convert(position: worldCoordinate, from: nil)
-        let touchingObj: StepperComponent.UIPart = localPos.x > 0 ? .left : .right
-        if self.isCompressed, !hasCollided || touchingObj != buttonStarted {
-            self.compressButton(compress: false)
-        } else if !self.isCompressed, hasCollided, touchingObj == buttonStarted {
-            self.compressButton()
-        }
-    }
-
-    public func arTouchCancelled() {
-        if self.isCompressed {
-            self.compressButton(compress: false)
-        }
-    }
-
-    public func arTouchEnded(at worldCoordinate: SIMD3<Float>?, hasCollided: Bool?) {
-        if self.isCompressed {
-            if self.buttonStarted == .left {
-                self.downTrigger?(self)
-            } else if self.buttonStarted == .right {
-                self.upTrigger?(self)
-            }
-        }
-        self.compressButton(compress: false)
-    }
-
-    public var collisionPlane: float4x4?
 
     /// Stepper's positive button has been pressed
-    public var upTrigger: ((HasStepper) -> Void)?
+    public var upTrigger: ((Entity) -> Void)?
     /// Stepper's negative button has been pressed
-    public var downTrigger: ((HasStepper) -> Void)?
+    public var downTrigger: ((Entity) -> Void)?
 
     /// Creates a RealityUI Stepper entity with optional ``StepperComponent``, ``RUIComponent``,
     /// as well as ``RUIStepper/upTrigger`` and ``RUIStepper/downTrigger`` callbacks.
@@ -87,8 +32,8 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
     public init(
         stepper: StepperComponent? = nil,
         rui: RUIComponent? = nil,
-        upTrigger: ((HasStepper) -> Void)? = nil,
-        downTrigger: ((HasStepper) -> Void)? = nil
+        upTrigger: ((Entity) -> Void)? = nil,
+        downTrigger: ((Entity) -> Void)? = nil
     ) {
         super.init()
         self.rui = rui ?? RUIComponent()
@@ -106,10 +51,14 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
     ///   - downTrigger: Callback function to receive updates then the negative button has been clicked.
     public convenience init(
         style: StepperComponent.Style,
-        upTrigger: ((HasStepper) -> Void)? = nil,
-        downTrigger: ((HasStepper) -> Void)? = nil
+        upTrigger: ((Entity) -> Void)? = nil,
+        downTrigger: ((Entity) -> Void)? = nil
     ) {
-        self.init(stepper: StepperComponent(style: style), upTrigger: upTrigger, downTrigger: downTrigger)
+        self.init(
+            stepper: StepperComponent(style: style),
+            upTrigger: upTrigger,
+            downTrigger: downTrigger
+        )
     }
 
     /// Create a RUIStepper entity with the default style of `.plusMinus`.
@@ -117,13 +66,29 @@ public class RUIStepper: Entity, HasRUIMaterials, HasStepper {
     ///   - upTrigger: Callback function to receive updates then the plus button has been clicked.
     ///   - downTrigger: Callback function to receive updates then the minus button has been clicked.
     public convenience init(
-        upTrigger: ((HasStepper) -> Void)? = nil, downTrigger: ((HasStepper) -> Void)? = nil
+        upTrigger: ((Entity) -> Void)? = nil, downTrigger: ((Entity) -> Void)? = nil
     ) {
         self.init(stepper: nil, upTrigger: upTrigger, downTrigger: downTrigger)
     }
 
     required public convenience init() {
         self.init(upTrigger: nil, downTrigger: nil)
+    }
+}
+
+extension RUIStepper: RUIDragDelegate {
+    public func ruiDrag(_ entity: Entity, selectedDidUpdate isSelected: Bool) {
+        entity.scale = isSelected ? .init(repeating: 0.95) : .one
+    }
+    public func ruiDrag(
+        _ entity: Entity,
+        touchUpInsideDidComplete ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)
+    ) {
+        if entity.name == "left" {
+            self.downTrigger?(self)
+        } else {
+            self.upTrigger?(self)
+        }
     }
 }
 
@@ -154,7 +119,7 @@ public struct StepperComponent: Component {
         /// Style of stepper with up and down chevrons.
         case arrowDownUp
     }
-    #if os(iOS)
+    #if os(iOS) || os(xrOS)
     /// Create a StepperComponent for an RUIStepper object to add to your scene
     /// - Parameters:
     ///   - style: Style of the stepper.
@@ -203,7 +168,7 @@ public struct StepperComponent: Component {
 }
 
 /// An interface used for entities with mutliple click actions, like RUIStepper.
-public protocol HasStepper: HasARTouch, HasRUIMaterials {}
+public protocol HasStepper: HasRUIMaterials {}
 
 public extension HasStepper {
     func updateMaterials() {
@@ -248,14 +213,10 @@ internal extension HasStepper {
         for part: StepperComponent.UIPart
     ) -> [Material] {
         switch part {
-        case .background:
-            return [self.getMaterial(with: stepper.backgroundTint)]
-        case .separator:
-            return [self.getMaterial(with: stepper.separatorTint)]
-        case .left:
-            return [self.getMaterial(with: stepper.buttonTint)]
-        case .right:
-            return [self.getMaterial(with: stepper.secondButtonTint ?? stepper.buttonTint)]
+        case .background: [self.getMaterial(with: stepper.backgroundTint)]
+        case .separator: [self.getMaterial(with: stepper.separatorTint)]
+        case .left: [self.getMaterial(with: stepper.buttonTint)]
+        case .right: [self.getMaterial(with: stepper.secondButtonTint ?? stepper.buttonTint)]
         }
     }
 
@@ -284,6 +245,11 @@ internal extension HasStepper {
         case .arrowLeftRight, .arrowDownUp:
             self.addArrowModels(leftModel, rightModel)
         }
+        let collider = CollisionComponent(shapes: [.generateBox(width: 0.9, height: 0.9, depth: 0.2)])
+        leftModel.components.set(collider)
+        rightModel.components.set(collider)
+        leftModel.components.set(RUIDragComponent(type: .click, delegate: self as? RUIDragDelegate))
+        rightModel.components.set(RUIDragComponent(type: .click, delegate: self as? RUIDragDelegate))
 
         let background = self.addModel(part: .background)
         background.model = ModelComponent(mesh: .generateBox(size: [2, 1, 0.25], cornerRadius: 0.125), materials: [])
@@ -294,7 +260,6 @@ internal extension HasStepper {
         separator.scale = .init(repeating: -1)
 
         self.updateMaterials()
-        self.collision = CollisionComponent(shapes: [.generateBox(size: [2, 1, 0.25])])
     }
 
     private func addArrowModels(_ leftModel: ModelEntity, _ rightModel: ModelEntity) {

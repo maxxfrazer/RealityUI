@@ -18,7 +18,6 @@ RUISwitch() { switch in
 - ``init()``
 - ``init(switchness:rui:switchCallback:)``
 - ``switchCallback``
-- ``init(switchness:RUI:changedCallback:)``
 
 ### Customising The Switch
 

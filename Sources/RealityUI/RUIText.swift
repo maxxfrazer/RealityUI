@@ -15,21 +15,7 @@ import UIKit.UIColor
 #endif
 
 /// A RealityUI Text object to be added to a RealityKit scene.
-open class RUIText: Entity, HasText, HasCollision {
-    /// Action to occus when the user taps on this Entity.
-    public var tapAction: ((Entity, SIMD3<Float>?) -> Void)? {
-        get { (self.components[TapActionComponent.self] as? TapActionComponent)?.action }
-        set {
-            if let newValue {
-                self.components.set(TapActionComponent(action: newValue))
-            } else {
-                self.components.remove(TapActionComponent.self)
-            }
-            // This is so the text does not block any clicks when there's no tapAction.
-            self.updateCollision()
-        }
-    }
-
+open class RUIText: Entity, HasText {
     /// Create a new RUIText object, adding text to your RealityKit scene.
     /// - Parameters:
     ///   - text: The text to render.
@@ -62,13 +48,12 @@ open class RUIText: Entity, HasText, HasCollision {
     ) {
         super.init()
         if let tapAction {
-            self.components.set(TapActionComponent(action: tapAction))
+            self.components.set(RUITapComponent(action: tapAction))
         }
         self.rui = rui ?? RUIComponent()
         self.textComponent = textComponent ?? TextComponent()
         self.ruiOrientation()
         self.makeModels()
-        self.updateCollision()
     }
 
     internal func makeModels() {
@@ -95,13 +80,13 @@ public struct TextComponent: Component {
     /// The maximum height, in meters, of the text frame in the local coordinate system.
     /// Set to `0` (default) for unbounded.
     public var height: CGFloat = 0
-#if os(iOS)
+    #if os(iOS) || os(xrOS)
     /// The color of the text material. `.label` by default (iOS)
     public var color: Material.Color = .label
-#elseif os(macOS)
+    #elseif os(macOS)
     /// The color of the text material. `.labelColor` by default (macOS)
     public var color: Material.Color = .labelColor
-#endif
+    #endif
     /// How the text should be aligned in the text frame
     public var alignment: CTTextAlignment = .center
     /// The extent, in meters, of the extruded text in the z-axis direction.
@@ -187,8 +172,7 @@ public extension HasText {
         for part: TextComponent.UIPart
     ) -> [Material] {
         switch part {
-        case .textEntity:
-            return [self.getMaterial(with: self.textComponent.color)]
+        case .textEntity: [self.getMaterial(with: self.textComponent.color)]
         }
     }
 
@@ -230,24 +214,19 @@ public extension HasText {
              textOffset.y,
              0 // textSize.z / 2
         ]
-        self.updateCollision()
     }
-    func updateCollision() {
-        guard let selfCol = self as? HasCollision else { return }
-        guard self.components.has(TapActionComponent.self) else {
-            return selfCol.components.remove(CollisionComponent.self)
-        }
+    func addCollision() {
         let visbounds = self.visualBounds(relativeTo: nil)
-        selfCol.collision = CollisionComponent(
+        self.components.set(CollisionComponent(
             shapes: [ShapeResource.generateBox(size: visbounds.extents)
                 .offsetBy(translation: visbounds.center)
             ]
-        )
+        ))
     }
 }
 
 extension RUIText {
-#if os(iOS)
+    #if os(iOS) || os(xrOS)
     /// Used as default larger text to be displayed in the scene
     static public var largeFont = MeshResource.Font(
         descriptor: .init(

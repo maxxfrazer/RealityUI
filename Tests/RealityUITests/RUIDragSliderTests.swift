@@ -1,6 +1,6 @@
 //
-//  RUILongTouchSliderTests.swift
-//  
+//  RUIDragSliderTests.swift
+//
 //
 //  Created by Max Cobb on 29/01/2023.
 //
@@ -9,16 +9,17 @@ import XCTest
 import RealityKit
 @testable import RealityUI
 
-final class RUILongTouchSliderTests: XCTestCase {
+#if os(iOS) || os(macOS)
+final class RUIDragSliderTests: XCTestCase {
 
-    var gestureRecognizer: RUILongTouchGestureRecognizer!
+    var gestureRecognizer: RUIDragGestureRecognizer!
     var arView: ARView!
     var entity: RUISlider!
 
     override func setUpWithError() throws {
         arView = ARView(frame: .init(origin: .zero, size: CGSize(width: 256, height: 256)))
-        gestureRecognizer = RUILongTouchGestureRecognizer(target: nil, action: nil, view: arView)
-        RealityUI.enableGestures(.longTouch, on: arView)
+        gestureRecognizer = RUIDragGestureRecognizer(target: nil, action: nil, view: arView)
+        RealityUI.enableGestures(.ruiDrag, on: arView)
         entity = RUISlider(length: 10, start: 0.5)
         let anchor = AnchorEntity()
         let cam = PerspectiveCamera()
@@ -45,18 +46,18 @@ final class RUILongTouchSliderTests: XCTestCase {
     func testSlideUpDownMiddle() {
         let mytouch = TestTouch(location: CGPoint(x: 128, y: 128))
         gestureRecognizer.touchesBegan([mytouch], with: UIEvent())
-        XCTAssertEqual(gestureRecognizer.entity, entity)
+        XCTAssertEqual(gestureRecognizer.entity, entity.getModel(part: "thumb"))
         mytouch.updateLocation(to: CGPoint(x: 255, y: 128))
         gestureRecognizer.touchesMoved([mytouch], with: UIEvent())
-        gestureRecognizer.updateRUILongTouch(nil)
-        XCTAssertEqual(entity.value, 1)
+        gestureRecognizer.dragUpdatedSceneEvent(nil)
+        XCTAssertEqual(entity.value, 1, accuracy: 0.05)
         mytouch.updateLocation(to: CGPoint(x: 1, y: 200))
         gestureRecognizer.touchesMoved([mytouch], with: UIEvent())
-        gestureRecognizer.updateRUILongTouch(nil)
-        XCTAssertEqual(entity.value, 0)
+        gestureRecognizer.dragUpdatedSceneEvent(nil)
+        XCTAssertEqual(entity.value, 0, accuracy: 0.05)
         mytouch.updateLocation(to: CGPoint(x: 128, y: 50))
         gestureRecognizer.touchesMoved([mytouch], with: UIEvent())
-        gestureRecognizer.updateRUILongTouch(nil)
+        gestureRecognizer.dragUpdatedSceneEvent(nil)
         XCTAssertEqual(entity.value, 0.5)
     }
 
@@ -75,5 +76,6 @@ final class RUILongTouchSliderTests: XCTestCase {
         gestureRecognizer.touchesBegan(mytouches, with: UIEvent())
         XCTAssertNil(gestureRecognizer.activeTouch)
     }
-#endif
+    #endif
 }
+#endif

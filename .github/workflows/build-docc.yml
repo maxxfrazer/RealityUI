@@ -23,10 +23,12 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Switch Xcode 🔄
+        run: sudo xcode-select --switch /Applications/Xcode_15.0.app
       - name: Build DocC
         run: |
           xcodebuild docbuild -scheme RealityUI -derivedDataPath /tmp/docbuild -destination 'generic/platform=iOS';
@@ -36,10 +38,10 @@ jobs:
             --output-path docs;
           echo "<script>window.location.href += \"/documentation/realityui\"</script>" > docs/index.html
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           # Upload docs directory
           path: 'docs'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2

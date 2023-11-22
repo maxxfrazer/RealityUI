@@ -14,14 +14,12 @@ jobs:
   build:
     runs-on: macOS-13
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - name: Switch Xcode 🔄
+      run: sudo xcode-select --switch /Applications/Xcode_15.0.app
     - name: Swift Lint
       run: swiftlint --strict
     - name: Test iOS
-      run: |
-        xcodebuild build -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 14" | xcpretty
+      run: xcodebuild build -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 15" | xcpretty
     - name: Test macOS
-      run: |
-        xcodebuild build -scheme RealityUI -destination "platform=macOS" | xcpretty
-      env:
-        SCHEME: RealityUI
+      run: xcodebuild build -scheme RealityUI -destination "platform=macOS" | xcpretty

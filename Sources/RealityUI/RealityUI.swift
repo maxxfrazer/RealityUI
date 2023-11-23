@@ -37,14 +37,6 @@ import Combine
 
     /// Store all the RealityUI Animations for an Entity. It's important for memory management that this is empty when it should be.
     internal static var anims: [Entity: [String: Cancellable]] = [:]
-    /// Use this to add GestureRecognisers for different RealityUI elements in your scene.
-    /// You do not need multiple GestureRecognisers for multiple elements in the scene.
-    /// - Parameters:
-    ///   - gestures: A list of gestures to be installed, such as ``RUIGesture/ruiDrag`` and ``RUIGesture/tap``
-    ///   - arView: ARView the gestures will be enabled on
-    public static func enableGestures(_ gestures: RealityUI.RUIGesture, on arView: ARView) {
-        RealityUI.shared.enable(gestures: gestures, on: arView)
-    }
 
     private func logActivated() {
         RealityUI.RUIPrint("Activated, registered components")
@@ -89,6 +81,15 @@ import Combine
     #if os(iOS) || os(macOS)
     /// Gestures that have been enabled, ``RUIGesture/tap``, ``RUIGesture/ruiDrag`` etc
     public internal(set) var enabledGestures: [ARView: RUIGesture] = [:]
+
+    /// Use this to add GestureRecognisers for different RealityUI elements in your scene.
+    /// You do not need multiple GestureRecognisers for multiple elements in the scene.
+    /// - Parameters:
+    ///   - gestures: A list of gestures to be installed, such as ``RUIGesture/ruiDrag`` and ``RUIGesture/tap``
+    ///   - arView: ARView the gestures will be enabled on
+    public static func enableGestures(_ gestures: RealityUI.RUIGesture, on arView: ARView) {
+        RealityUI.shared.enable(gestures: gestures, on: arView)
+    }
 
     /// Gestures that have been installed. Plan to expose this property later.
     private var installedGestures: [ARView: [GestureBase]] = [:]
@@ -179,6 +180,6 @@ import Combine
 
 extension Entity.ComponentSet {
     func get<T>(_ component: T.Type) -> T? where T: Component {
-        self[T.self] as? T
+        self[T.self]
     }
 }

@@ -1,5 +1,5 @@
 version: 1
 builder:
   configs:
-    - platform: ios
-      documentation_targets: [RealityUI]
+    - documentation_targets: [RealityUI]
+      custom_documentation_parameters: [--include-extended-types]

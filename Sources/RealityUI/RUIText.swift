@@ -80,7 +80,7 @@ public struct TextComponent: Component {
     /// The maximum height, in meters, of the text frame in the local coordinate system.
     /// Set to `0` (default) for unbounded.
     public var height: CGFloat = 0
-    #if os(iOS) || os(xrOS)
+    #if os(iOS) || os(visionOS)
     /// The color of the text material. `.label` by default (iOS)
     public var color: Material.Color = .label
     #elseif os(macOS)
@@ -226,7 +226,7 @@ public extension HasText {
 }
 
 extension RUIText {
-    #if os(iOS) || os(xrOS)
+    #if os(iOS) || os(visionOS)
     /// Used as default larger text to be displayed in the scene
     static public var largeFont = MeshResource.Font(
         descriptor: .init(

@@ -9,8 +9,16 @@ RealityUI also has a collection of components for interfacing with any Entity th
   <a href="https://swiftpackageindex.com/maxxfrazer/RealityUI">
     <img src="https://img.shields.io/github/v/release/maxxfrazer/RealityUI?color=F05138&label=Package%20Version&logo=Swift"/>
   </a>
-  <a href="https://codecov.io/github/maxxfrazer/RealityUI" > 
-    <img src="https://codecov.io/github/maxxfrazer/RealityUI/graph/badge.svg?token=3PCDBMSCLL"/> 
+  <a href="https://swiftpackageindex.com/maxxfrazer/RealityUI/main/documentation/realityui">
+    <img src="https://img.shields.io/badge/Swift-Doc-DE5C43.svg?style=flat"></a>
+  <a href="https://codecov.io/github/maxxfrazer/RealityUI" >
+    <img src="https://codecov.io/github/maxxfrazer/RealityUI/graph/badge.svg?token=3PCDBMSCLL"/>
+  </a>
+  <br/>
+  <img src="https://github.com/maxxfrazer/RealityUI/workflows/build/badge.svg?branch=main"/>
+  <img src="https://github.com/maxxfrazer/RealityUI/workflows/Deploy%20DocC/badge.svg?branch=main"/>
+  <a href="./LICENSE.md">
+    <img src="https://img.shields.io/github/license/maxxfrazer/RealityUI"/>
   </a>
   <br/>
   <a href="https://swiftpackageindex.com/maxxfrazer/RealityUI">
@@ -18,12 +26,6 @@ RealityUI also has a collection of components for interfacing with any Entity th
   </a>
   <a href="https://swiftpackageindex.com/maxxfrazer/RealityUI">
     <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmaxxfrazer%2FRealityUI%2Fbadge%3Ftype%3Dswift-versions"/>
-  </a>
-  <br/>
-  <img src="https://github.com/maxxfrazer/RealityUI/workflows/build/badge.svg?branch=main"/>
-  <img src="https://github.com/maxxfrazer/RealityUI/workflows/Deploy%20DocC/badge.svg?branch=main"/>
-  <a href="./LICENSE.md">
-    <img src="https://img.shields.io/github/license/maxxfrazer/RealityUI"/>
   </a>
 </p>
 

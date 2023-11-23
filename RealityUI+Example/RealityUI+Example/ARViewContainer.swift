@@ -38,8 +38,8 @@ struct ARViewContainer: UIViewRepresentable {
 
         // Add the anchor to the scene
         #if os(iOS)
-        let anchor = AnchorEntity(world: [0, 0, -2])
-        anchor.scale *= 0.5
+        let anchor = AnchorEntity(world: [0, 0, -1])
+        anchor.scale *= 0.15
         #else
         let anchor = AnchorEntity(world: .zero)
         #endif
@@ -63,6 +63,7 @@ struct ARViewContainer: UIViewRepresentable {
     func setModel(view: ARView) {
         guard let worldAnchor = view.scene.anchors.first,
             prevObjectType != objectType else { return }
+        worldAnchor.orientation = simd_quatf.init(angle: .pi, axis: [0, 1, 0])
         if let oldRui = view.scene.findEntity(named: "ruiReplace") {
             worldAnchor.removeChild(oldRui)
         }

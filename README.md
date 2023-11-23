@@ -1,14 +1,18 @@
 # RealityUI
 
-RealityUI is a collection of User Interface classes for RealityKit.
-The classes included in RealityUI aim to offer familiar User Interface guidelines, but in a 3D setting for Augmented and Virtual Reality through RealityKit.
+RealityUI is a collection of utilities and UI objects for RealityKit.
+The UI objects included in RealityUI aim to offer familiar User Interface standards, but in a 3D setting for Augmented and Virtual Reality through RealityKit.
 
-The User Interface controls in this repository so far are made to be familiar to what people are used to with 2D interfaces, however the plan is to expand the tools on offer to new and unique controls, which are more appropriate for an Augmented Reality and Virtual Reality context.
+RealityUI also has a collection of components for interfacing with any Entity through touch or drag interactions.
 
 <p align="center">
   <a href="https://swiftpackageindex.com/maxxfrazer/RealityUI">
     <img src="https://img.shields.io/github/v/release/maxxfrazer/RealityUI?color=F05138&label=Package%20Version&logo=Swift"/>
   </a>
+  <a href="https://codecov.io/github/maxxfrazer/RealityUI" > 
+    <img src="https://codecov.io/github/maxxfrazer/RealityUI/graph/badge.svg?token=3PCDBMSCLL"/> 
+  </a>
+  <br/>
   <a href="https://swiftpackageindex.com/maxxfrazer/RealityUI">
     <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmaxxfrazer%2FRealityUI%2Fbadge%3Ftype%3Dplatforms"/>
   </a>
@@ -16,9 +20,11 @@ The User Interface controls in this repository so far are made to be familiar to
     <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmaxxfrazer%2FRealityUI%2Fbadge%3Ftype%3Dswift-versions"/>
   </a>
   <br/>
-  <img src="https://img.shields.io/github/license/maxxfrazer/RealityUI"/>
   <img src="https://github.com/maxxfrazer/RealityUI/workflows/build/badge.svg?branch=main"/>
   <img src="https://github.com/maxxfrazer/RealityUI/workflows/Deploy%20DocC/badge.svg?branch=main"/>
+  <a href="./LICENSE.md">
+    <img src="https://img.shields.io/github/license/maxxfrazer/RealityUI"/>
+  </a>
 </p>
 
 ![RealityUI Elements in a RealityKit VR space](https://github.com/maxxfrazer/RealityUI/blob/main/media/realityui_banner.gif?raw=true)
@@ -114,6 +120,20 @@ Default button bounding box before depressing the button into the base is `[1, 1
 
 All of the RealityUI Control Entities use custom gestures that aren't standard in RealityKit, but some of them have been isolated so anyone can use them to manipulate their own RealityKit scene.
 
+### Drag
+
+Drag objects anywhere in space with 3 degrees of freedom with [RUIDragComponent](https://maxxfrazer.github.io/RealityUI/documentation/realityui/RUIDragComponent), using the [.move](https://maxxfrazer.github.io/RealityUI/documentation/realityui/RUIDragComponent/move(_:)) type.
+
+![Dragging Cubes](media/RUIDrag_cubes.gif)
+
+This type has an optional constraint, to fix the movement within certain criteria:
+
+1. **Box Constraint**: Restricts movement within a specified `BoundingBox`, providing a defined area where the entity can move.
+
+2. **Points Constraint**: Limits movement to a set of predefined points, represented as an array of `SIMD3<Float>`.
+
+3. **Clamp Constraint**: Uses a custom clamping function to control the movement. This function takes a `SIMD3<Float>` as input and returns a modified `SIMD3<Float>` to determine the new position.
+
 ### Turn
 
 Unlock the ability to rotate a RealityKit entity with just one finger.
@@ -127,6 +147,10 @@ Unlock the ability to rotate a RealityKit entity with just one finger.
 Create an object in your RealityKit scene with an action, and it will automatically be picked up whenever the user taps on it!
 
 No Gif for this one, but check out [RUITapComponent](https://maxxfrazer.github.io/RealityUI/documentation/realityui/RUITapComponent) to see how to add this to an entity in your application.
+
+If you instead wanted to use something similar to a "touch up inside" tap, you can use [RUIDragComponentType/click](https://maxxfrazer.github.io/RealityUI/documentation/realityui/RUIDragComponent/DragComponentType/click).
+
+![touch-up-inside example with a button](media/button_light.gif)
 
 ---
 ## Animations

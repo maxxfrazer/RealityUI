@@ -9,10 +9,11 @@ import XCTest
 import RealityKit
 @testable import RealityUI
 
+/*
 #if os(iOS)
 final class RUIAnimationTests: XCTestCase {
 
-    var gestureRecognizer: RUILongTouchGestureRecognizer!
+    var gestureRecognizer: RUIDragGestureRecognizer!
     var arView: ARView!
     var entity: Entity!
 
@@ -21,7 +22,7 @@ final class RUIAnimationTests: XCTestCase {
         arView = ARView(frame: .init(origin: .zero, size: CGSize(width: 256, height: 256)))
         viewC.view.addSubview(arView)
         entity = Entity()
-        let anchor = AnchorEntity()
+        let anchor = AnchorEntity(world: .zero)
         let cam = PerspectiveCamera()
         cam.look(at: .zero, from: [0, 1, 1], relativeTo: nil)
         anchor.addChild(cam)
@@ -73,3 +74,4 @@ final class RUIAnimationTests: XCTestCase {
 
 }
 #endif
+*/

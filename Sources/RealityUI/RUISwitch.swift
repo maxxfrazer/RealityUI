@@ -19,14 +19,7 @@ import UIKit.UIColor
 public typealias RUIToggle = RUISwitch
 
 /// A  RealityUI Switch to be added to a RealityKit scene.
-public class RUISwitch: Entity, HasSwitch, HasPanTouch {
-    public var panGestureOffset: SIMD3<Float> = .zero
-
-    public var collisionPlane: float4x4? {
-        return self.transformMatrix(relativeTo: nil)
-        * float4x4(simd_quatf(angle: .pi / 2, axis: [1, 0, 0]))
-    }
-
+public class RUISwitch: Entity, HasSwitch {
     var thumbCompressed = false
     func compressThumb() {
         self.getModel(part: .thumb)?.scale = .one * 0.95
@@ -36,37 +29,8 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
         self.getModel(part: .thumb)?.scale = .one
         thumbCompressed = false
     }
-    var startedOnThumb = false
+
     var distanceTravelled: Float = 0
-
-    public func arTouchStarted(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
-        self.panTouchStarted(at: worldCoordinate, hasCollided: hasCollided)
-        let moveDiff = self.togglePos - self.panGestureOffset
-        let xyLenSq = moveDiff.x * moveDiff.x + moveDiff.y * moveDiff.y
-        self.startedOnThumb = xyLenSq < 0.25
-        self.distanceTravelled = 0
-        self.compressThumb()
-    }
-
-    func clampThumbValue(_ thumbPos: inout Float) {
-        thumbPos = min(max(thumbPos, -self.toggleXSpan), self.toggleXSpan)
-    }
-
-    public func arTouchUpdated(at worldCoordinate: SIMD3<Float>, hasCollided: Bool) {
-        if self.startedOnThumb, let thumb = self.getModel(part: .thumb) {
-            let localPos = self.convert(position: worldCoordinate, from: nil)
-            var newThumbPos = self.togglePos.x + localPos.x - self.panGestureOffset.x
-            self.clampThumbValue(&newThumbPos)
-            self.distanceTravelled += abs(thumb.position.x - newThumbPos)
-            thumb.position.x = newThumbPos
-        } else if hasCollided != self.thumbCompressed {
-            if self.thumbCompressed {
-                self.uncompressThumb()
-            } else {
-                self.compressThumb()
-            }
-        }
-    }
 
     internal func startedOnThumbShouldToggle(hasCollided: Bool?) -> Bool {
         let startingPos = self.togglePos.x
@@ -86,35 +50,8 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
         return false
     }
 
-    public func arTouchEnded(at worldCoordinate: SIMD3<Float>?, hasCollided: Bool? = nil) {
-        if !self.startedOnThumb, self.thumbCompressed, hasCollided == true {
-            // if didn't start on thumb, but thumb is still compressed
-            self.setOn(!self.isOn)
-        } else if self.startedOnThumb, self.startedOnThumbShouldToggle(hasCollided: hasCollided) {
-            self.setOn(!self.isOn)
-        } else {
-            self.setOn(self.isOn)
-        }
-        self.thumbCompressed = false
-        self.panTouchEnded(at: worldCoordinate, hasCollided: hasCollided)
-    }
-
-    public func arTouchCancelled() {
-        self.uncompressThumb()
-        self.panTouchEnded(at: nil, hasCollided: nil)
-    }
-
     /// Switch's isOn property has changed
     public var switchCallback: ((HasSwitch) -> Void)?
-
-    @available(*, deprecated, renamed: "init(switchness:rui:switchCallback:)")
-    public convenience init(
-        switchness: SwitchComponent? = nil,
-        RUI: RUIComponent? = nil,
-        changedCallback: ((HasSwitch) -> Void)? = nil
-    ) {
-        self.init(switchness: switchness, rui: RUI, switchCallback: changedCallback)
-    }
 
     /// Creates a RealityUI Switch entity with optional ``SwitchComponent``, ``RUIComponent`` and ``switchCallback``.
     /// - Parameters:
@@ -137,6 +74,33 @@ public class RUISwitch: Entity, HasSwitch, HasPanTouch {
     /// Create a RUISwitch entity with the default styling.
     required public convenience init() {
         self.init(switchness: SwitchComponent())
+    }
+    var lastThumbPos: SIMD3<Float>?
+}
+
+extension RUISwitch: RUIDragDelegate {
+    public func ruiDrag(_ entity: Entity, dragDidStart ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
+        guard entity.name == "thumb" else { return }
+
+        self.distanceTravelled = 0
+        self.lastThumbPos = entity.position
+        self.compressThumb()
+    }
+    public func ruiDrag(_ entity: Entity, dragDidUpdate ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
+        guard entity.name == "thumb" else { return }
+
+        self.distanceTravelled += simd_distance(entity.position, self.lastThumbPos ?? entity.position)
+        self.lastThumbPos = entity.position
+    }
+    public func ruiDrag(_ entity: Entity, dragDidEnd ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) {
+        guard entity.name == "thumb" else { return }
+
+        if startedOnThumbShouldToggle(hasCollided: true) {
+            self.setOn(!self.isOn)
+        } else {
+            self.setOn(self.isOn)
+        }
+        self.thumbCompressed = false
     }
 }
 
@@ -261,7 +225,7 @@ public extension HasSwitch {
     var onColor: Material.Color { self.switchness.onColor }
     /// Color of the inner capsule when the switch is set to on. Default `Material.Color.lightGray`
     var offColor: Material.Color { self.switchness.offColor }
-    fileprivate var togglePos: SIMD3<Float> {
+    internal var togglePos: SIMD3<Float> {
         [(isOn ? -1 : 1) * self.toggleXSpan, 0, 0]
     }
     fileprivate var toggleXSpan: Float { (self.switchness.length - 1) / 2 }
@@ -295,12 +259,17 @@ public extension HasSwitch {
 
         let thumb = self.addModel(part: .thumb)
         thumb.model = ModelComponent(mesh: .generateSphere(radius: (1 - padding) / 2), materials: [])
+        thumb.collision = CollisionComponent(shapes: [.generateSphere(radius: (1 - padding) / 2)])
+        thumb.components.set(RUIDragComponent(type: .move(.box(
+            BoundingBox(min: [-toggleXSpan, 0, 0], max: [toggleXSpan, 0, 0]))
+        ), delegate: self as? RUIDragDelegate))
         thumb.position = togglePos
-        (self as? HasCollision)?.collision = CollisionComponent(
-            shapes: [ShapeResource.generateCapsule(height: togLen, radius: 0.5)
-                .offsetBy(rotation: simd_quatf(angle: .pi/2, axis: [0, 0, 1]))
-            ]
-        )
+
+        // add this if re-adding tap action is fixed at a later stage
+//        self.components.set(CollisionComponent(shapes: [.generateCapsule(height: togLen, radius: 0.5).offsetBy(rotation: simd_quatf(angle: .pi / 2, axis: [0, 0, 1]))]))
+//        self.components.set(RUITapComponent(action: { _, _ in
+//            self.setOn(!self.isOn)
+//        }))
         self.updateMaterials()
     }
 
@@ -316,12 +285,9 @@ public extension HasSwitch {
         for part: SwitchComponent.UIPart
     ) -> [Material] {
         switch part {
-        case .background:
-            return [self.getMaterial(with: self.isOn ? switchness.onColor : switchness.offColor)]
-        case .border:
-            return [self.getMaterial(with: switchness.borderColor)]
-        case .thumb:
-            return [self.getMaterial(with: switchness.thumbColor)]
+        case .background: [self.getMaterial(with: self.isOn ? switchness.onColor : switchness.offColor)]
+        case .border: [self.getMaterial(with: switchness.borderColor)]
+        case .thumb: [self.getMaterial(with: switchness.thumbColor)]
         }
     }
 }

@@ -9,7 +9,7 @@ RUIText adds a few features to make displaying text in RealityKit a little bit s
 ### Creating a Text Object
 
 - ``init(with:width:height:font:extrusion:color:)``
-- ``init(textComponent:rui:tapAction:)``
+- ``init(textComponent:rui:)``
 - ``init()``
 
 ### Modification

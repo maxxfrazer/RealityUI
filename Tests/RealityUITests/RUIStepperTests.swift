@@ -33,14 +33,18 @@ final class RUIStepperTests: XCTestCase {
         stepper.downTrigger = { _ in
             downTriggered = true
         }
-
-        stepper.arTouchStarted(at: SIMD3<Float>(-0.3, 0, 0), hasCollided: true)
-        stepper.arTouchEnded(at: nil, hasCollided: nil)
+        guard let leftMod = stepper.getModel(part: "left"),
+              let rightMod = stepper.getModel(part: "right"),
+              let leftComp = leftMod.components.get(RUIDragComponent.self),
+              let rightComp = rightMod.components.get(RUIDragComponent.self)
+        else { return XCTFail("could not get models or components") }
+        rightComp.dragStarted(rightMod, ray: ([-0.3, 0, 1], [0, 0, -1]))
+        rightComp.dragEnded(rightMod, ray: ([-0.3, 0, 1], [0, 0, -1]))
         XCTAssertTrue(upTriggered)
         XCTAssertFalse(downTriggered)
-        stepper.arTouchStarted(at: SIMD3<Float>(0.3, 0, 0), hasCollided: true)
-        stepper.arTouchEnded(at: nil, hasCollided: nil)
-        XCTAssertTrue(upTriggered)
+        leftComp.dragStarted(leftMod, ray: ([0.3, 0, 1], [0, 0, -1]))
+        leftComp.dragEnded(leftMod, ray: ([0.3, 0, 1], [0, 0, -1]))
+        XCTAssertTrue(downTriggered)
     }
 
 }

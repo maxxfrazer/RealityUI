@@ -26,14 +26,10 @@ It's important to set up your RealityKit scene to work with RealityUI before mov
 - ``RUIButton``
 - ``RUIStepper``
 
-### Custom Touch Events
+### Custom Interaction Events
 
-- ``HasARTouch``
-- ``HasClick``
-- ``HasPanTouch``
-- ``HasTouchUpInside``
-- ``HasTurnTouch``
-- ``TurnComponent``
+- ``RUIDragComponent``
+- ``RUITapComponent``
 
 ### Visual Objects
 

@@ -12,16 +12,21 @@ on:
 
 jobs:
   build:
-    runs-on: macOS-12
+    runs-on: macOS-13
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - name: Switch Xcode 🔄
+      run: sudo xcode-select --switch /Applications/Xcode_15.0.app
     - name: Swift Lint
       run: swiftlint --strict
     - name: Test iOS
-      run: |
-        xcodebuild build -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 14" | xcpretty
+      run: xcodebuild test -scheme RealityUI -destination "platform=iOS Simulator,name=iPhone 15" -enableCodeCoverage YES
+    - name: Fetch Coverage
+      uses: sersoft-gmbh/swift-coverage-action@v4
+      id: coverage-files
+    - name: Publish Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ${{ join(fromJSON(steps.coverage-files.outputs.files), ',') }}
     - name: Test macOS
-      run: |
-        xcodebuild build -scheme RealityUI -destination "platform=macOS" | xcpretty
-      env:
-        SCHEME: RealityUI
+      run: xcodebuild test -scheme RealityUI -destination "platform=macOS" -enableCodeCoverage YES

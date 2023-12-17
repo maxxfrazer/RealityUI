@@ -27,7 +27,12 @@ import Combine
         RealityUI.shared.logActivated()
     }
     /// Orientation of all RealityUI Entities upon creation. If nil, none will be set.
-    public static var startingOrientation: simd_quatf?
+    public static var startingOrientation: simd_quatf? {
+        #if os(visionOS)
+        return simd_quatf(angle: .pi, axis: [0, 1, 0])
+        #endif
+        return nil
+    }
 
     /// Mask to exclude entities from being hit by the long/panning gesture
     public static var longGestureMask: CollisionGroup = .all

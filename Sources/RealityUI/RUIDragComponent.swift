@@ -128,7 +128,7 @@ public class RUIDragComponent: Component {
     /// - Returns: The collision point as `SIMD3<Float>` if a collision occurs, otherwise `nil`.
     internal func getCollisionPoints(with ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) -> SIMD3<Float>? {
         switch self.touchState {
-        case .move(_, let distance): ray.origin + normalize(ray.direction) * distance
+        case .move(_, let distance): ray.origin + (distance == 0 ? ray.direction : (normalize(ray.direction) * distance))
         case .turn(let plane, _): self.findPointOnPlane(ray: ray, plane: plane)
         case .click: ray.origin + ray.direction
         case .none: nil

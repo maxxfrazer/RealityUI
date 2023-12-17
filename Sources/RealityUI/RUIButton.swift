@@ -36,6 +36,9 @@ public class RUIButton: Entity, HasButton, HasModel, HasPhysics {
         self.button = button ?? ButtonComponent()
         self.ruiOrientation()
         self.makeModels()
+        #if os(visionOS)
+        self.components.set(InputTargetComponent())
+        #endif
         self.components.set(RUIDragComponent(type: .click, delegate: self))
     }
 

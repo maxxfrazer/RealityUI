@@ -149,4 +149,12 @@ final class RUIGeometryTests: XCTestCase {
         XCTAssertNil(collisionPointsNil)
     }
 
+    func testEntityRotatedBy() {
+        let entity = Entity()
+        let rotatedAngle = entity.transformAfterRotation(by: [0, 1, 0], angle: .pi)
+        XCTAssertEqual(rotatedAngle.rotation.angle, .pi, accuracy: 0.01)
+        entity.transform = rotatedAngle
+        let rotatedAgain = entity.transformAfterRotation(by: [0, 1, 0], angle: .pi / 4)
+        XCTAssertEqual(rotatedAgain.rotation.angle, 5 * .pi / 4, accuracy: 0.01)
+    }
 }

@@ -50,13 +50,6 @@ public extension HasRUI {
         }
     }
 
-    /// Replace the current RUIComponent
-    /// - Parameter rui: new RUIComponent
-    func replaceRUI(with rui: RUIComponent) {
-        self.rui = rui
-        (self as? HasRUIMaterials)?.materialsShouldChange()
-    }
-
     /// RealityUI Component for the entity.
     internal(set) var rui: RUIComponent {
         get {

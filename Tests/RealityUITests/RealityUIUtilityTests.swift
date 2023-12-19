@@ -26,4 +26,21 @@ final class RealityUIUtilityTests: XCTestCase {
         XCTAssertEqual(Double(floatSimd.x), doubleSimd.x, "x value of doubleSimd and floatSimd should be equal")
         XCTAssertEqual(Double(floatSimd.x), 1, "x value of floatSimd should be one")
     }
+
+    func testHasRUIObj() {
+        class EntityHasRUI: Entity, HasRUI {}
+
+        let newHasRUI = EntityHasRUI()
+        let rui = newHasRUI.rui
+        XCTAssertTrue(rui.ruiEnabled)
+        XCTAssertFalse(rui.respondsToLighting)
+        newHasRUI.ruiEnabled = false
+        XCTAssertEqual(
+            newHasRUI.components.get(RUIComponent.self)?.respondsToLighting,
+            newHasRUI.rui.respondsToLighting
+        )
+        XCTAssertEqual(newHasRUI.respondsToLighting, newHasRUI.rui.respondsToLighting)
+        XCTAssertEqual(newHasRUI.components.get(RUIComponent.self)?.ruiEnabled, newHasRUI.rui.ruiEnabled)
+        XCTAssertFalse(newHasRUI.rui.ruiEnabled)
+    }
 }

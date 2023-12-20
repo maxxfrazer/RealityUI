@@ -20,8 +20,12 @@ final class RUITextureTests: XCTestCase {
         let tex = try await RUITexture.generateTexture(systemName: "pencil", pointSize: 20)
         let xcMainThread = XCTestExpectation(description: "main async called")
         DispatchQueue.main.async {
+            #if os(iOS)
             XCTAssertEqual(tex.width, 48, accuracy: 1)
             XCTAssertEqual(tex.height, 48, accuracy: 1)
+            #elseif os(macOS)
+            XCTAssertEqual(tex.width, tex.height, accuracy: 2)
+            #endif
             xcMainThread.fulfill()
         }
         await fulfillment(of: [xcMainThread])

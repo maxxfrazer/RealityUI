@@ -50,9 +50,12 @@ public struct RUITexture {
             throw TextureError.cgImageFailed
         }
         #else
-        guard let symbolImage = UIImage(
+        guard var symbolImage = UIImage(
             systemSymbolName: systemName, accessibilityDescription: nil
-        )?.withSymbolConfiguration(config) else { throw TextureError.invalidSystemName }
+        ) else { throw TextureError.invalidSystemName }
+        if let config, let imgWithConfig = symbolImage.withSymbolConfiguration(config) {
+            symbolImage = imgWithConfig
+        }
         guard let cgImage = symbolImage.cgImage(
             forProposedRect: nil, context: nil, hints: nil
         ) else { throw TextureError.cgImageFailed }

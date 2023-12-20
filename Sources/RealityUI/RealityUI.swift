@@ -152,7 +152,7 @@ import Combine
         self.installedGestures[arView]?.append(dragGesture)
     }
 
-    fileprivate func tapActionChecker(_ arView: ARView, _ tapInView: CGPoint) {
+    internal func tapActionChecker(_ arView: ARView, _ tapInView: CGPoint) {
         if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
            let comp = ccHit.entity.components.get(RUITapComponent.self) {
             // if the element has RUIComponent, and it has `ruiEnabled` set to false

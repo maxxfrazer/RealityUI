@@ -40,7 +40,7 @@ public struct RUITexture {
         return try await self.generateTexture(systemName: systemName, config: config)
     }
     fileprivate static func generateCGImage(
-        systemName: String, config: UIImage.SymbolConfiguration
+        systemName: String, config: UIImage.SymbolConfiguration?
     ) throws -> CGImage {
         #if canImport(UIKit)
         guard let symbolImage = UIImage(
@@ -65,7 +65,7 @@ public struct RUITexture {
     ///   - config: Image SymbolConfiguration for the SF Symbol Image.
     /// - Returns: A new `TextureResource`.
     public static func generateTexture(
-        systemName: String, config: UIImage.SymbolConfiguration
+        systemName: String, config: UIImage.SymbolConfiguration? = nil
     ) async throws -> TextureResource {
         let cgImage = try self.generateCGImage(systemName: systemName, config: config)
         return try await TextureResource.generate(

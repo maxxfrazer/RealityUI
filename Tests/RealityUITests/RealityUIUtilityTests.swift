@@ -43,4 +43,25 @@ final class RealityUIUtilityTests: XCTestCase {
         XCTAssertEqual(newHasRUI.components.get(RUIComponent.self)?.ruiEnabled, newHasRUI.rui.ruiEnabled)
         XCTAssertFalse(newHasRUI.rui.ruiEnabled)
     }
+
+    func testTapActions() {
+        let arView = ARView(frame: .init(origin: .zero, size: CGSize(width: 200, height: 200)))
+        let anch = AnchorEntity(world: .zero)
+        arView.scene.addAnchor(anch)
+        let ent = Entity()
+        ent.components.set(CollisionComponent(shapes: [.generateSphere(radius: 0.5)]))
+        anch.addChild(ent)
+
+        let exception = XCTestExpectation(description: "tap action called")
+        ent.components.set(RUITapComponent(action: { _, _ in exception.fulfill() }))
+        RealityUI.shared.tapActionChecker(arView, CGPoint(x: 100, y: 100))
+        wait(for: [exception])
+
+        ent.components.set(RUIComponent(isEnabled: false))
+        let nonException = XCTestExpectation(description: "tap action not called")
+        nonException.isInverted = true
+        ent.components.set(RUITapComponent(action: { _, _ in nonException.fulfill() }))
+        RealityUI.shared.tapActionChecker(arView, CGPoint(x: 100, y: 100))
+        wait(for: [nonException], timeout: 0.05)
+    }
 }

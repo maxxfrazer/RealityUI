@@ -45,7 +45,8 @@ import Combine
     func globalTouchBegan(touchInView: CGPoint) -> Bool {
         guard let firstHit = self.arView.hitTest(
             touchInView, query: .nearest, mask: RealityUI.longGestureMask
-        ).first, firstHit.entity.components.has(RUIDragComponent.self) else {
+        ).first, let dragComp = firstHit.entity.components.get(RUIDragComponent.self),
+              dragComp.isEnabled else {
             return false
         }
         return self.dragBegan(

@@ -25,10 +25,10 @@ public class RUISwitch: Entity, HasSwitch {
         self.getModel(part: .thumb)?.scale = .one * 0.95
         thumbCompressed = true
     }
-    func uncompressThumb() {
-        self.getModel(part: .thumb)?.scale = .one
-        thumbCompressed = false
-    }
+//    func uncompressThumb() {
+//        self.getModel(part: .thumb)?.scale = .one
+//        thumbCompressed = false
+//    }
 
     var distanceTravelled: Float = 0
 

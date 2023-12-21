@@ -111,6 +111,19 @@ final class RUISwitchTests: XCTestCase {
         XCTAssertTrue(testSwitch.isOn)
     }
 
+    func testDragThumb80Percent() {
+        guard let thumbModel = testSwitch.getModel(part: "thumb"),
+              let switchComponent = thumbModel.components.get(RUIDragComponent.self)
+        else { return XCTFail("Could not get thumb model") }
+        switchComponent.dragStarted(thumbModel, ray: ([0.3, 0, 1], forward))
+        XCTAssertTrue(thumbModel.position.x > 0)
+        switchComponent.dragUpdated(thumbModel, ray: ([0, 0, 1], forward), hasCollided: true)
+        XCTAssertEqual(thumbModel.position.x, 0, accuracy: 0.01)
+        switchComponent.dragUpdated(thumbModel, ray: ([0.03, 0, 1], forward), hasCollided: true)
+        switchComponent.dragEnded(thumbModel, ray: ([0.03, 0, 1], forward))
+        XCTAssertTrue(testSwitch.isOn)
+    }
+
     func testDragThumbAcrossAndBack() {
         guard let thumbModel = testSwitch.getModel(part: "thumb"),
               let switchComponent = thumbModel.components.get(RUIDragComponent.self)

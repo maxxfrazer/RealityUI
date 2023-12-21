@@ -9,7 +9,6 @@ import XCTest
 import RealityKit
 @testable import RealityUI
 
-/*
 #if os(iOS)
 final class RUIAnimationTests: XCTestCase {
 
@@ -30,6 +29,7 @@ final class RUIAnimationTests: XCTestCase {
         arView.scene.addAnchor(anchor)
     }
 
+    /*
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
@@ -71,7 +71,6 @@ final class RUIAnimationTests: XCTestCase {
         entity.orientation = .init(angle: .zero, axis: [0, 1, 0])
         XCTAssertEqual(RealityUI.anims.count, 0)
     }
-
+*/
 }
 #endif
-*/

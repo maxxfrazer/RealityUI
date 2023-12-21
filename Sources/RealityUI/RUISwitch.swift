@@ -25,10 +25,10 @@ public class RUISwitch: Entity, HasSwitch {
         self.getModel(part: .thumb)?.scale = .one * 0.95
         thumbCompressed = true
     }
-    func uncompressThumb() {
-        self.getModel(part: .thumb)?.scale = .one
-        thumbCompressed = false
-    }
+//    func uncompressThumb() {
+//        self.getModel(part: .thumb)?.scale = .one
+//        thumbCompressed = false
+//    }
 
     var distanceTravelled: Float = 0
 
@@ -260,6 +260,9 @@ public extension HasSwitch {
         let thumb = self.addModel(part: .thumb)
         thumb.model = ModelComponent(mesh: .generateSphere(radius: (1 - padding) / 2), materials: [])
         thumb.collision = CollisionComponent(shapes: [.generateSphere(radius: (1 - padding) / 2)])
+        #if os(visionOS)
+        thumb.components.set(InputTargetComponent())
+        #endif
         thumb.components.set(RUIDragComponent(type: .move(.box(
             BoundingBox(min: [-toggleXSpan, 0, 0], max: [toggleXSpan, 0, 0]))
         ), delegate: self as? RUIDragDelegate))

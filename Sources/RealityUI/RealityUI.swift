@@ -27,7 +27,13 @@ import Combine
         RealityUI.shared.logActivated()
     }
     /// Orientation of all RealityUI Entities upon creation. If nil, none will be set.
-    public static var startingOrientation: simd_quatf?
+    public static var startingOrientation: simd_quatf? {
+        #if os(visionOS)
+        simd_quatf(angle: .pi, axis: [0, 1, 0])
+        #else
+        nil
+        #endif
+    }
 
     /// Mask to exclude entities from being hit by the long/panning gesture
     public static var longGestureMask: CollisionGroup = .all
@@ -147,7 +153,7 @@ import Combine
         self.installedGestures[arView]?.append(dragGesture)
     }
 
-    fileprivate func tapActionChecker(_ arView: ARView, _ tapInView: CGPoint) {
+    internal func tapActionChecker(_ arView: ARView, _ tapInView: CGPoint) {
         if let ccHit = arView.hitTest(tapInView, mask: RealityUI.tapGestureMask).first,
            let comp = ccHit.entity.components.get(RUITapComponent.self) {
             // if the element has RUIComponent, and it has `ruiEnabled` set to false

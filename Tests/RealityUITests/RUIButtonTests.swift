@@ -38,9 +38,7 @@ final class RUIButtonTests: XCTestCase {
     func testTouchUpCompletedNotCalled() {
         let expectation = self.expectation(description: "touchUpInside callback was not called")
         expectation.isInverted = true
-        button.touchUpInside = { _ in
-            expectation.fulfill()
-        }
+        button.touchUpInside = { _ in expectation.fulfill() }
         button.components.get(RUIDragComponent.self)?.dragEnded(button, ray: ([0, 0, 1], [0, 0, -1]))
         waitForExpectations(timeout: 0.1, handler: nil)
     }
@@ -48,12 +46,8 @@ final class RUIButtonTests: XCTestCase {
     func testTouchUpCompletedNotCalledTouchMoved() {
         let expectation = self.expectation(description: "touchUpInside callback was not called")
         expectation.isInverted = true
-        button.touchUpInside = { _ in
-            expectation.fulfill()
-        }
-        guard let dragComp = button.components.get(RUIDragComponent.self) else {
-            return XCTFail("Could not find drag component")
-        }
+        button.touchUpInside = { _ in expectation.fulfill() }
+        let dragComp = button.components.get(RUIDragComponent.self)!
         dragComp.dragStarted(button, ray: ([0, 0, 1], [0, 0, -1]))
         dragComp.dragUpdated(button, ray: ([5, 5, 1], [0, 0, -1]), hasCollided: false)
         dragComp.dragEnded(button, ray: ([5, 5, 1], [0, 0, -1]))
@@ -61,9 +55,7 @@ final class RUIButtonTests: XCTestCase {
     }
 
     func testCompressButton() {
-        guard let dragComp = button.components.get(RUIDragComponent.self) else {
-            return XCTFail("Could not find drag component")
-        }
+        let dragComp = button.components.get(RUIDragComponent.self)!
         dragComp.dragStarted(button, ray: ([0, 0, 1], [0, 0, -1]))
         XCTAssertTrue(button.button.isCompressed)
         dragComp.dragEnded(button, ray: ([0, 0, 1], [0, 0, -1]))
@@ -73,9 +65,7 @@ final class RUIButtonTests: XCTestCase {
         let expectation = self.expectation(description: "touchUpInside callback was not called")
         expectation.isInverted = true
         button.touchUpInside = { _ in expectation.fulfill() }
-        guard let dragComp = button.components.get(RUIDragComponent.self) else {
-            return XCTFail("Could not find drag component")
-        }
+        let dragComp = button.components.get(RUIDragComponent.self)!
         dragComp.dragStarted(button, ray: ([0, 0, 1], [0, 0, -1]))
         dragComp.dragCancelled(button)
         waitForExpectations(timeout: 0.1, handler: nil)

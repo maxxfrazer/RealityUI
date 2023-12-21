@@ -18,8 +18,7 @@ public extension Entity {
     ///   - completion: Action to take place once the last spin has completed.
     ///                 This will not execute if the animation is interrupted.
     func ruiSpin(
-        by axis: SIMD3<Float>, period: TimeInterval,
-        times: Int = -1, completion: (() -> Void)? = nil
+        by axis: SIMD3<Float>, period: TimeInterval, times: Int = -1, completion: (() -> Void)? = nil
     ) {
         self.spinPrivate(by: axis, period: period, times: max(-1, times * 3 - 1), completion: completion)
     }
@@ -57,20 +56,22 @@ public extension Entity {
         RealityUI.anims.removeValue(forKey: self)
     }
 
+    internal func transformAfterRotation(by axis: SIMD3<Float>, angle: Float) -> Transform {
+        Transform(
+            matrix: self.transform.matrix
+            * Transform(rotation: simd_quatf(angle: angle, axis: axis)).matrix
+        )
+    }
+
     private func spinPrivate(
         by axis: SIMD3<Float>, period: TimeInterval,
         times: Int, completion: (() -> Void)? = nil
     ) {
-        let startPos = self.transform
-        let spun90 = matrix_multiply(
-            startPos.matrix,
-            Transform(scale: .one, rotation: simd_quatf(angle: 2 * .pi / 3, axis: axis), translation: .zero).matrix
-        )
+        let spun120 = transformAfterRotation(by: axis, angle: 2 * .pi / 3)
         self.move(
-            to: Transform(matrix: spun90),
-            relativeTo: self.parent,
-            duration: period / 3,
-            timingFunction: times == 0 ? .easeOut : .linear)
+            to: spun120, relativeTo: self.parent,
+            duration: period / 3, timingFunction: times == 0 ? .easeOut : .linear
+        )
         let spinCancellable = self.scene?.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: self, { _ in
             RealityUI.anims[self]?["spin"]?.cancel()
             RealityUI.anims[self]?.removeValue(forKey: "spin")

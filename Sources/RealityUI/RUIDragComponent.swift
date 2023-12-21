@@ -89,6 +89,9 @@ public class RUIDragComponent: Component {
     /// An optional delegate to handle drag events.
     public weak var delegate: RUIDragDelegate?
 
+    /// Whether the drag gesture should be enabled for this Entity.
+    public var isEnabled: Bool = true
+
     /// Initializes a new `RUIDragComponent` with a specific drag interaction type and an optional delegate.
     ///
     /// - Parameters:
@@ -100,7 +103,7 @@ public class RUIDragComponent: Component {
     }
 
     /// The current touch state of the drag component.
-    public internal(set) var touchState: DragState?
+    public internal(set) var dragState: DragState?
 
     /// `DragState` represents the state of the current in-progress touch in an AR/VR context.
     ///
@@ -126,10 +129,14 @@ public class RUIDragComponent: Component {
     ///
     /// - Parameter ray: A tuple containing the origin and direction of the ray.
     /// - Returns: The collision point as `SIMD3<Float>` if a collision occurs, otherwise `nil`.
-    internal func getCollisionPoints(with ray: (origin: SIMD3<Float>, direction: SIMD3<Float>)) -> SIMD3<Float>? {
-        switch self.touchState {
-        case .move(_, let distance): ray.origin + normalize(ray.direction) * distance
-        case .turn(let plane, _): self.findPointOnPlane(ray: ray, plane: plane)
+    internal static func getCollisionPoints(
+        with ray: (origin: SIMD3<Float>, direction: SIMD3<Float>), dragState: DragState?
+    ) -> SIMD3<Float>? {
+        switch dragState {
+        case .move(_, let distance): ray.origin + (
+            distance == 0 ? ray.direction : (normalize(ray.direction) * distance)
+        )
+        case .turn(let plane, _): RUIDragComponent.findPointOnPlane(ray: ray, plane: plane)
         case .click: ray.origin + ray.direction
         case .none: nil
         }
@@ -142,7 +149,7 @@ public class RUIDragComponent: Component {
         }
     }
 
-    internal var moveContraint: MoveConstraint? {
+    internal var moveConstraint: MoveConstraint? {
         switch self.type {
         case .move(let moveConstraint): moveConstraint
         default: nil
@@ -167,7 +174,7 @@ public class RUIDragComponent: Component {
         ))
     }
 
-    internal func findPointOnPlane(
+    internal static func findPointOnPlane(
         ray: (origin: SIMD3<Float>, direction: SIMD3<Float>), plane: float4x4
     ) -> SIMD3<Float>? {
         // Extract plane normal and a point on the plane from the matrix
@@ -186,13 +193,10 @@ public class RUIDragComponent: Component {
         }
     }
 
-    internal func handleMoveState(_ entity: Entity, _ newTouchPos: SIMD3<Float>?, _ poi: SIMD3<Float>) {
-        guard let newTouchPos else { return }
-        let parentSpaceNTP = entity.convert(position: newTouchPos, to: entity.parent)
-        let parentSpaceOTP = entity.convert(position: poi, to: entity.parent)
-        guard let arTouchComp = entity.components.get(RUIDragComponent.self) else { return }
-        let endPos = entity.position + parentSpaceNTP - parentSpaceOTP
-        entity.position = switch arTouchComp.moveContraint {
+    fileprivate static func getClampedPosition(
+        _ moveConstraint: MoveConstraint?, _ endPos: SIMD3<Float>
+    ) -> SIMD3<Float> {
+        switch moveConstraint {
         case .box(let bbox): bbox.clamp(endPos)
         case .points(let points): RUIDragComponent.closestPoint(from: endPos, points: points)
         case .clamp(let clampFoo): clampFoo(endPos)
@@ -200,12 +204,23 @@ public class RUIDragComponent: Component {
         }
     }
 
+    internal static func handleMoveState(
+        _ entity: Entity, _ newTouchPos: SIMD3<Float>?, _ poi: SIMD3<Float>
+    ) -> SIMD3<Float>? {
+        guard let newTouchPos else { return nil }
+        let parentSpaceNTP = entity.convert(position: newTouchPos, to: entity.parent)
+        let parentSpaceOTP = entity.convert(position: poi, to: entity.parent)
+        guard let arTouchComp = entity.components.get(RUIDragComponent.self) else { return nil }
+        let endPos = entity.position + parentSpaceNTP - parentSpaceOTP
+        return getClampedPosition(arTouchComp.moveConstraint, endPos)
+    }
+
     internal func handleTurnState(
         _ entity: Entity, _ plane: float4x4, _ lastPoint: SIMD3<Float>,
         _ ray: inout (origin: SIMD3<Float>, direction: SIMD3<Float>)
     ) {
         guard let rotateVector,
-              let newPoint = self.findPointOnPlane(ray: ray, plane: plane)
+              let newPoint = RUIDragComponent.findPointOnPlane(ray: ray, plane: plane)
         else { return }
 
         // calculate the unsigned angle
@@ -221,7 +236,7 @@ public class RUIDragComponent: Component {
             // calculate the rotation quaternion, and apply
             entity.orientation *= simd_quatf(angle: signedAngle, axis: rotateVector)
             // update the turn state, so we only check the difference with the new angle
-            self.touchState = .turn(plane: plane, start: newPoint)
+            self.dragState = .turn(plane: plane, start: newPoint)
         }
         ray.direction = normalize(ray.direction) * simd_distance(ray.origin, newPoint)
     }

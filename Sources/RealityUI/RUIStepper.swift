@@ -250,6 +250,10 @@ internal extension HasStepper {
         rightModel.components.set(collider)
         leftModel.components.set(RUIDragComponent(type: .click, delegate: self as? RUIDragDelegate))
         rightModel.components.set(RUIDragComponent(type: .click, delegate: self as? RUIDragDelegate))
+        #if os(visionOS)
+        leftModel.components.set(InputTargetComponent())
+        rightModel.components.set(InputTargetComponent())
+        #endif
 
         let background = self.addModel(part: .background)
         background.model = ModelComponent(mesh: .generateBox(size: [2, 1, 0.25], cornerRadius: 0.125), materials: [])

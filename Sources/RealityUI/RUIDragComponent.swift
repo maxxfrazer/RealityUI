@@ -89,6 +89,9 @@ public class RUIDragComponent: Component {
     /// An optional delegate to handle drag events.
     public weak var delegate: RUIDragDelegate?
 
+    /// Whether the drag gesture should be enabled for this Entity.
+    public var isEnabled: Bool = true
+
     /// Initializes a new `RUIDragComponent` with a specific drag interaction type and an optional delegate.
     ///
     /// - Parameters:

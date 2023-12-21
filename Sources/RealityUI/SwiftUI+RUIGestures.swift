@@ -32,7 +32,7 @@ public struct RUITapGesture: Gesture {
 
 internal extension EntityTargetValue where Value == DragGesture.Value {
     var ray3D: Ray3D? {
-        guard let devicePose = self.inputDevicePose3D, let parent = self.entity.parent else { return nil }
+        guard let devicePose = self.inputDevicePose3D else { return nil }
         let devicePos = self.convert(devicePose.position, from: .local, to: .scene)
         let endPos = self.convert(self.location3D, from: .local, to: .scene)
         let direction = endPos - devicePos
@@ -42,7 +42,7 @@ internal extension EntityTargetValue where Value == DragGesture.Value {
 }
 
 extension Ray3D {
-    var rayTuple: (SIMD3<Float>, SIMD3<Float>) {
+    var rayTuple: (origin: SIMD3<Float>, direction: SIMD3<Float>) {
         (origin.vector.toFloat3(), direction.vector.toFloat3())
     }
 }
@@ -52,26 +52,30 @@ public struct RUIDragGesture: Gesture {
         DragGesture(minimumDistance: 0).targetedToEntity(where: .has(RUIDragComponent.self))
             .onChanged { value in
                 guard let touchRay = value.ray3D,
-                      let dragComp = value.entity.components[RUIDragComponent.self] else {
+                      let dragComp = value.entity.components[RUIDragComponent.self],
+                      dragComp.isEnabled else {
                     return
                 }
-//                print(value.location3D)
                 if value.entity.components[RUIComponent.self]?.ruiEnabled == false { return }
 
-                if dragComp.touchState == nil {
+                if dragComp.dragState == nil {
                     dragComp.dragStarted(value.entity, ray: touchRay.rayTuple)
                 } else {
-                    dragComp.dragUpdated(value.entity, ray: touchRay.rayTuple, hasCollided: true)
+                    let rayTuple = touchRay.rayTuple
+                    let collided = value.entity.scene?.raycast(
+                        origin: rayTuple.origin,
+                        direction: rayTuple.direction
+                    ).first { $0.entity == value.entity } != nil
+
+                    dragComp.dragUpdated(value.entity, ray: rayTuple, hasCollided: collided)
                 }
             }.onEnded { value in
                 guard let dragComp = value.entity.components[RUIDragComponent.self],
-                      dragComp.touchState != nil, let touchRay = value.ray3D
+                      dragComp.dragState != nil, let touchRay = value.ray3D
                 else { return }
                 dragComp.dragEnded(value.entity, ray: touchRay.rayTuple)
             }
     }
-    public init() {
-        print("making new draggy")
-    }
+    public init() {}
 }
 #endif

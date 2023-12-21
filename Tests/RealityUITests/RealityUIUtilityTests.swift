@@ -44,6 +44,7 @@ final class RealityUIUtilityTests: XCTestCase {
         XCTAssertFalse(newHasRUI.rui.ruiEnabled)
     }
 
+    #if os(iOS) || os(macOS)
     func testTapActions() {
         let arView = ARView(frame: .init(origin: .zero, size: CGSize(width: 200, height: 200)))
         let anch = AnchorEntity(world: .zero)
@@ -64,4 +65,5 @@ final class RealityUIUtilityTests: XCTestCase {
         RealityUI.shared.tapActionChecker(arView, CGPoint(x: 100, y: 100))
         wait(for: [nonException], timeout: 0.05)
     }
+    #endif
 }

@@ -33,22 +33,36 @@ RealityUI also has a collection of components for interfacing with any Entity th
 
 ## Requirements
 
-- iOS 13 or macOS 10.15
-- Swift 5.4
-- Xcode 12
+- iOS 13, macOS 10.15 or visionOS 1.0
+- Swift 5.8
+- Xcode 13
 
 ## Content
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Control Entities](#control-entities)
-- [Gestures](#gestures)
-- [Animations](#animations)
-- [Text](#text)
-- [More](#more)
-  - [RealityUI Wiki](https://github.com/maxxfrazer/RealityUI/wiki)
-  - [Documentation](https://maxxfrazer.github.io/RealityUI/documentation/realityui/)
-  - [Example Project](https://github.com/maxxfrazer/RealityUI/tree/main/RealityUI%2BExamples)
+- [RealityUI](#realityui)
+  - [Requirements](#requirements)
+  - [Content](#content)
+  - [Installation](#installation)
+    - [Swift Package Manager](#swift-package-manager)
+  - [Usage](#usage)
+      - [Registering RealityUI Components](#registering-realityui-components)
+      - [Activating Gestures](#activating-gestures)
+        - [visionOS](#visionos)
+        - [iOS/macOS](#iosmacos)
+  - [Control Entities](#control-entities)
+    - [RUISwitch](#ruiswitch)
+    - [RUIStepper](#ruistepper)
+    - [RUISlider](#ruislider)
+    - [RUIButton](#ruibutton)
+  - [Gestures](#gestures)
+    - [Drag](#drag)
+    - [Turn](#turn)
+    - [Tap](#tap)
+  - [Animations](#animations)
+    - [Spin](#spin)
+    - [Shake](#shake)
+  - [Text](#text)
+  - [More](#more)
 
 ## Installation
 
@@ -67,6 +81,38 @@ Add `import RealityUI` to the top of your swift file to start.
 All components used in RealityUI must be registered before they are used, simply call `RealityUI.registerComponents()` anywhere in your app before any classes starting with `RUI` are initialised to avoid issues with that. For more information on what is meant by registering components [see Apple's documentation here](https://developer.apple.com/documentation/realitykit/component/3243766-registercomponent).
 
 #### Activating Gestures
+
+##### visionOS
+
+With visionOS, gestures can be enabled on a RealityView using `View/addRUIDragGesture()` or `View/addRUITapGesture()` modifiers, or by adding the gestures directly with `.gesture(RUIDragGesture())` or `.gesture(RUITapGesture())`. The RealityView might look something like this:
+
+```swift
+RealityView { content in
+    let swtch = RUISwitch()
+    swtch.scale = .init(repeating: 0.1)
+    content.add(swtch)
+}.addRUIDragGesture()
+```
+
+> The above snippet adds an interactive switch/toggle to the scene.
+
+This gesture works for any entity with RUIDragComponent, for example:
+
+```swift
+RealityView { content in
+    let movable = try! await ModelEntity(named: "toy_biplane")
+    movable.generateCollisionShapes(recursive: false)
+
+    movable.components.set(RUIDragComponent(type: .move(nil)))
+    movable.components.set(InputTargetComponent())
+
+    content.add(movable)
+}.addRUIDragGesture()
+```
+
+![moving a biplane around in vision pro simulator](media/biplane_drag.gif)
+
+##### iOS/macOS
 
 Enabling RealityUI gestures can be doen by calling `RealityUI.enableGestures(.all, on: ARView)`, with `ARView` being your instance of an [ARView](https://developer.apple.com/documentation/realitykit/arview) object.
 
